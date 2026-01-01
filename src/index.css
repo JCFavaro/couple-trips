@@ -1,0 +1,285 @@
+@import "tailwindcss";
+
+/* Disney Magic Theme - Pink & Purple */
+@theme {
+  /* Background colors - Magical Night */
+  --color-magic-dark: #1a0a2e;
+  --color-magic-purple: #2d1b4e;
+  --color-magic-pink: #4a1942;
+
+  /* Accent colors */
+  --color-accent-gold: #ffd700;
+  --color-accent-pink: #ff69b4;
+  --color-accent-rose: #f472b6;
+  --color-accent-purple: #a855f7;
+  --color-accent-lavender: #c4b5fd;
+
+  /* Text colors */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e9d5ff;
+  --color-text-muted: #a78bfa;
+
+  /* Font family */
+  --font-disney: 'Poppins', system-ui, sans-serif;
+}
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-disney);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1a0a2e 0%, #2d1b4e 40%, #4a1942 100%);
+  background-attachment: fixed;
+  color: white;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Animated stars background */
+.stars-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle var(--duration, 3s) ease-in-out infinite;
+  opacity: 0;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: var(--max-opacity, 0.8); transform: scale(1); }
+}
+
+/* Sparkle animation */
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+
+.sparkle {
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Shimmer effect for text */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, #f472b6, #e879f9, #f472b6, #e879f9, #f472b6);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+.gold-shimmer {
+  background: linear-gradient(90deg, #ffd700, #ffed4a, #ffd700, #ffed4a, #ffd700);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Glass morphism card - Pink theme */
+.glass-card {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(244, 114, 182, 0.15) 100%);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(244, 114, 182, 0.2);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(168, 85, 247, 0.1);
+}
+
+.glass-card:hover {
+  border-color: rgba(244, 114, 182, 0.4);
+  box-shadow: 0 8px 32px rgba(244, 114, 182, 0.2);
+}
+
+/* Magic button - Pink gradient */
+.magic-btn {
+  background: linear-gradient(135deg, #ec4899, #a855f7);
+  color: white;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
+}
+
+.magic-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(236, 72, 153, 0.5);
+}
+
+.magic-btn:active {
+  transform: translateY(0);
+}
+
+/* Secondary button */
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(244, 114, 182, 0.3);
+  color: white;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+  background: rgba(244, 114, 182, 0.2);
+  border-color: rgba(244, 114, 182, 0.5);
+}
+
+/* Input styles - Pink focus */
+.magic-input {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(244, 114, 182, 0.2);
+  border-radius: 16px;
+  padding: 14px 18px;
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.magic-input:focus {
+  outline: none;
+  border-color: #f472b6;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.15);
+}
+
+.magic-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Select styles */
+.magic-select {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(244, 114, 182, 0.2);
+  border-radius: 16px;
+  padding: 14px 18px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f472b6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6,9 12,15 18,9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px;
+  padding-right: 45px;
+}
+
+.magic-select:focus {
+  outline: none;
+  border-color: #f472b6;
+  box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.15);
+}
+
+.magic-select option {
+  background: #2d1b4e;
+  color: white;
+}
+
+/* Custom scrollbar - Pink */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ec4899, #a855f7);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #f472b6, #c084fc);
+}
+
+/* Category badges */
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Glowing effect */
+.glow-pink {
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.5);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #f472b6, #e879f9, #c4b5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Bottom navigation safe area */
+.pb-safe {
+  padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Pulse animation */
+@keyframes pulse-pink {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(236, 72, 153, 0); }
+}
+
+.pulse-pink {
+  animation: pulse-pink 2s infinite;
+}
