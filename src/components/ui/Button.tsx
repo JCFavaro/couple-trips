@@ -46,9 +46,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const sizeStyles: Record<string, React.CSSProperties> = {
-      sm: { padding: '10px 16px', fontSize: 14 },
-      md: { padding: '14px 24px', fontSize: 15 },
-      lg: { padding: '18px 32px', fontSize: 16 },
+      sm: { padding: '14px 20px', fontSize: 15 },
+      md: { padding: '18px 28px', fontSize: 16 },
+      lg: { padding: '22px 36px', fontSize: 17 },
     };
 
     return (

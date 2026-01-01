@@ -20,7 +20,7 @@ export function PageWrapper({ children, title, subtitle, rightAction }: PageWrap
         paddingLeft: 20,
         paddingRight: 20,
         paddingTop: 56,
-        paddingBottom: 'calc(100px + env(safe-area-inset-bottom, 0px))',
+        paddingBottom: 'calc(120px + env(safe-area-inset-bottom, 0px))',
         position: 'relative',
         zIndex: 10,
       }}
