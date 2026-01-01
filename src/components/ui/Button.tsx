@@ -1,5 +1,6 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -8,51 +9,71 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className = '', variant = 'primary', size = 'md', isLoading, children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed';
+  ({ className = '', variant = 'primary', size = 'md', isLoading, children, disabled, style, ...props }, ref) => {
 
-    const variants = {
-      primary: 'magic-btn',
-      secondary: 'bg-white/10 hover:bg-white/20 text-white border border-white/20',
-      ghost: 'bg-transparent hover:bg-white/10 text-white',
-      danger: 'bg-red-500/80 hover:bg-red-500 text-white',
+    const baseStyle: React.CSSProperties = {
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontWeight: 600,
+      borderRadius: 14,
+      border: 'none',
+      cursor: disabled || isLoading ? 'not-allowed' : 'pointer',
+      opacity: disabled || isLoading ? 0.5 : 1,
+      transition: 'all 0.3s ease',
     };
 
-    const sizes = {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2 text-base',
-      lg: 'px-6 py-3 text-lg',
+    const variantStyles: Record<string, React.CSSProperties> = {
+      primary: {
+        background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+        color: 'white',
+        boxShadow: '0 4px 20px rgba(236, 72, 153, 0.4)',
+      },
+      secondary: {
+        background: 'rgba(255, 255, 255, 0.1)',
+        color: 'white',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+      },
+      ghost: {
+        background: 'transparent',
+        color: 'white',
+      },
+      danger: {
+        background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+        color: 'white',
+        boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4)',
+      },
+    };
+
+    const sizeStyles: Record<string, React.CSSProperties> = {
+      sm: { padding: '10px 16px', fontSize: 14 },
+      md: { padding: '14px 24px', fontSize: 15 },
+      lg: { padding: '18px 32px', fontSize: 16 },
     };
 
     return (
       <motion.button
         ref={ref}
-        className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+        style={{
+          ...baseStyle,
+          ...variantStyles[variant],
+          ...sizeStyles[size],
+          ...style,
+        }}
+        className={className}
         disabled={disabled || isLoading}
-        whileTap={{ scale: 0.98 }}
+        whileHover={!disabled && !isLoading ? { scale: 1.02 } : undefined}
+        whileTap={!disabled && !isLoading ? { scale: 0.98 } : undefined}
         {...(props as any)}
       >
         {isLoading ? (
-          <svg
-            className="animate-spin -ml-1 mr-2 h-4 w-4"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+            style={{ marginRight: 8 }}
           >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-            />
-          </svg>
+            <Sparkles style={{ width: 18, height: 18 }} />
+          </motion.div>
         ) : null}
         {children}
       </motion.button>

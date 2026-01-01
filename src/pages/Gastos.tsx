@@ -165,7 +165,7 @@ export function Gastos() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ marginBottom: 32 }}
+        style={{ marginBottom: 48 }}
       >
         <div className="glass-card" style={{ padding: 28, position: 'relative', overflow: 'hidden' }}>
           <Sparkles className="sparkle" style={{ position: 'absolute', top: 16, right: 16, width: 20, height: 20, color: 'rgba(244, 114, 182, 0.4)' }} />
@@ -252,7 +252,7 @@ export function Gastos() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          style={{ marginBottom: 32 }}
+          style={{ marginBottom: 48 }}
         >
           <div className="glass-card" style={{ padding: 24 }}>
             <h3 style={{
@@ -325,7 +325,7 @@ export function Gastos() {
           fontSize: 14,
           fontWeight: 600,
           color: 'rgba(192, 132, 252, 0.7)',
-          marginBottom: 20,
+          marginBottom: 24,
           display: 'flex',
           alignItems: 'center',
           gap: 8
@@ -457,7 +457,7 @@ export function Gastos() {
         onClose={handleCloseModal}
         title={selectedGasto ? 'Editar gasto' : 'Nuevo gasto'}
       >
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <Input
             label="Concepto"
             placeholder="Ej: Hotel Miami Beach"
@@ -466,7 +466,7 @@ export function Gastos() {
             required
           />
 
-          <div className="grid grid-cols-2 gap-4">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <Input
               label="Fecha"
               type="date"
@@ -482,7 +482,7 @@ export function Gastos() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <Input
               label="Monto"
               type="number"
@@ -510,27 +510,35 @@ export function Gastos() {
 
           {formData.moneda === 'ARS' && formData.monto > 0 && (
             <motion.p
-              className="text-sm text-purple-300/60 text-center p-4 rounded-xl bg-purple-500/10 border border-purple-500/20"
+              style={{
+                fontSize: 14,
+                color: 'rgba(192, 132, 252, 0.6)',
+                textAlign: 'center',
+                padding: 16,
+                borderRadius: 14,
+                background: 'rgba(168, 85, 247, 0.1)',
+                border: '1px solid rgba(168, 85, 247, 0.2)'
+              }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              Equivale a ~<span className="text-pink-300 font-semibold">{formatCurrency(formData.monto / dolarRate)}</span> USD
+              Equivale a ~<span style={{ color: '#f9a8d4', fontWeight: 600 }}>{formatCurrency(formData.monto / dolarRate)}</span> USD
             </motion.p>
           )}
 
-          <div className="flex gap-4 pt-4">
+          <div style={{ display: 'flex', gap: 16, paddingTop: 12 }}>
             <Button
               type="button"
               variant="secondary"
               onClick={handleCloseModal}
-              className="flex-1"
+              style={{ flex: 1 }}
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               isLoading={isSubmitting}
-              className="flex-1"
+              style={{ flex: 1 }}
             >
               {selectedGasto ? 'Guardar' : 'Agregar'}
             </Button>

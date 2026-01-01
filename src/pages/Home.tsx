@@ -53,7 +53,7 @@ export function Home() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ textAlign: 'center', marginBottom: 48 }}
+        style={{ textAlign: 'center', marginBottom: 56 }}
       >
         <motion.div
           animate={{ y: [0, -8, 0] }}
@@ -85,7 +85,7 @@ export function Home() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
-        style={{ marginBottom: 40 }}
+        style={{ marginBottom: 56 }}
       >
         <div className="glass-card" style={{ padding: 32, position: 'relative', overflow: 'hidden' }}>
           {/* Decorative sparkles */}
@@ -114,7 +114,7 @@ export function Home() {
       </motion.div>
 
       {/* Quick Stats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 40 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 56 }}>
         {/* Gastos Card */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -200,9 +200,9 @@ export function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          style={{ marginBottom: 40 }}
+          style={{ marginBottom: 56 }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
             <Calendar style={{ width: 20, height: 20, color: '#f472b6' }} />
             <h2 style={{ fontSize: 18, fontWeight: 600, color: 'white' }}>Proxima actividad</h2>
           </div>
