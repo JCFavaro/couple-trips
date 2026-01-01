@@ -114,11 +114,24 @@ export function Documentos() {
       rightAction={
         <motion.button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white font-medium text-sm shadow-lg shadow-pink-500/30"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '16px 28px',
+            borderRadius: 16,
+            background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+            color: 'white',
+            fontWeight: 600,
+            fontSize: 16,
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 8px 24px rgba(236, 72, 153, 0.4)'
+          }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
         >
-          <Plus className="w-4 h-4" />
+          <Plus style={{ width: 20, height: 20 }} />
           Subir
         </motion.button>
       }
@@ -312,20 +325,22 @@ export function Documentos() {
             onChange={(e) => setCategoria(e.target.value as CategoriaDocumento)}
           />
 
-          <div className="flex gap-4 pt-4">
+          <div style={{ display: 'flex', gap: 16, paddingTop: 20 }}>
             <Button
               type="button"
               variant="secondary"
+              size="lg"
               onClick={handleCloseModal}
-              className="flex-1"
+              style={{ flex: 1 }}
             >
               Cancelar
             </Button>
             <Button
               type="submit"
+              size="lg"
               isLoading={uploading}
               disabled={!selectedFile || !nombre}
-              className="flex-1"
+              style={{ flex: 1 }}
             >
               Subir
             </Button>

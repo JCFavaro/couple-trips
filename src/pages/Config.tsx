@@ -186,14 +186,27 @@ function LugaresTab() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 20 }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>
         <motion.button
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white font-medium text-sm shadow-lg shadow-pink-500/30"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '16px 28px',
+            borderRadius: 16,
+            background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+            color: 'white',
+            fontWeight: 600,
+            fontSize: 16,
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 8px 24px rgba(236, 72, 153, 0.4)'
+          }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
         >
-          <Plus className="w-5 h-5" />
+          <Plus style={{ width: 20, height: 20 }} />
           Agregar lugar
         </motion.button>
       </div>
@@ -330,11 +343,11 @@ function LugaresTab() {
             value={formData.notas}
             onChange={(e) => setFormData({ ...formData, notas: e.target.value })}
           />
-          <div className="flex gap-3 pt-2">
-            <Button type="button" variant="secondary" onClick={handleCloseModal} className="flex-1">
+          <div style={{ display: 'flex', gap: 16, paddingTop: 20 }}>
+            <Button type="button" variant="secondary" size="lg" onClick={handleCloseModal} style={{ flex: 1 }}>
               Cancelar
             </Button>
-            <Button type="submit" isLoading={isSubmitting} className="flex-1">
+            <Button type="submit" size="lg" isLoading={isSubmitting} style={{ flex: 1 }}>
               {selectedLugar ? 'Guardar' : 'Agregar'}
             </Button>
           </div>
@@ -421,14 +434,27 @@ function NotasTab() {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
     >
-      <div className="flex justify-end mb-5">
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>
         <motion.button
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white font-medium text-sm shadow-lg shadow-pink-500/30"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '16px 28px',
+            borderRadius: 16,
+            background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+            color: 'white',
+            fontWeight: 600,
+            fontSize: 16,
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 8px 24px rgba(236, 72, 153, 0.4)'
+          }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
         >
-          <Plus className="w-5 h-5" />
+          <Plus style={{ width: 20, height: 20 }} />
           Nueva nota
         </motion.button>
       </div>
@@ -517,20 +543,21 @@ function NotasTab() {
             onChange={(e) => setFormData({ ...formData, contenido: e.target.value })}
             className="min-h-[200px]"
           />
-          <div className="flex gap-3 pt-2">
-            <Button type="button" variant="secondary" onClick={handleCloseModal} className="flex-1">
+          <div style={{ display: 'flex', gap: 16, paddingTop: 20 }}>
+            <Button type="button" variant="secondary" size="lg" onClick={handleCloseModal} style={{ flex: 1 }}>
               Cancelar
             </Button>
             {selectedNota && (
               <Button
                 type="button"
                 variant="danger"
+                size="lg"
                 onClick={() => { setDeleteId(selectedNota.id); setShowDeleteModal(true); handleCloseModal(); }}
               >
                 Eliminar
               </Button>
             )}
-            <Button type="submit" isLoading={isSubmitting} className="flex-1">
+            <Button type="submit" size="lg" isLoading={isSubmitting} style={{ flex: 1 }}>
               {selectedNota ? 'Guardar' : 'Crear'}
             </Button>
           </div>

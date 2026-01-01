@@ -142,21 +142,21 @@ export function Gastos() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 8,
-            padding: '12px 20px',
-            borderRadius: 14,
-            background: 'linear-gradient(to right, #ec4899, #a855f7)',
+            gap: 10,
+            padding: '16px 28px',
+            borderRadius: 16,
+            background: 'linear-gradient(135deg, #ec4899, #a855f7)',
             color: 'white',
-            fontWeight: 500,
-            fontSize: 14,
+            fontWeight: 600,
+            fontSize: 16,
             border: 'none',
             cursor: 'pointer',
-            boxShadow: '0 10px 15px -3px rgba(236, 72, 153, 0.3)'
+            boxShadow: '0 8px 24px rgba(236, 72, 153, 0.4)'
           }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
         >
-          <Plus style={{ width: 16, height: 16 }} />
+          <Plus style={{ width: 20, height: 20 }} />
           Agregar
         </motion.button>
       }
@@ -526,10 +526,11 @@ export function Gastos() {
             </motion.p>
           )}
 
-          <div style={{ display: 'flex', gap: 16, paddingTop: 12 }}>
+          <div style={{ display: 'flex', gap: 16, paddingTop: 20 }}>
             <Button
               type="button"
               variant="secondary"
+              size="lg"
               onClick={handleCloseModal}
               style={{ flex: 1 }}
             >
@@ -537,6 +538,7 @@ export function Gastos() {
             </Button>
             <Button
               type="submit"
+              size="lg"
               isLoading={isSubmitting}
               style={{ flex: 1 }}
             >

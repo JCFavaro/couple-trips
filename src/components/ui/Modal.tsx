@@ -196,17 +196,17 @@ export function ConfirmModal({
       <p style={{ color: 'rgba(255, 255, 255, 0.7)', marginBottom: 28, fontSize: 15, lineHeight: 1.6 }}>
         {message}
       </p>
-      <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+      <div style={{ display: 'flex', gap: 16, justifyContent: 'flex-end' }}>
         <motion.button
           onClick={onClose}
           style={{
-            padding: '14px 24px',
-            borderRadius: 14,
+            padding: '18px 28px',
+            borderRadius: 16,
             background: 'rgba(255, 255, 255, 0.1)',
             border: '1px solid rgba(255, 255, 255, 0.2)',
             color: 'white',
-            fontWeight: 500,
-            fontSize: 15,
+            fontWeight: 600,
+            fontSize: 16,
             cursor: 'pointer'
           }}
           whileHover={{ scale: 1.02, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
@@ -217,19 +217,19 @@ export function ConfirmModal({
         <motion.button
           onClick={handleConfirm}
           style={{
-            padding: '14px 24px',
-            borderRadius: 14,
+            padding: '18px 28px',
+            borderRadius: 16,
             background: variant === 'danger'
               ? 'linear-gradient(135deg, #ef4444, #dc2626)'
               : 'linear-gradient(135deg, #eab308, #ca8a04)',
             border: 'none',
             color: 'white',
             fontWeight: 600,
-            fontSize: 15,
+            fontSize: 16,
             cursor: 'pointer',
             boxShadow: variant === 'danger'
-              ? '0 4px 15px rgba(239, 68, 68, 0.4)'
-              : '0 4px 15px rgba(234, 179, 8, 0.4)'
+              ? '0 6px 20px rgba(239, 68, 68, 0.4)'
+              : '0 6px 20px rgba(234, 179, 8, 0.4)'
           }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
