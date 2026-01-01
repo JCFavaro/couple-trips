@@ -231,6 +231,67 @@ ALTER PUBLICATION supabase_realtime ADD TABLE lugares;
 ALTER PUBLICATION supabase_realtime ADD TABLE notas;
 
 -- ============================================
+-- PAYMENT PLANS TABLE (Planes de Pago)
+-- ============================================
+CREATE TABLE IF NOT EXISTS payment_plans (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  nombre TEXT NOT NULL,
+  descripcion TEXT,
+  categoria TEXT NOT NULL CHECK (categoria IN ('hotel', 'vuelos', 'parques', 'transporte', 'seguro', 'otros')),
+  monto_total DECIMAL(12, 2) NOT NULL,
+  cuotas_total INTEGER NOT NULL DEFAULT 1,
+  fecha_inicio DATE,
+  moneda TEXT DEFAULT 'USD' CHECK (moneda IN ('USD', 'ARS')),
+  notas TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for payment_plans
+CREATE INDEX IF NOT EXISTS idx_payment_plans_categoria ON payment_plans(categoria);
+
+-- ============================================
+-- PAYMENTS TABLE (Pagos/Cuotas)
+-- ============================================
+CREATE TABLE IF NOT EXISTS payments (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  plan_id UUID NOT NULL REFERENCES payment_plans(id) ON DELETE CASCADE,
+  numero_cuota INTEGER NOT NULL,
+  monto DECIMAL(12, 2) NOT NULL,
+  pagador TEXT NOT NULL CHECK (pagador IN ('Juan', 'Vale')),
+  fecha_pago DATE NOT NULL,
+  notas TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for payments
+CREATE INDEX IF NOT EXISTS idx_payments_plan_id ON payments(plan_id);
+CREATE INDEX IF NOT EXISTS idx_payments_pagador ON payments(pagador);
+CREATE INDEX IF NOT EXISTS idx_payments_fecha ON payments(fecha_pago DESC);
+
+-- RLS for payment_plans
+ALTER TABLE payment_plans ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Authenticated users full access payment_plans" ON payment_plans;
+CREATE POLICY "Authenticated users full access payment_plans"
+ON payment_plans FOR ALL
+USING (auth.uid() IS NOT NULL)
+WITH CHECK (auth.uid() IS NOT NULL);
+
+-- RLS for payments
+ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Authenticated users full access payments" ON payments;
+CREATE POLICY "Authenticated users full access payments"
+ON payments FOR ALL
+USING (auth.uid() IS NOT NULL)
+WITH CHECK (auth.uid() IS NOT NULL);
+
+-- Enable realtime for payment tables
+ALTER PUBLICATION supabase_realtime ADD TABLE payment_plans;
+ALTER PUBLICATION supabase_realtime ADD TABLE payments;
+
+-- ============================================
 -- NOTA: Crear usuarios
 -- ============================================
 -- Para crear usuarios para Juan y Vale:

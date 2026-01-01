@@ -6,10 +6,14 @@ import type {
   Lugar,
   Nota,
   TripConfig,
+  PaymentPlan,
+  Payment,
   GastoFormData,
   ItinerarioFormData,
   LugarFormData,
   NotaFormData,
+  PaymentPlanFormData,
+  PaymentFormData,
 } from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -387,6 +391,127 @@ export async function deleteNota(id: string): Promise<boolean> {
 
   if (error) {
     console.error('Error deleting nota:', error);
+    return false;
+  }
+  return true;
+}
+
+// ============ PAYMENT PLANS ============
+export async function getPaymentPlans(): Promise<PaymentPlan[]> {
+  const { data, error } = await supabase
+    .from('payment_plans')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching payment plans:', error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function createPaymentPlan(plan: PaymentPlanFormData): Promise<PaymentPlan | null> {
+  const { data, error } = await supabase
+    .from('payment_plans')
+    .insert({
+      ...plan,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating payment plan:', error);
+    return null;
+  }
+  return data;
+}
+
+export async function updatePaymentPlan(id: string, plan: Partial<PaymentPlanFormData>): Promise<PaymentPlan | null> {
+  const { data, error } = await supabase
+    .from('payment_plans')
+    .update({
+      ...plan,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating payment plan:', error);
+    return null;
+  }
+  return data;
+}
+
+export async function deletePaymentPlan(id: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('payment_plans')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting payment plan:', error);
+    return false;
+  }
+  return true;
+}
+
+// ============ PAYMENTS ============
+export async function getPayments(): Promise<Payment[]> {
+  const { data, error } = await supabase
+    .from('payments')
+    .select('*')
+    .order('fecha_pago', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching payments:', error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function getPaymentsByPlan(planId: string): Promise<Payment[]> {
+  const { data, error } = await supabase
+    .from('payments')
+    .select('*')
+    .eq('plan_id', planId)
+    .order('numero_cuota', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching payments for plan:', error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function createPayment(payment: PaymentFormData): Promise<Payment | null> {
+  const { data, error } = await supabase
+    .from('payments')
+    .insert({
+      ...payment,
+      created_at: new Date().toISOString(),
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating payment:', error);
+    return null;
+  }
+  return data;
+}
+
+export async function deletePayment(id: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('payments')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting payment:', error);
     return false;
   }
   return true;

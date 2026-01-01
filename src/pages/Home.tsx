@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
-import { Sparkles, DollarSign, Calendar, MapPin, Heart, ArrowRight } from 'lucide-react';
+import { Sparkles, DollarSign, Calendar, MapPin, Heart, ArrowRight, CreditCard } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { PageWrapper } from '../components/layout';
-import { useGastos, useItinerario, useLugares, useTripConfig } from '../hooks';
+import { useGastos, useItinerario, useLugares, useTripConfig, usePaymentPlans } from '../hooks';
 import { formatCurrency, formatDate } from '../lib/utils';
 
 // Disney Castle SVG - Pink version
@@ -43,6 +43,7 @@ export function Home() {
   const { balance } = useGastos();
   const { items: itinerario } = useItinerario();
   const { pendientes: lugaresPendientes } = useLugares();
+  const { resumen: paymentResumen } = usePaymentPlans();
 
   const today = new Date().toISOString().split('T')[0];
   const nextActivity = itinerario.find((item) => item.fecha >= today);
@@ -194,6 +195,80 @@ export function Home() {
         </motion.div>
       </div>
 
+      {/* Payment Progress Card */}
+      {paymentResumen.totalPlanes > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          style={{ marginBottom: 56 }}
+        >
+          <Link to="/pagos" style={{ textDecoration: 'none' }}>
+            <div className="glass-card" style={{ padding: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <div style={{
+                  padding: 10,
+                  borderRadius: 14,
+                  background: 'linear-gradient(135deg, rgba(74, 222, 128, 0.3), rgba(34, 197, 94, 0.3))'
+                }}>
+                  <CreditCard style={{ width: 20, height: 20, color: '#4ade80' }} />
+                </div>
+                <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 14, fontWeight: 500 }}>Plan de pagos</span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 16 }}>
+                <div>
+                  <p style={{ fontSize: 28, fontWeight: 700, color: '#4ade80' }}>
+                    {paymentResumen.progresoGeneral.toFixed(0)}%
+                  </p>
+                  <p style={{ fontSize: 12, color: 'rgba(192, 132, 252, 0.6)' }}>
+                    {formatCurrency(paymentResumen.totalPagado, 'USD')} de {formatCurrency(paymentResumen.totalAPagar, 'USD')}
+                  </p>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <p style={{ fontSize: 14, color: 'rgba(192, 132, 252, 0.7)' }}>
+                    {paymentResumen.totalPlanes} {paymentResumen.totalPlanes === 1 ? 'plan' : 'planes'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Progress bar */}
+              <div style={{
+                height: 10,
+                background: 'rgba(139, 92, 246, 0.2)',
+                borderRadius: 999,
+                overflow: 'hidden'
+              }}>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${paymentResumen.progresoGeneral}%` }}
+                  transition={{ duration: 1, ease: 'easeOut', delay: 0.5 }}
+                  style={{
+                    height: '100%',
+                    background: paymentResumen.progresoGeneral >= 100
+                      ? 'linear-gradient(90deg, #4ade80, #22c55e)'
+                      : 'linear-gradient(90deg, #ec4899, #a855f7)',
+                    borderRadius: 999
+                  }}
+                />
+              </div>
+
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                marginTop: 16,
+                color: 'rgba(74, 222, 128, 0.7)',
+                fontSize: 12
+              }}>
+                <span>Ver planes</span>
+                <ArrowRight style={{ width: 14, height: 14 }} />
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+      )}
+
       {/* Next Activity Section */}
       {nextActivity && (
         <motion.div
@@ -272,7 +347,7 @@ export function Home() {
           {[
             { to: '/gastos', icon: DollarSign, label: 'Nuevo gasto', color: 'from-pink-500 to-rose-500' },
             { to: '/itinerario', icon: Calendar, label: 'Itinerario', color: 'from-purple-500 to-pink-500' },
-            { to: '/documentos', icon: Sparkles, label: 'Documentos', color: 'from-fuchsia-500 to-purple-500' },
+            { to: '/pagos', icon: CreditCard, label: 'Pagos', color: 'from-green-500 to-emerald-500' },
           ].map((item) => (
             <motion.div
               key={item.to}

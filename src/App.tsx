@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './hooks/useAuth';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Layout } from './components/layout';
-import { Home, Gastos, ItinerarioPage, Documentos, Config } from './pages';
+import { Home, Gastos, ItinerarioPage, Pagos, Config } from './pages';
 import { Login } from './pages/Login';
 
 function App() {
@@ -25,7 +25,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="gastos" element={<Gastos />} />
             <Route path="itinerario" element={<ItinerarioPage />} />
-            <Route path="documentos" element={<Documentos />} />
+            <Route path="pagos" element={<Pagos />} />
             <Route path="config" element={<Config />} />
           </Route>
         </Routes>

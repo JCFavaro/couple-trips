@@ -1,12 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import { Home, DollarSign, Calendar, FolderOpen, Settings, Sparkles } from 'lucide-react';
+import { Home, DollarSign, Calendar, CreditCard, Settings, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const navItems = [
   { to: '/', icon: Home, label: 'Inicio' },
   { to: '/gastos', icon: DollarSign, label: 'Gastos' },
   { to: '/itinerario', icon: Calendar, label: 'Viaje' },
-  { to: '/documentos', icon: FolderOpen, label: 'Docs' },
+  { to: '/pagos', icon: CreditCard, label: 'Pagos' },
   { to: '/config', icon: Settings, label: 'Config' },
 ];
 
