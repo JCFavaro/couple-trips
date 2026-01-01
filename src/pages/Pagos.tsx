@@ -13,6 +13,8 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
+  Castle,
+  MoreHorizontal,
 } from 'lucide-react';
 import { PageWrapper } from '../components/layout';
 import { Button, Input, Select, Modal, ConfirmModal, Textarea } from '../components/ui';
@@ -30,10 +32,10 @@ import type {
 const CATEGORIA_ICONS: Record<CategoriaPlan, typeof Hotel> = {
   hotel: Hotel,
   vuelos: Plane,
-  parques: Sparkles,
+  parques: Castle,
   transporte: Car,
   seguro: Shield,
-  otros: CreditCard,
+  otros: MoreHorizontal,
 };
 
 const CATEGORIA_COLORS: Record<CategoriaPlan, string> = {
@@ -223,10 +225,10 @@ export function Pagos() {
     setExpandedPlanId(expandedPlanId === planId ? null : planId);
   };
 
-  const getProgressColor = (progreso: number) => {
-    if (progreso >= 100) return 'from-green-500 to-emerald-500';
-    if (progreso >= 50) return 'from-yellow-500 to-amber-500';
-    return 'from-pink-500 to-purple-500';
+  const getProgressGradient = (progreso: number): string => {
+    if (progreso >= 100) return 'linear-gradient(90deg, #4ade80, #22c55e)';
+    if (progreso >= 50) return 'linear-gradient(90deg, #eab308, #f59e0b)';
+    return 'linear-gradient(90deg, #ec4899, #a855f7)';
   };
 
   return (
@@ -384,7 +386,7 @@ export function Pagos() {
                   transition={{ duration: 1, ease: 'easeOut' }}
                   style={{
                     height: '100%',
-                    background: `linear-gradient(90deg, ${getProgressColor(resumen.progresoGeneral).replace('from-', '').replace(' to-', ', ')})`,
+                    background: getProgressGradient(resumen.progresoGeneral),
                     borderRadius: 999,
                   }}
                 />
@@ -507,9 +509,7 @@ export function Pagos() {
                                 transition={{ duration: 0.8, ease: 'easeOut' }}
                                 style={{
                                   height: '100%',
-                                  background: isComplete
-                                    ? 'linear-gradient(90deg, #4ade80, #22c55e)'
-                                    : 'linear-gradient(90deg, #ec4899, #a855f7)',
+                                  background: getProgressGradient(plan.progreso),
                                   borderRadius: 999,
                                 }}
                               />
@@ -531,6 +531,28 @@ export function Pagos() {
                                 {formatCurrency(plan.monto_total, plan.moneda)}
                               </span>
                             </div>
+
+                            {/* Monto restante */}
+                            {!isComplete && plan.restante > 0 && (
+                              <div
+                                style={{
+                                  marginTop: 10,
+                                  padding: '8px 12px',
+                                  background: 'rgba(251, 191, 36, 0.1)',
+                                  borderRadius: 10,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 6,
+                                }}
+                              >
+                                <span style={{ fontSize: 12, color: 'rgba(251, 191, 36, 0.8)' }}>
+                                  Restante:
+                                </span>
+                                <span style={{ fontSize: 13, fontWeight: 600, color: '#fbbf24' }}>
+                                  {formatCurrency(plan.restante, plan.moneda)}
+                                </span>
+                              </div>
+                            )}
 
                             {/* Juan / Vale breakdown */}
                             <div
@@ -678,7 +700,9 @@ export function Pagos() {
                                   Historial de pagos
                                 </p>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                                  {plan.payments.map((payment) => (
+                                  {[...plan.payments]
+                                    .sort((a, b) => new Date(b.fecha_pago).getTime() - new Date(a.fecha_pago).getTime())
+                                    .map((payment) => (
                                     <div
                                       key={payment.id}
                                       style={{
