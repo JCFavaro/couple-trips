@@ -1,12 +1,11 @@
 import { NavLink } from 'react-router-dom';
-import { Home, DollarSign, Calendar, CreditCard, Settings, Sparkles } from 'lucide-react';
+import { Home, DollarSign, Calendar, Settings, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const navItems = [
   { to: '/', icon: Home, label: 'Inicio' },
   { to: '/gastos', icon: DollarSign, label: 'Gastos' },
   { to: '/itinerario', icon: Calendar, label: 'Viaje' },
-  { to: '/pagos', icon: CreditCard, label: 'Pagos' },
   { to: '/config', icon: Settings, label: 'Config' },
 ];
 
@@ -23,7 +22,7 @@ export function BottomNav() {
               <NavLink
                 key={item.to}
                 to={item.to}
-                className="relative flex flex-col items-center gap-1.5 px-4 py-3 rounded-xl transition-all"
+                className="relative flex flex-col items-center gap-1.5 px-5 py-3 rounded-xl transition-all"
               >
                 {({ isActive }) => (
                   <>

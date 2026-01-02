@@ -13,12 +13,37 @@ export interface Gasto {
   fecha: string;
   concepto: string;
   categoria: CategoriaGasto;
-  pagador: Pagador;
-  monto: number;
+  pagador: Pagador | null;  // null si es en cuotas
+  monto: number;            // Monto TOTAL
   moneda: Moneda;
-  monto_usd: number;
+  monto_usd: number;        // Total en USD
+  cuotas_total: number;     // 1 = pago unico, >1 = cuotas
+  descripcion?: string;
   created_at: string;
   updated_at: string;
+}
+
+// Pago de cuota individual
+export interface GastoPago {
+  id: string;
+  gasto_id: string;
+  numero_cuota: number;
+  monto: number;
+  pagador: Pagador;
+  fecha_pago: string;
+  notas?: string;
+  created_at: string;
+}
+
+// Gasto con info de cuotas calculada (para UI)
+export interface GastoConPagos extends Gasto {
+  pagos: GastoPago[];
+  total_pagado: number;
+  cuotas_pagadas: number;
+  restante: number;
+  progreso: number;         // 0-100
+  pagado_juan: number;
+  pagado_vale: number;
 }
 
 export interface Itinerario {
@@ -60,31 +85,6 @@ export interface Nota {
   updated_at: string;
 }
 
-export interface PaymentPlan {
-  id: string;
-  nombre: string;
-  descripcion?: string;
-  categoria: CategoriaPlan;
-  monto_total: number;
-  cuotas_total: number;
-  fecha_inicio?: string;
-  moneda: Moneda;
-  notas?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Payment {
-  id: string;
-  plan_id: string;
-  numero_cuota: number;
-  monto: number;
-  pagador: Pagador;
-  fecha_pago: string;
-  notas?: string;
-  created_at: string;
-}
-
 // Enums
 export type CategoriaGasto =
   | 'vuelos'
@@ -117,22 +117,25 @@ export type TipoNota =
   | 'llevar'
   | 'comprar';
 
-export type CategoriaPlan =
-  | 'hotel'
-  | 'vuelos'
-  | 'parques'
-  | 'transporte'
-  | 'seguro'
-  | 'otros';
-
 // Form types
 export interface GastoFormData {
   fecha: string;
   concepto: string;
   categoria: CategoriaGasto;
-  pagador: Pagador;
+  pagador?: Pagador;        // Solo requerido si cuotas_total = 1
   monto: number;
   moneda: Moneda;
+  cuotas_total: number;     // 1 = pago unico, >1 = cuotas
+  descripcion?: string;
+}
+
+export interface GastoPagoFormData {
+  gasto_id: string;
+  numero_cuota: number;
+  monto: number;
+  pagador: Pagador;
+  fecha_pago: string;
+  notas?: string;
 }
 
 export interface ItinerarioFormData {
@@ -156,37 +159,6 @@ export interface NotaFormData {
   tipo: TipoNota;
 }
 
-export interface PaymentPlanFormData {
-  nombre: string;
-  descripcion?: string;
-  categoria: CategoriaPlan;
-  monto_total: number;
-  cuotas_total: number;
-  fecha_inicio?: string;
-  moneda: Moneda;
-  notas?: string;
-}
-
-export interface PaymentFormData {
-  plan_id: string;
-  numero_cuota: number;
-  monto: number;
-  pagador: Pagador;
-  fecha_pago: string;
-  notas?: string;
-}
-
-// Plan con pagos calculados (para UI)
-export interface PaymentPlanWithPayments extends PaymentPlan {
-  payments: Payment[];
-  total_pagado: number;
-  cuotas_pagadas: number;
-  restante: number;
-  progreso: number; // 0-100
-  pagado_juan: number;
-  pagado_vale: number;
-}
-
 // UI types
 export interface CategoryConfig {
   label: string;
@@ -196,7 +168,7 @@ export interface CategoryConfig {
 
 export const CATEGORIAS_GASTO: Record<CategoriaGasto, CategoryConfig> = {
   vuelos: { label: 'Vuelos', icon: 'Plane', color: 'bg-blue-500' },
-  estadia: { label: 'Estadía', icon: 'Hotel', color: 'bg-purple-500' },
+  estadia: { label: 'Estadia', icon: 'Hotel', color: 'bg-purple-500' },
   parques: { label: 'Parques', icon: 'Castle', color: 'bg-pink-500' },
   comida: { label: 'Comida', icon: 'UtensilsCrossed', color: 'bg-orange-500' },
   transporte: { label: 'Transporte', icon: 'Car', color: 'bg-green-500' },
@@ -215,30 +187,24 @@ export const CATEGORIAS_DOCUMENTO: Record<CategoriaDocumento, CategoryConfig> = 
 export const TIPOS_LUGAR: Record<TipoLugar, CategoryConfig> = {
   restaurante: { label: 'Restaurante', icon: 'UtensilsCrossed', color: 'bg-orange-500' },
   tienda: { label: 'Tienda', icon: 'Store', color: 'bg-purple-500' },
-  atraccion: { label: 'Atracción', icon: 'Sparkles', color: 'bg-pink-500' },
+  atraccion: { label: 'Atraccion', icon: 'Sparkles', color: 'bg-pink-500' },
   tip: { label: 'Tip', icon: 'Lightbulb', color: 'bg-yellow-500' },
 };
 
 export const TIPOS_NOTA: Record<TipoNota, CategoryConfig> = {
   general: { label: 'General', icon: 'StickyNote', color: 'bg-blue-500' },
-  llevar: { label: 'Qué llevar', icon: 'Luggage', color: 'bg-green-500' },
-  comprar: { label: 'Qué comprar', icon: 'ShoppingCart', color: 'bg-pink-500' },
+  llevar: { label: 'Que llevar', icon: 'Luggage', color: 'bg-green-500' },
+  comprar: { label: 'Que comprar', icon: 'ShoppingCart', color: 'bg-pink-500' },
 };
 
-export const CATEGORIAS_PLAN: Record<CategoriaPlan, CategoryConfig> = {
-  hotel: { label: 'Hotel', icon: 'Hotel', color: 'bg-purple-500' },
-  vuelos: { label: 'Vuelos', icon: 'Plane', color: 'bg-blue-500' },
-  parques: { label: 'Parques', icon: 'Castle', color: 'bg-pink-500' },
-  transporte: { label: 'Transporte', icon: 'Car', color: 'bg-green-500' },
-  seguro: { label: 'Seguro', icon: 'Shield', color: 'bg-yellow-500' },
-  otros: { label: 'Otros', icon: 'MoreHorizontal', color: 'bg-gray-500' },
-};
-
-// Balance type
+// Balance type (unificado)
 export interface Balance {
   total: number;
   juan: number;
   vale: number;
   diferencia: number;
   deudor: Pagador | null;
+  // Desglose
+  gastosUnicos: { total: number; juan: number; vale: number };
+  gastosCuotas: { total: number; juan: number; vale: number; restante: number };
 }

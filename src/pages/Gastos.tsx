@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Edit2, TrendingUp, Plane, Hotel, Ticket, UtensilsCrossed, Car, ShoppingBag, MoreHorizontal, Sparkles, DollarSign, Heart, CreditCard, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Plus, Trash2, Edit2, TrendingUp, Plane, Hotel, Ticket, UtensilsCrossed, Car, ShoppingBag, MoreHorizontal, Sparkles, DollarSign, Heart, ChevronDown, ChevronUp, CreditCard } from 'lucide-react';
 import { PageWrapper } from '../components/layout';
 import { Button, Input, Select, Modal, ConfirmModal } from '../components/ui';
-import { useGastos, useBalance } from '../hooks';
+import { useGastos } from '../hooks';
 import { formatCurrency, formatDate } from '../lib/utils';
 import { getFormattedRate } from '../lib/dolarBlue';
-import type { Gasto, GastoFormData, CategoriaGasto, Pagador, Moneda } from '../types';
+import type { GastoConPagos, GastoFormData, GastoPagoFormData, CategoriaGasto, Pagador, Moneda } from '../types';
 
 const CATEGORIA_ICONS: Record<CategoriaGasto, typeof Plane> = {
   vuelos: Plane,
@@ -50,13 +49,17 @@ const MONEDA_OPTIONS = [
 ];
 
 export function Gastos() {
-  const { gastos, balance, dolarRate, loading, addGasto, editGasto, removeGasto } = useGastos();
-  const { balance: balanceTotal } = useBalance();
+  const { gastos, balance, dolarRate, resumenCuotas, loading, addGasto, editGasto, removeGasto, addPago, removePago } = useGastos();
   const [showModal, setShowModal] = useState(false);
+  const [showPagoModal, setShowPagoModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedGasto, setSelectedGasto] = useState<Gasto | null>(null);
+  const [showDeletePagoModal, setShowDeletePagoModal] = useState(false);
+  const [selectedGasto, setSelectedGasto] = useState<GastoConPagos | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deletePagoId, setDeletePagoId] = useState<string | null>(null);
+  const [expandedGasto, setExpandedGasto] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [tipoPago, setTipoPago] = useState<'unico' | 'cuotas'>('unico');
 
   const [formData, setFormData] = useState<GastoFormData>({
     fecha: new Date().toISOString().split('T')[0],
@@ -65,6 +68,16 @@ export function Gastos() {
     pagador: 'Juan',
     monto: 0,
     moneda: 'USD',
+    cuotas_total: 1,
+    descripcion: '',
+  });
+
+  const [pagoFormData, setPagoFormData] = useState<Omit<GastoPagoFormData, 'gasto_id'>>({
+    numero_cuota: 1,
+    monto: 0,
+    pagador: 'Juan',
+    fecha_pago: new Date().toISOString().split('T')[0],
+    notas: '',
   });
 
   const resetForm = () => {
@@ -75,20 +88,36 @@ export function Gastos() {
       pagador: 'Juan',
       monto: 0,
       moneda: 'USD',
+      cuotas_total: 1,
+      descripcion: '',
     });
+    setTipoPago('unico');
     setSelectedGasto(null);
   };
 
-  const handleOpenModal = (gasto?: Gasto) => {
+  const resetPagoForm = () => {
+    setPagoFormData({
+      numero_cuota: 1,
+      monto: 0,
+      pagador: 'Juan',
+      fecha_pago: new Date().toISOString().split('T')[0],
+      notas: '',
+    });
+  };
+
+  const handleOpenModal = (gasto?: GastoConPagos) => {
     if (gasto) {
       setSelectedGasto(gasto);
+      setTipoPago(gasto.cuotas_total > 1 ? 'cuotas' : 'unico');
       setFormData({
         fecha: gasto.fecha,
         concepto: gasto.concepto,
         categoria: gasto.categoria,
-        pagador: gasto.pagador,
+        pagador: gasto.pagador || 'Juan',
         monto: gasto.monto,
         moneda: gasto.moneda,
+        cuotas_total: gasto.cuotas_total,
+        descripcion: gasto.descripcion || '',
       });
     } else {
       resetForm();
@@ -96,23 +125,65 @@ export function Gastos() {
     setShowModal(true);
   };
 
+  const handleOpenPagoModal = (gasto: GastoConPagos) => {
+    setSelectedGasto(gasto);
+    const nextCuota = gasto.cuotas_pagadas + 1;
+    const montoPorCuota = gasto.monto / gasto.cuotas_total;
+    setPagoFormData({
+      numero_cuota: nextCuota,
+      monto: Number(montoPorCuota.toFixed(2)),
+      pagador: 'Juan',
+      fecha_pago: new Date().toISOString().split('T')[0],
+      notas: '',
+    });
+    setShowPagoModal(true);
+  };
+
   const handleCloseModal = () => {
     setShowModal(false);
     resetForm();
+  };
+
+  const handleClosePagoModal = () => {
+    setShowPagoModal(false);
+    setSelectedGasto(null);
+    resetPagoForm();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.concepto || formData.monto <= 0) return;
 
+    const dataToSubmit = {
+      ...formData,
+      cuotas_total: tipoPago === 'cuotas' ? formData.cuotas_total : 1,
+      pagador: tipoPago === 'unico' ? formData.pagador : undefined,
+    };
+
     setIsSubmitting(true);
     try {
       if (selectedGasto) {
-        await editGasto(selectedGasto.id, formData);
+        await editGasto(selectedGasto.id, dataToSubmit);
       } else {
-        await addGasto(formData);
+        await addGasto(dataToSubmit);
       }
       handleCloseModal();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmitPago = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedGasto || pagoFormData.monto <= 0) return;
+
+    setIsSubmitting(true);
+    try {
+      await addPago({
+        ...pagoFormData,
+        gasto_id: selectedGasto.id,
+      });
+      handleClosePagoModal();
     } finally {
       setIsSubmitting(false);
     }
@@ -124,9 +195,25 @@ export function Gastos() {
     setDeleteId(null);
   };
 
+  const handleDeletePago = async () => {
+    if (!deletePagoId) return;
+    await removePago(deletePagoId);
+    setDeletePagoId(null);
+    setShowDeletePagoModal(false);
+  };
+
   const confirmDelete = (id: string) => {
     setDeleteId(id);
     setShowDeleteModal(true);
+  };
+
+  const confirmDeletePago = (id: string) => {
+    setDeletePagoId(id);
+    setShowDeletePagoModal(true);
+  };
+
+  const toggleExpanded = (id: string) => {
+    setExpandedGasto(expandedGasto === id ? null : id);
   };
 
   const byCategory = gastos.reduce((acc, gasto) => {
@@ -223,40 +310,47 @@ export function Gastos() {
             </div>
           </div>
 
-          {/* Balance Total Unificado (incluyendo cuotas) */}
-          {balanceTotal.pagos.total > 0 && (
-            <Link to="/pagos" style={{ textDecoration: 'none' }}>
-              <motion.div
-                style={{
-                  padding: 16,
-                  borderRadius: 14,
-                  background: 'rgba(74, 222, 128, 0.1)',
-                  border: '1px solid rgba(74, 222, 128, 0.2)',
-                  marginBottom: balance.deudor ? 16 : 0
-                }}
-                whileHover={{ scale: 1.01 }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <CreditCard style={{ width: 18, height: 18, color: '#4ade80' }} />
-                    <div>
-                      <p style={{ fontSize: 12, color: 'rgba(74, 222, 128, 0.8)' }}>
-                        Balance Total (gastos + cuotas)
-                      </p>
-                      <p style={{ fontSize: 18, fontWeight: 600, color: '#4ade80' }}>
-                        {formatCurrency(balanceTotal.totalGeneral)}
-                      </p>
-                    </div>
-                  </div>
-                  <ArrowRight style={{ width: 16, height: 16, color: 'rgba(74, 222, 128, 0.6)' }} />
+          {/* Resumen de cuotas pendientes */}
+          {resumenCuotas.cantidad > 0 && (
+            <motion.div
+              style={{
+                padding: 16,
+                borderRadius: 14,
+                background: 'rgba(74, 222, 128, 0.1)',
+                border: '1px solid rgba(74, 222, 128, 0.2)',
+                marginBottom: balance.deudor ? 16 : 0
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                <CreditCard style={{ width: 18, height: 18, color: '#4ade80' }} />
+                <span style={{ fontSize: 14, color: '#4ade80', fontWeight: 500 }}>
+                  {resumenCuotas.cantidad} gasto{resumenCuotas.cantidad > 1 ? 's' : ''} en cuotas
+                </span>
+              </div>
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(74, 222, 128, 0.8)', marginBottom: 6 }}>
+                  <span>Pagado: {formatCurrency(resumenCuotas.totalPagado)}</span>
+                  <span>Restante: {formatCurrency(resumenCuotas.totalRestante)}</span>
                 </div>
-                {balanceTotal.deudor && balanceTotal.diferencia > 0 && (
-                  <p style={{ fontSize: 12, color: 'rgba(192, 132, 252, 0.7)', marginTop: 8 }}>
-                    {balanceTotal.deudor} debe {formatCurrency(balanceTotal.diferencia)} (total)
-                  </p>
-                )}
-              </motion.div>
-            </Link>
+                <div style={{ height: 8, borderRadius: 4, background: 'rgba(74, 222, 128, 0.1)', overflow: 'hidden' }}>
+                  <motion.div
+                    style={{
+                      height: '100%',
+                      borderRadius: 4,
+                      background: 'linear-gradient(to right, #22c55e, #4ade80)'
+                    }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${resumenCuotas.progresoGeneral}%` }}
+                    transition={{ duration: 0.5 }}
+                  />
+                </div>
+                <div style={{ textAlign: 'center', marginTop: 6 }}>
+                  <span style={{ fontSize: 12, color: 'rgba(74, 222, 128, 0.8)' }}>
+                    {resumenCuotas.progresoGeneral}% completado
+                  </span>
+                </div>
+              </div>
+            </motion.div>
           )}
 
           {balance.deudor && (
@@ -276,7 +370,6 @@ export function Gastos() {
                   <span style={{ fontWeight: 600, color: 'white' }}>{balance.deudor}</span> le debe{' '}
                   <span style={{ fontWeight: 600, color: '#f9a8d4' }}>{formatCurrency(balance.diferencia)}</span> a{' '}
                   <span style={{ fontWeight: 600, color: 'white' }}>{balance.deudor === 'Juan' ? 'Vale' : 'Juan'}</span>
-                  <span style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.5)' }}> (solo gastos)</span>
                 </span>
                 <Sparkles style={{ width: 16, height: 16, color: '#fde047' }} />
               </p>
@@ -400,6 +493,9 @@ export function Gastos() {
               gastos.map((gasto, index) => {
                 const Icon = CATEGORIA_ICONS[gasto.categoria];
                 const colors = CATEGORIA_COLORS[gasto.categoria];
+                const isEnCuotas = gasto.cuotas_total > 1;
+                const isExpanded = expandedGasto === gasto.id;
+
                 return (
                   <motion.div
                     key={gasto.id}
@@ -422,18 +518,37 @@ export function Gastos() {
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                             <div style={{ minWidth: 0, flex: 1 }}>
-                              <p style={{ fontWeight: 500, color: 'white', fontSize: 16, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {gasto.concepto}
-                              </p>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <p style={{ fontWeight: 500, color: 'white', fontSize: 16, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  {gasto.concepto}
+                                </p>
+                                {isEnCuotas && (
+                                  <span style={{
+                                    fontSize: 10,
+                                    fontWeight: 600,
+                                    color: gasto.progreso === 100 ? '#4ade80' : '#fbbf24',
+                                    background: gasto.progreso === 100 ? 'rgba(74, 222, 128, 0.2)' : 'rgba(251, 191, 36, 0.2)',
+                                    padding: '2px 8px',
+                                    borderRadius: 6,
+                                    textTransform: 'uppercase'
+                                  }}>
+                                    {gasto.progreso === 100 ? 'Pagado' : 'En cuotas'}
+                                  </span>
+                                )}
+                              </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
                                 <span style={{ fontSize: 14, color: 'rgba(192, 132, 252, 0.6)' }}>
                                   {formatDate(gasto.fecha)}
                                 </span>
-                                <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'rgba(168, 85, 247, 0.5)' }} />
-                                <span style={{ fontSize: 14, color: 'rgba(192, 132, 252, 0.6)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                  <Heart style={{ width: 12, height: 12, fill: 'currentColor' }} />
-                                  {gasto.pagador}
-                                </span>
+                                {!isEnCuotas && gasto.pagador && (
+                                  <>
+                                    <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'rgba(168, 85, 247, 0.5)' }} />
+                                    <span style={{ fontSize: 14, color: 'rgba(192, 132, 252, 0.6)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                      <Heart style={{ width: 12, height: 12, fill: 'currentColor' }} />
+                                      {gasto.pagador}
+                                    </span>
+                                  </>
+                                )}
                               </div>
                             </div>
                             <div style={{ textAlign: 'right', marginLeft: 16 }}>
@@ -447,40 +562,199 @@ export function Gastos() {
                               )}
                             </div>
                           </div>
+
+                          {/* Progress bar para gastos en cuotas */}
+                          {isEnCuotas && (
+                            <div style={{ marginTop: 16 }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(192, 132, 252, 0.6)', marginBottom: 6 }}>
+                                <span>{gasto.cuotas_pagadas}/{gasto.cuotas_total} cuotas</span>
+                                <span>{gasto.progreso}%</span>
+                              </div>
+                              <div style={{ height: 6, borderRadius: 3, background: 'rgba(255, 255, 255, 0.1)', overflow: 'hidden' }}>
+                                <motion.div
+                                  style={{
+                                    height: '100%',
+                                    borderRadius: 3,
+                                    background: gasto.progreso === 100
+                                      ? 'linear-gradient(to right, #22c55e, #4ade80)'
+                                      : 'linear-gradient(to right, #ec4899, #a855f7)'
+                                  }}
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${gasto.progreso}%` }}
+                                  transition={{ duration: 0.5 }}
+                                />
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginTop: 10 }}>
+                                <span style={{ color: '#f472b6', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                  <Heart style={{ width: 12, height: 12, fill: 'currentColor' }} />
+                                  Juan: {formatCurrency(gasto.pagado_juan)}
+                                </span>
+                                <span style={{ color: '#a855f7', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                  <Heart style={{ width: 12, height: 12, fill: 'currentColor' }} />
+                                  Vale: {formatCurrency(gasto.pagado_vale)}
+                                </span>
+                                <span style={{ color: 'rgba(192, 132, 252, 0.7)' }}>
+                                  Restante: {formatCurrency(gasto.restante)}
+                                </span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16, paddingTop: 16, borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                        <motion.button
-                          onClick={() => handleOpenModal(gasto)}
-                          style={{
-                            padding: 10,
-                            borderRadius: 12,
-                            background: 'transparent',
-                            border: 'none',
-                            cursor: 'pointer',
-                            color: 'rgba(192, 132, 252, 0.5)'
-                          }}
-                          whileHover={{ scale: 1.1, backgroundColor: 'rgba(168, 85, 247, 0.2)', color: '#c4b5fd' }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <Edit2 style={{ width: 16, height: 16 }} />
-                        </motion.button>
-                        <motion.button
-                          onClick={() => confirmDelete(gasto.id)}
-                          style={{
-                            padding: 10,
-                            borderRadius: 12,
-                            background: 'transparent',
-                            border: 'none',
-                            cursor: 'pointer',
-                            color: 'rgba(192, 132, 252, 0.5)'
-                          }}
-                          whileHover={{ scale: 1.1, backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#f87171' }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <Trash2 style={{ width: 16, height: 16 }} />
-                        </motion.button>
+
+                      {/* Actions */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, paddingTop: 16, borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                        {isEnCuotas && gasto.progreso < 100 && (
+                          <motion.button
+                            onClick={() => handleOpenPagoModal(gasto)}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              padding: '8px 14px',
+                              borderRadius: 10,
+                              background: 'rgba(74, 222, 128, 0.2)',
+                              border: '1px solid rgba(74, 222, 128, 0.3)',
+                              color: '#4ade80',
+                              fontSize: 13,
+                              fontWeight: 500,
+                              cursor: 'pointer',
+                            }}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <Plus style={{ width: 14, height: 14 }} />
+                            Registrar cuota
+                          </motion.button>
+                        )}
+
+                        <div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
+                          {isEnCuotas && (
+                            <motion.button
+                              onClick={() => toggleExpanded(gasto.id)}
+                              style={{
+                                padding: 10,
+                                borderRadius: 12,
+                                background: 'transparent',
+                                border: 'none',
+                                cursor: 'pointer',
+                                color: 'rgba(192, 132, 252, 0.5)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 4
+                              }}
+                              whileHover={{ backgroundColor: 'rgba(168, 85, 247, 0.2)', color: '#c4b5fd' }}
+                            >
+                              {isExpanded ? <ChevronUp style={{ width: 16, height: 16 }} /> : <ChevronDown style={{ width: 16, height: 16 }} />}
+                            </motion.button>
+                          )}
+                          <motion.button
+                            onClick={() => handleOpenModal(gasto)}
+                            style={{
+                              padding: 10,
+                              borderRadius: 12,
+                              background: 'transparent',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: 'rgba(192, 132, 252, 0.5)'
+                            }}
+                            whileHover={{ scale: 1.1, backgroundColor: 'rgba(168, 85, 247, 0.2)', color: '#c4b5fd' }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <Edit2 style={{ width: 16, height: 16 }} />
+                          </motion.button>
+                          <motion.button
+                            onClick={() => confirmDelete(gasto.id)}
+                            style={{
+                              padding: 10,
+                              borderRadius: 12,
+                              background: 'transparent',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: 'rgba(192, 132, 252, 0.5)'
+                            }}
+                            whileHover={{ scale: 1.1, backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#f87171' }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <Trash2 style={{ width: 16, height: 16 }} />
+                          </motion.button>
+                        </div>
                       </div>
+
+                      {/* Cuotas expandidas */}
+                      <AnimatePresence>
+                        {isExpanded && isEnCuotas && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            style={{ overflow: 'hidden' }}
+                          >
+                            <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                              <h4 style={{ fontSize: 12, color: 'rgba(192, 132, 252, 0.6)', marginBottom: 12 }}>
+                                Historial de cuotas
+                              </h4>
+                              {gasto.pagos.length === 0 ? (
+                                <p style={{
+                                  color: 'rgba(192, 132, 252, 0.5)',
+                                  fontSize: 13,
+                                  textAlign: 'center',
+                                  padding: 16
+                                }}>
+                                  No hay cuotas registradas aun
+                                </p>
+                              ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                  {gasto.pagos.sort((a, b) => b.numero_cuota - a.numero_cuota).map((pago) => (
+                                    <div
+                                      key={pago.id}
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        padding: '10px 14px',
+                                        borderRadius: 10,
+                                        background: 'rgba(255, 255, 255, 0.03)',
+                                        border: '1px solid rgba(255, 255, 255, 0.05)'
+                                      }}
+                                    >
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                        <span style={{ fontSize: 12, color: '#a855f7', fontWeight: 600 }}>
+                                          #{pago.numero_cuota}
+                                        </span>
+                                        <span style={{ fontSize: 13, color: 'white' }}>
+                                          {formatCurrency(pago.monto, gasto.moneda)}
+                                        </span>
+                                        <span style={{ fontSize: 12, color: 'rgba(192, 132, 252, 0.5)' }}>
+                                          {pago.pagador}
+                                        </span>
+                                        <span style={{ fontSize: 12, color: 'rgba(192, 132, 252, 0.4)' }}>
+                                          {formatDate(pago.fecha_pago)}
+                                        </span>
+                                      </div>
+                                      <motion.button
+                                        onClick={() => confirmDeletePago(pago.id)}
+                                        style={{
+                                          padding: 6,
+                                          borderRadius: 8,
+                                          background: 'transparent',
+                                          border: 'none',
+                                          cursor: 'pointer',
+                                          color: 'rgba(192, 132, 252, 0.3)'
+                                        }}
+                                        whileHover={{ color: '#f87171' }}
+                                      >
+                                        <Trash2 style={{ width: 14, height: 14 }} />
+                                      </motion.button>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </motion.div>
                 );
@@ -490,7 +764,7 @@ export function Gastos() {
         </div>
       </motion.div>
 
-      {/* Add/Edit Modal */}
+      {/* Add/Edit Gasto Modal */}
       <Modal
         isOpen={showModal}
         onClose={handleCloseModal}
@@ -523,7 +797,7 @@ export function Gastos() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <Input
-              label="Monto"
+              label="Monto total"
               type="number"
               step="0.01"
               min="0"
@@ -540,11 +814,75 @@ export function Gastos() {
             />
           </div>
 
-          <Select
-            label="Pagador"
-            options={PAGADOR_OPTIONS}
-            value={formData.pagador}
-            onChange={(e) => setFormData({ ...formData, pagador: e.target.value as Pagador })}
+          {/* Tipo de pago */}
+          <div>
+            <label style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'rgba(192, 132, 252, 0.8)', marginBottom: 10 }}>
+              Tipo de pago
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <motion.button
+                type="button"
+                onClick={() => setTipoPago('unico')}
+                style={{
+                  padding: '14px 16px',
+                  borderRadius: 12,
+                  border: tipoPago === 'unico' ? '2px solid #ec4899' : '2px solid rgba(168, 85, 247, 0.2)',
+                  background: tipoPago === 'unico' ? 'rgba(236, 72, 153, 0.15)' : 'transparent',
+                  color: tipoPago === 'unico' ? '#f9a8d4' : 'rgba(192, 132, 252, 0.6)',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  fontSize: 14,
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Pago unico
+              </motion.button>
+              <motion.button
+                type="button"
+                onClick={() => setTipoPago('cuotas')}
+                style={{
+                  padding: '14px 16px',
+                  borderRadius: 12,
+                  border: tipoPago === 'cuotas' ? '2px solid #ec4899' : '2px solid rgba(168, 85, 247, 0.2)',
+                  background: tipoPago === 'cuotas' ? 'rgba(236, 72, 153, 0.15)' : 'transparent',
+                  color: tipoPago === 'cuotas' ? '#f9a8d4' : 'rgba(192, 132, 252, 0.6)',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  fontSize: 14,
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                En cuotas
+              </motion.button>
+            </div>
+          </div>
+
+          {tipoPago === 'unico' ? (
+            <Select
+              label="Pagador"
+              options={PAGADOR_OPTIONS}
+              value={formData.pagador || 'Juan'}
+              onChange={(e) => setFormData({ ...formData, pagador: e.target.value as Pagador })}
+            />
+          ) : (
+            <Input
+              label="Cantidad de cuotas"
+              type="number"
+              min="2"
+              max="48"
+              value={formData.cuotas_total}
+              onChange={(e) => setFormData({ ...formData, cuotas_total: parseInt(e.target.value) || 2 })}
+              required
+            />
+          )}
+
+          <Input
+            label="Notas (opcional)"
+            placeholder="Detalles adicionales..."
+            value={formData.descripcion || ''}
+            onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
           />
 
           {formData.moneda === 'ARS' && formData.monto > 0 && (
@@ -587,13 +925,110 @@ export function Gastos() {
         </form>
       </Modal>
 
-      {/* Delete Confirmation Modal */}
+      {/* Registrar Cuota Modal */}
+      <Modal
+        isOpen={showPagoModal}
+        onClose={handleClosePagoModal}
+        title={`Registrar cuota - ${selectedGasto?.concepto || ''}`}
+      >
+        <form onSubmit={handleSubmitPago} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {selectedGasto && (
+            <div style={{
+              padding: 16,
+              borderRadius: 12,
+              background: 'rgba(168, 85, 247, 0.1)',
+              border: '1px solid rgba(168, 85, 247, 0.2)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: 'rgba(192, 132, 252, 0.7)' }}>
+                <span>Cuotas pagadas: {selectedGasto.cuotas_pagadas}/{selectedGasto.cuotas_total}</span>
+                <span>Restante: {formatCurrency(selectedGasto.restante)}</span>
+              </div>
+            </div>
+          )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <Input
+              label="Numero de cuota"
+              type="number"
+              min="1"
+              max={selectedGasto?.cuotas_total || 1}
+              value={pagoFormData.numero_cuota}
+              onChange={(e) => setPagoFormData({ ...pagoFormData, numero_cuota: parseInt(e.target.value) || 1 })}
+              required
+            />
+            <Input
+              label="Monto"
+              type="number"
+              step="0.01"
+              min="0"
+              value={pagoFormData.monto || ''}
+              onChange={(e) => setPagoFormData({ ...pagoFormData, monto: parseFloat(e.target.value) || 0 })}
+              required
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <Select
+              label="Pagador"
+              options={PAGADOR_OPTIONS}
+              value={pagoFormData.pagador}
+              onChange={(e) => setPagoFormData({ ...pagoFormData, pagador: e.target.value as Pagador })}
+            />
+            <Input
+              label="Fecha de pago"
+              type="date"
+              value={pagoFormData.fecha_pago}
+              onChange={(e) => setPagoFormData({ ...pagoFormData, fecha_pago: e.target.value })}
+              required
+            />
+          </div>
+
+          <Input
+            label="Notas (opcional)"
+            placeholder="Notas sobre este pago..."
+            value={pagoFormData.notas || ''}
+            onChange={(e) => setPagoFormData({ ...pagoFormData, notas: e.target.value })}
+          />
+
+          <div style={{ display: 'flex', gap: 16, paddingTop: 20 }}>
+            <Button
+              type="button"
+              variant="secondary"
+              size="lg"
+              onClick={handleClosePagoModal}
+              style={{ flex: 1 }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              size="lg"
+              isLoading={isSubmitting}
+              style={{ flex: 1 }}
+            >
+              Registrar
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete Gasto Confirmation Modal */}
       <ConfirmModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleDelete}
         title="Eliminar gasto"
-        message="Estas seguro de que quieres eliminar este gasto? Esta accion no se puede deshacer."
+        message="Estas seguro de que quieres eliminar este gasto? Si tiene cuotas registradas, tambien se eliminaran. Esta accion no se puede deshacer."
+        confirmText="Eliminar"
+      />
+
+      {/* Delete Pago Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showDeletePagoModal}
+        onClose={() => setShowDeletePagoModal(false)}
+        onConfirm={handleDeletePago}
+        title="Eliminar cuota"
+        message="Estas seguro de que quieres eliminar esta cuota? Esta accion no se puede deshacer."
         confirmText="Eliminar"
       />
     </PageWrapper>

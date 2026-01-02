@@ -5,5 +5,3 @@ export * from './useDocumentos';
 export * from './useLugares';
 export * from './useNotas';
 export * from './useTripConfig';
-export * from './usePaymentPlans';
-export * from './useBalance';

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Sparkles, DollarSign, Calendar, MapPin, Heart, CreditCard, Wallet } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { PageWrapper } from '../components/layout';
-import { useItinerario, useLugares, useTripConfig, useBalance } from '../hooks';
+import { useItinerario, useLugares, useTripConfig, useGastos } from '../hooks';
 import { formatCurrency, formatDate } from '../lib/utils';
 
 // Disney Castle SVG - Pink version
@@ -40,7 +40,7 @@ function MiniCastle() {
 
 export function Home() {
   const { daysUntil, countdownMessage, onTrip, config } = useTripConfig();
-  const { balance } = useBalance();
+  const { balance, resumenCuotas } = useGastos();
   const { items: itinerario } = useItinerario();
   const { pendientes: lugaresPendientes } = useLugares();
 
@@ -120,98 +120,100 @@ export function Home() {
         transition={{ delay: 0.2 }}
         style={{ marginBottom: 32 }}
       >
-        <div className="glass-card" style={{ padding: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-            <div style={{
-              padding: 10,
-              borderRadius: 14,
-              background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(168, 85, 247, 0.3))'
-            }}>
-              <Wallet style={{ width: 20, height: 20, color: '#f9a8d4' }} />
-            </div>
-            <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 14, fontWeight: 500 }}>Balance Total</span>
-          </div>
-
-          {/* Total gastado */}
-          <p style={{ fontSize: 32, fontWeight: 700, color: 'white', marginBottom: 8 }}>
-            {formatCurrency(balance.totalGeneral)}
-          </p>
-
-          {/* Quién debe a quién */}
-          {balance.deudor && balance.diferencia > 0 && (
-            <div style={{
-              padding: '10px 14px',
-              background: balance.deudor === 'Juan' ? 'rgba(96, 165, 250, 0.15)' : 'rgba(244, 114, 182, 0.15)',
-              borderRadius: 12,
-              marginBottom: 16,
-              border: `1px solid ${balance.deudor === 'Juan' ? 'rgba(96, 165, 250, 0.3)' : 'rgba(244, 114, 182, 0.3)'}`
-            }}>
-              <p style={{
-                fontSize: 14,
-                color: balance.deudor === 'Juan' ? '#60a5fa' : '#f472b6',
-                fontWeight: 500
+        <Link to="/gastos" style={{ textDecoration: 'none' }}>
+          <div className="glass-card" style={{ padding: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+              <div style={{
+                padding: 10,
+                borderRadius: 14,
+                background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(168, 85, 247, 0.3))'
               }}>
-                {balance.deudor} debe {formatCurrency(balance.diferencia)} a {balance.deudor === 'Juan' ? 'Vale' : 'Juan'}
-              </p>
+                <Wallet style={{ width: 20, height: 20, color: '#f9a8d4' }} />
+              </div>
+              <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 14, fontWeight: 500 }}>Balance Total</span>
             </div>
-          )}
 
-          {/* Desglose Juan vs Vale */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
-            <div style={{
-              padding: 14,
-              background: 'rgba(96, 165, 250, 0.1)',
-              borderRadius: 12,
-              textAlign: 'center'
-            }}>
-              <p style={{ fontSize: 12, color: 'rgba(96, 165, 250, 0.8)', marginBottom: 4 }}>Juan pagó</p>
-              <p style={{ fontSize: 18, fontWeight: 600, color: '#60a5fa' }}>
-                {formatCurrency(balance.totalJuan)}
-              </p>
+            {/* Total gastado */}
+            <p style={{ fontSize: 32, fontWeight: 700, color: 'white', marginBottom: 8 }}>
+              {formatCurrency(balance.total)}
+            </p>
+
+            {/* Quien debe a quien */}
+            {balance.deudor && balance.diferencia > 0 && (
+              <div style={{
+                padding: '10px 14px',
+                background: balance.deudor === 'Juan' ? 'rgba(96, 165, 250, 0.15)' : 'rgba(244, 114, 182, 0.15)',
+                borderRadius: 12,
+                marginBottom: 16,
+                border: `1px solid ${balance.deudor === 'Juan' ? 'rgba(96, 165, 250, 0.3)' : 'rgba(244, 114, 182, 0.3)'}`
+              }}>
+                <p style={{
+                  fontSize: 14,
+                  color: balance.deudor === 'Juan' ? '#60a5fa' : '#f472b6',
+                  fontWeight: 500
+                }}>
+                  {balance.deudor} debe {formatCurrency(balance.diferencia)} a {balance.deudor === 'Juan' ? 'Vale' : 'Juan'}
+                </p>
+              </div>
+            )}
+
+            {/* Desglose Juan vs Vale */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+              <div style={{
+                padding: 14,
+                background: 'rgba(96, 165, 250, 0.1)',
+                borderRadius: 12,
+                textAlign: 'center'
+              }}>
+                <p style={{ fontSize: 12, color: 'rgba(96, 165, 250, 0.8)', marginBottom: 4 }}>Juan pago</p>
+                <p style={{ fontSize: 18, fontWeight: 600, color: '#60a5fa' }}>
+                  {formatCurrency(balance.juan)}
+                </p>
+              </div>
+              <div style={{
+                padding: 14,
+                background: 'rgba(244, 114, 182, 0.1)',
+                borderRadius: 12,
+                textAlign: 'center'
+              }}>
+                <p style={{ fontSize: 12, color: 'rgba(244, 114, 182, 0.8)', marginBottom: 4 }}>Vale pago</p>
+                <p style={{ fontSize: 18, fontWeight: 600, color: '#f472b6' }}>
+                  {formatCurrency(balance.vale)}
+                </p>
+              </div>
             </div>
+
+            {/* Desglose por tipo */}
             <div style={{
-              padding: 14,
-              background: 'rgba(244, 114, 182, 0.1)',
-              borderRadius: 12,
-              textAlign: 'center'
+              display: 'flex',
+              gap: 16,
+              fontSize: 12,
+              color: 'rgba(192, 132, 252, 0.6)',
+              paddingTop: 12,
+              borderTop: '1px solid rgba(139, 92, 246, 0.2)'
             }}>
-              <p style={{ fontSize: 12, color: 'rgba(244, 114, 182, 0.8)', marginBottom: 4 }}>Vale pagó</p>
-              <p style={{ fontSize: 18, fontWeight: 600, color: '#f472b6' }}>
-                {formatCurrency(balance.totalVale)}
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <DollarSign style={{ width: 14, height: 14 }} />
+                Gastos unicos: {formatCurrency(balance.gastosUnicos.total)}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <CreditCard style={{ width: 14, height: 14 }} />
+                Cuotas: {formatCurrency(balance.gastosCuotas.total)}
+              </div>
             </div>
           </div>
-
-          {/* Desglose por tipo */}
-          <div style={{
-            display: 'flex',
-            gap: 16,
-            fontSize: 12,
-            color: 'rgba(192, 132, 252, 0.6)',
-            paddingTop: 12,
-            borderTop: '1px solid rgba(139, 92, 246, 0.2)'
-          }}>
-            <Link to="/gastos" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: 4 }}>
-              <DollarSign style={{ width: 14, height: 14 }} />
-              Gastos: {formatCurrency(balance.gastos.total)}
-            </Link>
-            <Link to="/pagos" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: 4 }}>
-              <CreditCard style={{ width: 14, height: 14 }} />
-              Cuotas: {formatCurrency(balance.pagos.total)}
-            </Link>
-          </div>
-        </div>
+        </Link>
       </motion.div>
 
       {/* Quick Stats Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 32 }}>
-        {/* Planes de Pago Card */}
+        {/* Cuotas Card */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.25 }}
         >
-          <Link to="/pagos" style={{ textDecoration: 'none' }}>
+          <Link to="/gastos" style={{ textDecoration: 'none' }}>
             <div className="glass-card" style={{ padding: 20, height: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                 <div style={{
@@ -221,31 +223,33 @@ export function Home() {
                 }}>
                   <CreditCard style={{ width: 18, height: 18, color: '#4ade80' }} />
                 </div>
-                <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 13, fontWeight: 500 }}>Planes</span>
+                <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 13, fontWeight: 500 }}>Cuotas</span>
               </div>
               <p style={{ fontSize: 24, fontWeight: 700, color: '#4ade80', marginBottom: 4 }}>
-                {balance.planesProgreso.toFixed(0)}%
+                {resumenCuotas.progresoGeneral}%
               </p>
               <p style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.6)' }}>
-                {formatCurrency(balance.planesPagado)} / {formatCurrency(balance.planesTotal)}
+                {formatCurrency(resumenCuotas.totalPagado)} / {formatCurrency(resumenCuotas.totalAPagar)}
               </p>
               {/* Mini progress bar */}
-              <div style={{
-                height: 6,
-                background: 'rgba(139, 92, 246, 0.2)',
-                borderRadius: 999,
-                marginTop: 10,
-                overflow: 'hidden'
-              }}>
+              {resumenCuotas.cantidad > 0 && (
                 <div style={{
-                  width: `${balance.planesProgreso}%`,
-                  height: '100%',
-                  background: balance.planesProgreso >= 100
-                    ? 'linear-gradient(90deg, #4ade80, #22c55e)'
-                    : 'linear-gradient(90deg, #ec4899, #a855f7)',
-                  borderRadius: 999
-                }} />
-              </div>
+                  height: 6,
+                  background: 'rgba(139, 92, 246, 0.2)',
+                  borderRadius: 999,
+                  marginTop: 10,
+                  overflow: 'hidden'
+                }}>
+                  <div style={{
+                    width: `${resumenCuotas.progresoGeneral}%`,
+                    height: '100%',
+                    background: resumenCuotas.progresoGeneral >= 100
+                      ? 'linear-gradient(90deg, #4ade80, #22c55e)'
+                      : 'linear-gradient(90deg, #ec4899, #a855f7)',
+                    borderRadius: 999
+                  }} />
+                </div>
+              )}
             </div>
           </Link>
         </motion.div>
@@ -351,11 +355,10 @@ export function Home() {
           <Sparkles style={{ width: 20, height: 20, color: '#f472b6' }} />
           Accesos rapidos
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
           {[
-            { to: '/gastos', icon: DollarSign, label: 'Nuevo gasto', color: 'from-pink-500 to-rose-500' },
+            { to: '/gastos', icon: DollarSign, label: 'Gastos', color: 'from-pink-500 to-rose-500' },
             { to: '/itinerario', icon: Calendar, label: 'Itinerario', color: 'from-purple-500 to-pink-500' },
-            { to: '/pagos', icon: CreditCard, label: 'Pagos', color: 'from-green-500 to-emerald-500' },
           ].map((item) => (
             <motion.div
               key={item.to}

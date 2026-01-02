@@ -1,6 +1,7 @@
 import { differenceInDays, format, parseISO, isAfter, isBefore, isToday } from 'date-fns';
 import { es } from 'date-fns/locale';
-import type { Gasto, Balance } from '../types';
+import type { GastoConPagos, Balance } from '../types';
+import { arsToUsd } from './dolarBlue';
 
 // Date formatting
 export function formatDate(date: string | Date, formatStr: string = 'dd MMM yyyy'): string {
@@ -38,22 +39,45 @@ export function isTripOver(endDate: string): boolean {
   return isAfter(today, end);
 }
 
-// Calculate balance from gastos
-export function calculateBalance(gastos: Gasto[]): Balance {
-  let total = 0;
+// Calculate balance from gastos (con pagos integrados)
+export function calculateBalance(gastos: GastoConPagos[], dolarRate: number = 1200): Balance {
   let juan = 0;
   let vale = 0;
+  let gastosUnicosJuan = 0;
+  let gastosUnicosVale = 0;
+  let gastosCuotasJuan = 0;
+  let gastosCuotasVale = 0;
+  let restanteCuotas = 0;
 
   for (const gasto of gastos) {
-    const amount = gasto.monto_usd;
-    total += amount;
-    if (gasto.pagador === 'Juan') {
-      juan += amount;
+    if (gasto.cuotas_total === 1) {
+      // Pago unico - cuenta el pagador del gasto
+      const montoUsd = gasto.monto_usd;
+      if (gasto.pagador === 'Juan') {
+        juan += montoUsd;
+        gastosUnicosJuan += montoUsd;
+      } else if (gasto.pagador === 'Vale') {
+        vale += montoUsd;
+        gastosUnicosVale += montoUsd;
+      }
     } else {
-      vale += amount;
+      // En cuotas - cuenta cada pago individual
+      for (const pago of gasto.pagos) {
+        // Convertir el monto del pago a USD si es necesario
+        const montoUsd = gasto.moneda === 'USD' ? pago.monto : arsToUsd(pago.monto, dolarRate);
+        if (pago.pagador === 'Juan') {
+          juan += montoUsd;
+          gastosCuotasJuan += montoUsd;
+        } else if (pago.pagador === 'Vale') {
+          vale += montoUsd;
+          gastosCuotasVale += montoUsd;
+        }
+      }
+      restanteCuotas += gasto.restante;
     }
   }
 
+  const total = juan + vale;
   const diferencia = Math.abs(juan - vale) / 2;
   let deudor: 'Juan' | 'Vale' | null = null;
 
@@ -69,6 +93,17 @@ export function calculateBalance(gastos: Gasto[]): Balance {
     vale: Number(vale.toFixed(2)),
     diferencia: Number(diferencia.toFixed(2)),
     deudor,
+    gastosUnicos: {
+      total: Number((gastosUnicosJuan + gastosUnicosVale).toFixed(2)),
+      juan: Number(gastosUnicosJuan.toFixed(2)),
+      vale: Number(gastosUnicosVale.toFixed(2)),
+    },
+    gastosCuotas: {
+      total: Number((gastosCuotasJuan + gastosCuotasVale).toFixed(2)),
+      juan: Number(gastosCuotasJuan.toFixed(2)),
+      vale: Number(gastosCuotasVale.toFixed(2)),
+      restante: Number(restanteCuotas.toFixed(2)),
+    },
   };
 }
 
