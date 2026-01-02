@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
-import { Sparkles, DollarSign, Calendar, MapPin, Heart, ArrowRight, CreditCard } from 'lucide-react';
+import { Sparkles, DollarSign, Calendar, MapPin, Heart, CreditCard, Wallet } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { PageWrapper } from '../components/layout';
-import { useGastos, useItinerario, useLugares, useTripConfig, usePaymentPlans } from '../hooks';
+import { useItinerario, useLugares, useTripConfig, useBalance } from '../hooks';
 import { formatCurrency, formatDate } from '../lib/utils';
 
 // Disney Castle SVG - Pink version
@@ -40,10 +40,9 @@ function MiniCastle() {
 
 export function Home() {
   const { daysUntil, countdownMessage, onTrip, config } = useTripConfig();
-  const { balance } = useGastos();
+  const { balance } = useBalance();
   const { items: itinerario } = useItinerario();
   const { pendientes: lugaresPendientes } = useLugares();
-  const { resumen: paymentResumen } = usePaymentPlans();
 
   const today = new Date().toISOString().split('T')[0];
   const nextActivity = itinerario.find((item) => item.fecha >= today);
@@ -114,44 +113,138 @@ export function Home() {
         </div>
       </motion.div>
 
+      {/* Balance Card - Unificado */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        style={{ marginBottom: 32 }}
+      >
+        <div className="glass-card" style={{ padding: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+            <div style={{
+              padding: 10,
+              borderRadius: 14,
+              background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(168, 85, 247, 0.3))'
+            }}>
+              <Wallet style={{ width: 20, height: 20, color: '#f9a8d4' }} />
+            </div>
+            <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 14, fontWeight: 500 }}>Balance Total</span>
+          </div>
+
+          {/* Total gastado */}
+          <p style={{ fontSize: 32, fontWeight: 700, color: 'white', marginBottom: 8 }}>
+            {formatCurrency(balance.totalGeneral)}
+          </p>
+
+          {/* Quién debe a quién */}
+          {balance.deudor && balance.diferencia > 0 && (
+            <div style={{
+              padding: '10px 14px',
+              background: balance.deudor === 'Juan' ? 'rgba(96, 165, 250, 0.15)' : 'rgba(244, 114, 182, 0.15)',
+              borderRadius: 12,
+              marginBottom: 16,
+              border: `1px solid ${balance.deudor === 'Juan' ? 'rgba(96, 165, 250, 0.3)' : 'rgba(244, 114, 182, 0.3)'}`
+            }}>
+              <p style={{
+                fontSize: 14,
+                color: balance.deudor === 'Juan' ? '#60a5fa' : '#f472b6',
+                fontWeight: 500
+              }}>
+                {balance.deudor} debe {formatCurrency(balance.diferencia)} a {balance.deudor === 'Juan' ? 'Vale' : 'Juan'}
+              </p>
+            </div>
+          )}
+
+          {/* Desglose Juan vs Vale */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+            <div style={{
+              padding: 14,
+              background: 'rgba(96, 165, 250, 0.1)',
+              borderRadius: 12,
+              textAlign: 'center'
+            }}>
+              <p style={{ fontSize: 12, color: 'rgba(96, 165, 250, 0.8)', marginBottom: 4 }}>Juan pagó</p>
+              <p style={{ fontSize: 18, fontWeight: 600, color: '#60a5fa' }}>
+                {formatCurrency(balance.totalJuan)}
+              </p>
+            </div>
+            <div style={{
+              padding: 14,
+              background: 'rgba(244, 114, 182, 0.1)',
+              borderRadius: 12,
+              textAlign: 'center'
+            }}>
+              <p style={{ fontSize: 12, color: 'rgba(244, 114, 182, 0.8)', marginBottom: 4 }}>Vale pagó</p>
+              <p style={{ fontSize: 18, fontWeight: 600, color: '#f472b6' }}>
+                {formatCurrency(balance.totalVale)}
+              </p>
+            </div>
+          </div>
+
+          {/* Desglose por tipo */}
+          <div style={{
+            display: 'flex',
+            gap: 16,
+            fontSize: 12,
+            color: 'rgba(192, 132, 252, 0.6)',
+            paddingTop: 12,
+            borderTop: '1px solid rgba(139, 92, 246, 0.2)'
+          }}>
+            <Link to="/gastos" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <DollarSign style={{ width: 14, height: 14 }} />
+              Gastos: {formatCurrency(balance.gastos.total)}
+            </Link>
+            <Link to="/pagos" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <CreditCard style={{ width: 14, height: 14 }} />
+              Cuotas: {formatCurrency(balance.pagos.total)}
+            </Link>
+          </div>
+        </div>
+      </motion.div>
+
       {/* Quick Stats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 56 }}>
-        {/* Gastos Card */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 32 }}>
+        {/* Planes de Pago Card */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.25 }}
         >
-          <Link to="/gastos" style={{ textDecoration: 'none' }}>
-            <div className="glass-card" style={{ padding: 24, height: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+          <Link to="/pagos" style={{ textDecoration: 'none' }}>
+            <div className="glass-card" style={{ padding: 20, height: '100%' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                 <div style={{
-                  padding: 10,
-                  borderRadius: 14,
-                  background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(168, 85, 247, 0.3))'
+                  padding: 8,
+                  borderRadius: 12,
+                  background: 'linear-gradient(135deg, rgba(74, 222, 128, 0.3), rgba(34, 197, 94, 0.3))'
                 }}>
-                  <DollarSign style={{ width: 20, height: 20, color: '#f9a8d4' }} />
+                  <CreditCard style={{ width: 18, height: 18, color: '#4ade80' }} />
                 </div>
-                <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 14, fontWeight: 500 }}>Gastos</span>
+                <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 13, fontWeight: 500 }}>Planes</span>
               </div>
-              <p style={{ fontSize: 28, fontWeight: 700, color: 'white', marginBottom: 8 }}>
-                {formatCurrency(balance.total)}
+              <p style={{ fontSize: 24, fontWeight: 700, color: '#4ade80', marginBottom: 4 }}>
+                {balance.planesProgreso.toFixed(0)}%
               </p>
-              {balance.deudor && (
-                <p style={{ fontSize: 12, color: 'rgba(244, 114, 182, 0.7)' }}>
-                  {balance.deudor} debe {formatCurrency(balance.diferencia)}
-                </p>
-              )}
+              <p style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.6)' }}>
+                {formatCurrency(balance.planesPagado)} / {formatCurrency(balance.planesTotal)}
+              </p>
+              {/* Mini progress bar */}
               <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                marginTop: 16,
-                color: 'rgba(244, 114, 182, 0.6)',
-                fontSize: 12
+                height: 6,
+                background: 'rgba(139, 92, 246, 0.2)',
+                borderRadius: 999,
+                marginTop: 10,
+                overflow: 'hidden'
               }}>
-                <span>Ver detalle</span>
-                <ArrowRight style={{ width: 14, height: 14 }} />
+                <div style={{
+                  width: `${balance.planesProgreso}%`,
+                  height: '100%',
+                  background: balance.planesProgreso >= 100
+                    ? 'linear-gradient(90deg, #4ade80, #22c55e)'
+                    : 'linear-gradient(90deg, #ec4899, #a855f7)',
+                  borderRadius: 999
+                }} />
               </div>
             </div>
           </Link>
@@ -161,113 +254,28 @@ export function Home() {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.25 }}
         >
           <Link to="/config" style={{ textDecoration: 'none' }}>
-            <div className="glass-card" style={{ padding: 24, height: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+            <div className="glass-card" style={{ padding: 20, height: '100%' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                 <div style={{
-                  padding: 10,
-                  borderRadius: 14,
+                  padding: 8,
+                  borderRadius: 12,
                   background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.3))'
                 }}>
-                  <MapPin style={{ width: 20, height: 20, color: '#c4b5fd' }} />
+                  <MapPin style={{ width: 18, height: 18, color: '#c4b5fd' }} />
                 </div>
-                <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 14, fontWeight: 500 }}>Lugares</span>
+                <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 13, fontWeight: 500 }}>Lugares</span>
               </div>
-              <p style={{ fontSize: 28, fontWeight: 700, color: 'white', marginBottom: 8 }}>
+              <p style={{ fontSize: 24, fontWeight: 700, color: 'white', marginBottom: 4 }}>
                 {lugaresPendientes}
               </p>
-              <p style={{ fontSize: 12, color: 'rgba(192, 132, 252, 0.7)' }}>por visitar</p>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                marginTop: 16,
-                color: 'rgba(168, 85, 247, 0.6)',
-                fontSize: 12
-              }}>
-                <span>Ver lista</span>
-                <ArrowRight style={{ width: 14, height: 14 }} />
-              </div>
+              <p style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.6)' }}>por visitar</p>
             </div>
           </Link>
         </motion.div>
       </div>
-
-      {/* Payment Progress Card */}
-      {paymentResumen.totalPlanes > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-          style={{ marginBottom: 56 }}
-        >
-          <Link to="/pagos" style={{ textDecoration: 'none' }}>
-            <div className="glass-card" style={{ padding: 24 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <div style={{
-                  padding: 10,
-                  borderRadius: 14,
-                  background: 'linear-gradient(135deg, rgba(74, 222, 128, 0.3), rgba(34, 197, 94, 0.3))'
-                }}>
-                  <CreditCard style={{ width: 20, height: 20, color: '#4ade80' }} />
-                </div>
-                <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 14, fontWeight: 500 }}>Plan de pagos</span>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 16 }}>
-                <div>
-                  <p style={{ fontSize: 28, fontWeight: 700, color: '#4ade80' }}>
-                    {paymentResumen.progresoGeneral.toFixed(0)}%
-                  </p>
-                  <p style={{ fontSize: 12, color: 'rgba(192, 132, 252, 0.6)' }}>
-                    {formatCurrency(paymentResumen.totalPagado, 'USD')} de {formatCurrency(paymentResumen.totalAPagar, 'USD')}
-                  </p>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <p style={{ fontSize: 14, color: 'rgba(192, 132, 252, 0.7)' }}>
-                    {paymentResumen.totalPlanes} {paymentResumen.totalPlanes === 1 ? 'plan' : 'planes'}
-                  </p>
-                </div>
-              </div>
-
-              {/* Progress bar */}
-              <div style={{
-                height: 10,
-                background: 'rgba(139, 92, 246, 0.2)',
-                borderRadius: 999,
-                overflow: 'hidden'
-              }}>
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${paymentResumen.progresoGeneral}%` }}
-                  transition={{ duration: 1, ease: 'easeOut', delay: 0.5 }}
-                  style={{
-                    height: '100%',
-                    background: paymentResumen.progresoGeneral >= 100
-                      ? 'linear-gradient(90deg, #4ade80, #22c55e)'
-                      : 'linear-gradient(90deg, #ec4899, #a855f7)',
-                    borderRadius: 999
-                  }}
-                />
-              </div>
-
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                marginTop: 16,
-                color: 'rgba(74, 222, 128, 0.7)',
-                fontSize: 12
-              }}>
-                <span>Ver planes</span>
-                <ArrowRight style={{ width: 14, height: 14 }} />
-              </div>
-            </div>
-          </Link>
-        </motion.div>
-      )}
 
       {/* Next Activity Section */}
       {nextActivity && (

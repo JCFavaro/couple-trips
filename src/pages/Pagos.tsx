@@ -15,10 +15,12 @@ import {
   ChevronUp,
   Castle,
   MoreHorizontal,
+  Wallet,
+  AlertCircle,
 } from 'lucide-react';
 import { PageWrapper } from '../components/layout';
 import { Button, Input, Select, Modal, ConfirmModal, Textarea } from '../components/ui';
-import { usePaymentPlans } from '../hooks';
+import { usePaymentPlans, useBalance } from '../hooks';
 import { formatCurrency, formatDate } from '../lib/utils';
 import type {
   CategoriaPlan,
@@ -69,6 +71,7 @@ const MONEDA_OPTIONS = [
 export function Pagos() {
   const { plans, resumen, loading, addPlan, editPlan, removePlan, addPayment, removePayment } =
     usePaymentPlans();
+  const { balance: balanceTotal } = useBalance();
   const [showPlanModal, setShowPlanModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -347,6 +350,68 @@ export function Pagos() {
               </p>
             </motion.div>
           </div>
+
+          {/* Restante Total */}
+          {resumen.totalRestante > 0 && (
+            <motion.div
+              className="glass-card"
+              style={{ padding: 20 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{
+                  padding: 10,
+                  borderRadius: 12,
+                  background: 'rgba(251, 191, 36, 0.2)',
+                }}>
+                  <AlertCircle style={{ width: 20, height: 20, color: '#fbbf24' }} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 13, color: 'rgba(251, 191, 36, 0.8)', marginBottom: 4 }}>
+                    Total restante por pagar
+                  </p>
+                  <p style={{ fontSize: 24, fontWeight: 700, color: '#fbbf24' }}>
+                    {formatCurrency(resumen.totalRestante, 'USD')}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Balance Unificado (quien debe a quien) */}
+          {balanceTotal.deudor && balanceTotal.diferencia > 0 && (
+            <motion.div
+              className="glass-card"
+              style={{ padding: 20 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{
+                  padding: 10,
+                  borderRadius: 12,
+                  background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(168, 85, 247, 0.2))',
+                }}>
+                  <Wallet style={{ width: 20, height: 20, color: '#f472b6' }} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 12, color: 'rgba(192, 132, 252, 0.6)', marginBottom: 4 }}>
+                    Balance total (gastos + cuotas)
+                  </p>
+                  <p style={{
+                    fontSize: 15,
+                    fontWeight: 600,
+                    color: balanceTotal.deudor === 'Juan' ? '#60a5fa' : '#f472b6'
+                  }}>
+                    {balanceTotal.deudor} debe {formatCurrency(balanceTotal.diferencia)} a {balanceTotal.deudor === 'Juan' ? 'Vale' : 'Juan'}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           {/* Progress bar general */}
           {resumen.totalAPagar > 0 && (

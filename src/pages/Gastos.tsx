@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Edit2, TrendingUp, Plane, Hotel, Ticket, UtensilsCrossed, Car, ShoppingBag, MoreHorizontal, Sparkles, DollarSign, Heart } from 'lucide-react';
+import { Plus, Trash2, Edit2, TrendingUp, Plane, Hotel, Ticket, UtensilsCrossed, Car, ShoppingBag, MoreHorizontal, Sparkles, DollarSign, Heart, CreditCard, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { PageWrapper } from '../components/layout';
 import { Button, Input, Select, Modal, ConfirmModal } from '../components/ui';
-import { useGastos } from '../hooks';
+import { useGastos, useBalance } from '../hooks';
 import { formatCurrency, formatDate } from '../lib/utils';
 import { getFormattedRate } from '../lib/dolarBlue';
 import type { Gasto, GastoFormData, CategoriaGasto, Pagador, Moneda } from '../types';
@@ -50,6 +51,7 @@ const MONEDA_OPTIONS = [
 
 export function Gastos() {
   const { gastos, balance, dolarRate, loading, addGasto, editGasto, removeGasto } = useGastos();
+  const { balance: balanceTotal } = useBalance();
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedGasto, setSelectedGasto] = useState<Gasto | null>(null);
@@ -221,6 +223,42 @@ export function Gastos() {
             </div>
           </div>
 
+          {/* Balance Total Unificado (incluyendo cuotas) */}
+          {balanceTotal.pagos.total > 0 && (
+            <Link to="/pagos" style={{ textDecoration: 'none' }}>
+              <motion.div
+                style={{
+                  padding: 16,
+                  borderRadius: 14,
+                  background: 'rgba(74, 222, 128, 0.1)',
+                  border: '1px solid rgba(74, 222, 128, 0.2)',
+                  marginBottom: balance.deudor ? 16 : 0
+                }}
+                whileHover={{ scale: 1.01 }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <CreditCard style={{ width: 18, height: 18, color: '#4ade80' }} />
+                    <div>
+                      <p style={{ fontSize: 12, color: 'rgba(74, 222, 128, 0.8)' }}>
+                        Balance Total (gastos + cuotas)
+                      </p>
+                      <p style={{ fontSize: 18, fontWeight: 600, color: '#4ade80' }}>
+                        {formatCurrency(balanceTotal.totalGeneral)}
+                      </p>
+                    </div>
+                  </div>
+                  <ArrowRight style={{ width: 16, height: 16, color: 'rgba(74, 222, 128, 0.6)' }} />
+                </div>
+                {balanceTotal.deudor && balanceTotal.diferencia > 0 && (
+                  <p style={{ fontSize: 12, color: 'rgba(192, 132, 252, 0.7)', marginTop: 8 }}>
+                    {balanceTotal.deudor} debe {formatCurrency(balanceTotal.diferencia)} (total)
+                  </p>
+                )}
+              </motion.div>
+            </Link>
+          )}
+
           {balance.deudor && (
             <motion.div
               style={{
@@ -232,12 +270,13 @@ export function Gastos() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
             >
-              <p style={{ textAlign: 'center', color: '#fbcfe8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <p style={{ textAlign: 'center', color: '#fbcfe8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
                 <Sparkles style={{ width: 16, height: 16, color: '#fde047' }} />
                 <span>
                   <span style={{ fontWeight: 600, color: 'white' }}>{balance.deudor}</span> le debe{' '}
                   <span style={{ fontWeight: 600, color: '#f9a8d4' }}>{formatCurrency(balance.diferencia)}</span> a{' '}
                   <span style={{ fontWeight: 600, color: 'white' }}>{balance.deudor === 'Juan' ? 'Vale' : 'Juan'}</span>
+                  <span style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.5)' }}> (solo gastos)</span>
                 </span>
                 <Sparkles style={{ width: 16, height: 16, color: '#fde047' }} />
               </p>
