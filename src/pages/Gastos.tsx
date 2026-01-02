@@ -128,10 +128,15 @@ export function Gastos() {
   const handleOpenPagoModal = (gasto: GastoConPagos) => {
     setSelectedGasto(gasto);
     const nextCuota = gasto.cuotas_pagadas + 1;
-    const montoPorCuota = gasto.monto / gasto.cuotas_total;
+    const cuotasRestantes = gasto.cuotas_total - gasto.cuotas_pagadas;
+    // Calcular restante en la moneda original del gasto
+    const totalPagadoMonedaOriginal = gasto.pagos.reduce((sum, p) => sum + p.monto, 0);
+    const restanteMonedaOriginal = gasto.monto - totalPagadoMonedaOriginal;
+    // Monto sugerido = restante / cuotas que faltan (se ajusta si pagaste de mas o de menos)
+    const montoPorCuota = cuotasRestantes > 0 ? restanteMonedaOriginal / cuotasRestantes : 0;
     setPagoFormData({
       numero_cuota: nextCuota,
-      monto: Number(montoPorCuota.toFixed(2)),
+      monto: Number(Math.max(0, montoPorCuota).toFixed(2)),
       pagador: 'Juan',
       fecha_pago: new Date().toISOString().split('T')[0],
       notas: '',
@@ -564,8 +569,8 @@ export function Gastos() {
                     transition={{ delay: index * 0.03 }}
                   >
                     <div className="glass-card" style={{ padding: 16 }}>
-                      {/* Header con icono y concepto */}
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                      {/* Row 1: Icono + Concepto completo */}
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 10 }}>
                         <div style={{
                           padding: 12,
                           borderRadius: 12,
@@ -575,64 +580,80 @@ export function Gastos() {
                         }}>
                           <Icon style={{ width: 18, height: 18, color: colors.text }} />
                         </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          {/* Concepto - permite wrap */}
+                        <div style={{ flex: 1 }}>
                           <p style={{
                             fontWeight: 600,
                             color: 'white',
-                            fontSize: 15,
-                            lineHeight: 1.3,
-                            marginBottom: 6
+                            fontSize: 16,
+                            lineHeight: 1.4,
+                            wordBreak: 'break-word'
                           }}>
                             {gasto.concepto}
                           </p>
-                          {/* Meta info: fecha, pagador, badge */}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: 13, color: 'rgba(192, 132, 252, 0.6)' }}>
-                              {formatDate(gasto.fecha)}
-                            </span>
-                            {!isEnCuotas && gasto.pagador && (
-                              <>
-                                <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'rgba(168, 85, 247, 0.5)' }} />
-                                <span style={{ fontSize: 13, color: 'rgba(192, 132, 252, 0.6)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                  <Heart style={{ width: 11, height: 11, fill: 'currentColor' }} />
-                                  {gasto.pagador}
-                                </span>
-                              </>
-                            )}
-                            {isEnCuotas && (
-                              <span style={{
-                                fontSize: 10,
-                                fontWeight: 600,
-                                color: gasto.progreso === 100 ? '#4ade80' : '#fbbf24',
-                                background: gasto.progreso === 100 ? 'rgba(74, 222, 128, 0.2)' : 'rgba(251, 191, 36, 0.2)',
-                                padding: '3px 8px',
-                                borderRadius: 6,
-                                textTransform: 'uppercase'
-                              }}>
-                                {gasto.progreso === 100 ? 'Pagado' : 'Cuotas'}
-                              </span>
-                            )}
-                          </div>
                         </div>
                       </div>
 
-                      {/* Monto - en su propia linea para mobile */}
+                      {/* Row 2: Fecha + Badge/Pagador */}
                       <div style={{
                         display: 'flex',
-                        justifyContent: 'flex-end',
+                        alignItems: 'center',
+                        gap: 10,
+                        marginBottom: 12,
+                        flexWrap: 'wrap'
+                      }}>
+                        <span style={{
+                          fontSize: 13,
+                          color: 'rgba(192, 132, 252, 0.6)',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {formatDate(gasto.fecha)}
+                        </span>
+                        {!isEnCuotas && gasto.pagador && (
+                          <>
+                            <span style={{ color: 'rgba(168, 85, 247, 0.4)' }}>•</span>
+                            <span style={{
+                              fontSize: 13,
+                              color: gasto.pagador === 'Juan' ? '#f472b6' : '#c084fc',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 4,
+                              whiteSpace: 'nowrap'
+                            }}>
+                              <Heart style={{ width: 11, height: 11, fill: 'currentColor' }} />
+                              {gasto.pagador}
+                            </span>
+                          </>
+                        )}
+                        {isEnCuotas && (
+                          <span style={{
+                            fontSize: 10,
+                            fontWeight: 600,
+                            color: gasto.progreso === 100 ? '#4ade80' : '#fbbf24',
+                            background: gasto.progreso === 100 ? 'rgba(74, 222, 128, 0.2)' : 'rgba(251, 191, 36, 0.2)',
+                            padding: '4px 10px',
+                            borderRadius: 6,
+                            textTransform: 'uppercase',
+                            whiteSpace: 'nowrap'
+                          }}>
+                            {gasto.progreso === 100 ? 'Pagado' : `${gasto.cuotas_pagadas}/${gasto.cuotas_total} cuotas`}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Row 3: Monto grande */}
+                      <div style={{
+                        display: 'flex',
                         alignItems: 'baseline',
                         gap: 8,
-                        marginTop: 12,
                         paddingTop: 12,
                         borderTop: '1px solid rgba(255, 255, 255, 0.05)'
                       }}>
-                        <p style={{ fontWeight: 700, color: 'white', fontSize: 22 }}>
-                          {formatCurrency(gasto.moneda === 'USD' ? gasto.monto : gasto.monto_usd)}
+                        <p style={{ fontWeight: 700, color: 'white', fontSize: 24 }}>
+                          {formatCurrency(gasto.monto, gasto.moneda)}
                         </p>
                         {gasto.moneda === 'ARS' && (
                           <span style={{ fontSize: 13, color: 'rgba(168, 85, 247, 0.5)' }}>
-                            ({formatCurrency(gasto.monto, 'ARS')})
+                            (~{formatCurrency(gasto.monto_usd, 'USD')})
                           </span>
                         )}
                       </div>
@@ -640,133 +661,150 @@ export function Gastos() {
                       {/* Progress bar y desglose para gastos en cuotas */}
                       {isEnCuotas && (
                         <div style={{ marginTop: 12 }}>
-                          {/* Progress bar */}
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(192, 132, 252, 0.6)', marginBottom: 6 }}>
-                            <span>{gasto.cuotas_pagadas}/{gasto.cuotas_total} cuotas</span>
-                            <span>{gasto.progreso}%</span>
-                          </div>
-                          <div style={{ height: 8, borderRadius: 4, background: 'rgba(255, 255, 255, 0.1)', overflow: 'hidden' }}>
-                            <motion.div
-                              style={{
-                                height: '100%',
-                                borderRadius: 4,
-                                background: gasto.progreso === 100
-                                  ? 'linear-gradient(to right, #22c55e, #4ade80)'
-                                  : 'linear-gradient(to right, #ec4899, #a855f7)'
-                              }}
-                              initial={{ width: 0 }}
-                              animate={{ width: `${gasto.progreso}%` }}
-                              transition={{ duration: 0.5 }}
-                            />
+                          {/* Progress bar con porcentaje */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                            <div style={{ flex: 1, height: 8, borderRadius: 4, background: 'rgba(255, 255, 255, 0.1)', overflow: 'hidden' }}>
+                              <motion.div
+                                style={{
+                                  height: '100%',
+                                  borderRadius: 4,
+                                  background: gasto.progreso === 100
+                                    ? 'linear-gradient(to right, #22c55e, #4ade80)'
+                                    : 'linear-gradient(to right, #ec4899, #a855f7)'
+                                }}
+                                initial={{ width: 0 }}
+                                animate={{ width: `${gasto.progreso}%` }}
+                                transition={{ duration: 0.5 }}
+                              />
+                            </div>
+                            <span style={{ fontSize: 12, color: 'rgba(192, 132, 252, 0.7)', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                              {gasto.progreso}%
+                            </span>
                           </div>
 
-                          {/* Desglose Juan/Vale/Restante - vertical para mobile */}
+                          {/* Desglose Juan/Vale/Restante - 3 columnas */}
                           <div style={{
                             display: 'grid',
-                            gridTemplateColumns: '1fr 1fr',
+                            gridTemplateColumns: '1fr 1fr 1fr',
                             gap: 8,
-                            marginTop: 12,
                             padding: 12,
                             background: 'rgba(255, 255, 255, 0.03)',
                             borderRadius: 10
                           }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                              <Heart style={{ width: 12, height: 12, fill: '#f472b6', color: '#f472b6', flexShrink: 0 }} />
-                              <div>
-                                <p style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.5)' }}>Juan</p>
-                                <p style={{ fontSize: 14, fontWeight: 600, color: '#f472b6' }}>{formatCurrency(gasto.pagado_juan)}</p>
-                              </div>
+                            <div style={{ textAlign: 'center' }}>
+                              <p style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.5)', marginBottom: 2 }}>Juan</p>
+                              <p style={{ fontSize: 13, fontWeight: 600, color: '#f472b6' }}>
+                                {formatCurrency(gasto.pagado_juan, gasto.moneda)}
+                              </p>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                              <Heart style={{ width: 12, height: 12, fill: '#a855f7', color: '#a855f7', flexShrink: 0 }} />
-                              <div>
-                                <p style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.5)' }}>Vale</p>
-                                <p style={{ fontSize: 14, fontWeight: 600, color: '#a855f7' }}>{formatCurrency(gasto.pagado_vale)}</p>
-                              </div>
+                            <div style={{ textAlign: 'center' }}>
+                              <p style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.5)', marginBottom: 2 }}>Vale</p>
+                              <p style={{ fontSize: 13, fontWeight: 600, color: '#c084fc' }}>
+                                {formatCurrency(gasto.pagado_vale, gasto.moneda)}
+                              </p>
                             </div>
-                            <div style={{ gridColumn: '1 / -1', textAlign: 'center', paddingTop: 8, borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                              <p style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.5)' }}>Restante</p>
-                              <p style={{ fontSize: 14, fontWeight: 600, color: 'rgba(192, 132, 252, 0.8)' }}>{formatCurrency(gasto.restante)}</p>
+                            <div style={{ textAlign: 'center' }}>
+                              <p style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.5)', marginBottom: 2 }}>Restante</p>
+                              <p style={{ fontSize: 13, fontWeight: 600, color: 'rgba(192, 132, 252, 0.8)' }}>
+                                {formatCurrency(gasto.restante, gasto.moneda)}
+                              </p>
                             </div>
                           </div>
                         </div>
                       )}
 
-                      {/* Actions */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, paddingTop: 16, borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                      {/* Actions - Mobile friendly */}
+                      <div style={{
+                        display: 'flex',
+                        gap: 10,
+                        marginTop: 16,
+                        paddingTop: 16,
+                        borderTop: '1px solid rgba(255, 255, 255, 0.05)'
+                      }}>
+                        {/* Boton principal: Registrar cuota o Ver historial */}
                         {isEnCuotas && gasto.progreso < 100 && (
                           <motion.button
                             onClick={() => handleOpenPagoModal(gasto)}
                             style={{
+                              flex: 1,
                               display: 'flex',
                               alignItems: 'center',
-                              gap: 6,
-                              padding: '8px 14px',
-                              borderRadius: 10,
-                              background: 'rgba(74, 222, 128, 0.2)',
+                              justifyContent: 'center',
+                              gap: 8,
+                              padding: '12px 16px',
+                              borderRadius: 12,
+                              background: 'rgba(74, 222, 128, 0.15)',
                               border: '1px solid rgba(74, 222, 128, 0.3)',
                               color: '#4ade80',
-                              fontSize: 13,
-                              fontWeight: 500,
+                              fontSize: 14,
+                              fontWeight: 600,
                               cursor: 'pointer',
+                              minHeight: 44,
                             }}
-                            whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                           >
-                            <Plus style={{ width: 14, height: 14 }} />
-                            Registrar cuota
+                            <Plus style={{ width: 18, height: 18 }} />
+                            Pagar cuota
                           </motion.button>
                         )}
 
-                        <div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
+                        {/* Botones secundarios */}
+                        <div style={{ display: 'flex', gap: 8 }}>
                           {isEnCuotas && (
                             <motion.button
                               onClick={() => toggleExpanded(gasto.id)}
                               style={{
-                                padding: 10,
+                                width: 44,
+                                height: 44,
                                 borderRadius: 12,
-                                background: 'transparent',
-                                border: 'none',
+                                background: 'rgba(168, 85, 247, 0.1)',
+                                border: '1px solid rgba(168, 85, 247, 0.2)',
                                 cursor: 'pointer',
-                                color: 'rgba(192, 132, 252, 0.5)',
+                                color: isExpanded ? '#c4b5fd' : 'rgba(192, 132, 252, 0.6)',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: 4
+                                justifyContent: 'center'
                               }}
-                              whileHover={{ backgroundColor: 'rgba(168, 85, 247, 0.2)', color: '#c4b5fd' }}
+                              whileTap={{ scale: 0.95 }}
                             >
-                              {isExpanded ? <ChevronUp style={{ width: 16, height: 16 }} /> : <ChevronDown style={{ width: 16, height: 16 }} />}
+                              {isExpanded ? <ChevronUp style={{ width: 20, height: 20 }} /> : <ChevronDown style={{ width: 20, height: 20 }} />}
                             </motion.button>
                           )}
                           <motion.button
                             onClick={() => handleOpenModal(gasto)}
                             style={{
-                              padding: 10,
+                              width: 44,
+                              height: 44,
                               borderRadius: 12,
-                              background: 'transparent',
-                              border: 'none',
+                              background: 'rgba(168, 85, 247, 0.1)',
+                              border: '1px solid rgba(168, 85, 247, 0.2)',
                               cursor: 'pointer',
-                              color: 'rgba(192, 132, 252, 0.5)'
+                              color: 'rgba(192, 132, 252, 0.6)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
                             }}
-                            whileHover={{ scale: 1.1, backgroundColor: 'rgba(168, 85, 247, 0.2)', color: '#c4b5fd' }}
-                            whileTap={{ scale: 0.9 }}
+                            whileTap={{ scale: 0.95 }}
                           >
-                            <Edit2 style={{ width: 16, height: 16 }} />
+                            <Edit2 style={{ width: 18, height: 18 }} />
                           </motion.button>
                           <motion.button
                             onClick={() => confirmDelete(gasto.id)}
                             style={{
-                              padding: 10,
+                              width: 44,
+                              height: 44,
                               borderRadius: 12,
-                              background: 'transparent',
-                              border: 'none',
+                              background: 'rgba(239, 68, 68, 0.1)',
+                              border: '1px solid rgba(239, 68, 68, 0.2)',
                               cursor: 'pointer',
-                              color: 'rgba(192, 132, 252, 0.5)'
+                              color: 'rgba(248, 113, 113, 0.6)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
                             }}
-                            whileHover={{ scale: 1.1, backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#f87171' }}
-                            whileTap={{ scale: 0.9 }}
+                            whileTap={{ scale: 0.95 }}
                           >
-                            <Trash2 style={{ width: 16, height: 16 }} />
+                            <Trash2 style={{ width: 18, height: 18 }} />
                           </motion.button>
                         </div>
                       </div>
