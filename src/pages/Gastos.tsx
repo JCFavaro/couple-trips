@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Edit2, TrendingUp, Plane, Hotel, Ticket, UtensilsCrossed, Car, ShoppingBag, MoreHorizontal, Sparkles, DollarSign, Heart, ChevronDown, ChevronUp, CreditCard } from 'lucide-react';
 import { PageWrapper } from '../components/layout';
@@ -50,6 +51,8 @@ const MONEDA_OPTIONS = [
 
 export function Gastos() {
   const { gastos, balance, dolarRate, resumenCuotas, loading, addGasto, editGasto, removeGasto, addPago, removePago } = useGastos();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [showPagoModal, setShowPagoModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -79,6 +82,17 @@ export function Gastos() {
     fecha_pago: new Date().toISOString().split('T')[0],
     notas: '',
   });
+
+  // Auto-abrir modal cuando viene del FAB (?nuevo=1)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('nuevo') === '1') {
+      setShowModal(true);
+      setSelectedGasto(null);
+      // Limpiar el param de la URL
+      navigate('/gastos', { replace: true });
+    }
+  }, [location.search, navigate]);
 
   const resetForm = () => {
     setFormData({
