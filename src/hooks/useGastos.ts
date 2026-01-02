@@ -192,10 +192,10 @@ export function useGastos() {
     }
   };
 
-  // Calcular balance
+  // Calcular balance (separado por moneda, sin conversion)
   const balance: Balance = useMemo(() => {
-    return calculateBalance(gastos, dolarRate);
-  }, [gastos, dolarRate]);
+    return calculateBalance(gastos);
+  }, [gastos]);
 
   // Resumen de cuotas pendientes
   const resumenCuotas = useMemo(() => {

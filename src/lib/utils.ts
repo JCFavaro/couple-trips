@@ -1,7 +1,6 @@
 import { differenceInDays, format, parseISO, isAfter, isBefore, isToday } from 'date-fns';
 import { es } from 'date-fns/locale';
 import type { GastoConPagos, Balance } from '../types';
-import { arsToUsd } from './dolarBlue';
 
 // Date formatting
 export function formatDate(date: string | Date, formatStr: string = 'dd MMM yyyy'): string {
@@ -39,70 +38,90 @@ export function isTripOver(endDate: string): boolean {
   return isAfter(today, end);
 }
 
-// Calculate balance from gastos (con pagos integrados)
-export function calculateBalance(gastos: GastoConPagos[], dolarRate: number = 1200): Balance {
-  let juan = 0;
-  let vale = 0;
-  let gastosUnicosJuan = 0;
-  let gastosUnicosVale = 0;
-  let gastosCuotasJuan = 0;
-  let gastosCuotasVale = 0;
-  let restanteCuotas = 0;
+// Calculate balance from gastos (separado por moneda, sin conversion)
+export function calculateBalance(gastos: GastoConPagos[]): Balance {
+  // Separar por moneda
+  let juanUsd = 0;
+  let valeUsd = 0;
+  let juanArs = 0;
+  let valeArs = 0;
 
   for (const gasto of gastos) {
+    const isUsd = gasto.moneda === 'USD';
+
     if (gasto.cuotas_total === 1) {
       // Pago unico - cuenta el pagador del gasto
-      const montoUsd = gasto.monto_usd;
       if (gasto.pagador === 'Juan') {
-        juan += montoUsd;
-        gastosUnicosJuan += montoUsd;
+        if (isUsd) {
+          juanUsd += gasto.monto;
+        } else {
+          juanArs += gasto.monto;
+        }
       } else if (gasto.pagador === 'Vale') {
-        vale += montoUsd;
-        gastosUnicosVale += montoUsd;
-      }
-    } else {
-      // En cuotas - cuenta cada pago individual
-      for (const pago of gasto.pagos) {
-        // Convertir el monto del pago a USD si es necesario
-        const montoUsd = gasto.moneda === 'USD' ? pago.monto : arsToUsd(pago.monto, dolarRate);
-        if (pago.pagador === 'Juan') {
-          juan += montoUsd;
-          gastosCuotasJuan += montoUsd;
-        } else if (pago.pagador === 'Vale') {
-          vale += montoUsd;
-          gastosCuotasVale += montoUsd;
+        if (isUsd) {
+          valeUsd += gasto.monto;
+        } else {
+          valeArs += gasto.monto;
         }
       }
-      restanteCuotas += gasto.restante;
+    } else {
+      // En cuotas - cuenta cada pago individual (en la moneda del gasto)
+      for (const pago of gasto.pagos) {
+        if (pago.pagador === 'Juan') {
+          if (isUsd) {
+            juanUsd += pago.monto;
+          } else {
+            juanArs += pago.monto;
+          }
+        } else if (pago.pagador === 'Vale') {
+          if (isUsd) {
+            valeUsd += pago.monto;
+          } else {
+            valeArs += pago.monto;
+          }
+        }
+      }
     }
   }
 
-  const total = juan + vale;
-  const diferencia = Math.abs(juan - vale) / 2;
-  let deudor: 'Juan' | 'Vale' | null = null;
+  // Calcular balance USD
+  const totalUsd = juanUsd + valeUsd;
+  const diferenciaUsd = Math.abs(juanUsd - valeUsd) / 2;
+  let deudorUsd: 'Juan' | 'Vale' | null = null;
+  if (juanUsd > valeUsd) {
+    deudorUsd = 'Vale';
+  } else if (valeUsd > juanUsd) {
+    deudorUsd = 'Juan';
+  }
 
-  if (juan > vale) {
-    deudor = 'Vale';
-  } else if (vale > juan) {
-    deudor = 'Juan';
+  // Calcular balance ARS
+  const totalArs = juanArs + valeArs;
+  const diferenciaArs = Math.abs(juanArs - valeArs) / 2;
+  let deudorArs: 'Juan' | 'Vale' | null = null;
+  if (juanArs > valeArs) {
+    deudorArs = 'Vale';
+  } else if (valeArs > juanArs) {
+    deudorArs = 'Juan';
   }
 
   return {
-    total: Number(total.toFixed(2)),
-    juan: Number(juan.toFixed(2)),
-    vale: Number(vale.toFixed(2)),
-    diferencia: Number(diferencia.toFixed(2)),
-    deudor,
-    gastosUnicos: {
-      total: Number((gastosUnicosJuan + gastosUnicosVale).toFixed(2)),
-      juan: Number(gastosUnicosJuan.toFixed(2)),
-      vale: Number(gastosUnicosVale.toFixed(2)),
+    usd: {
+      total: Number(totalUsd.toFixed(2)),
+      juan: Number(juanUsd.toFixed(2)),
+      vale: Number(valeUsd.toFixed(2)),
+      diferencia: Number(diferenciaUsd.toFixed(2)),
+      deudor: deudorUsd,
     },
-    gastosCuotas: {
-      total: Number((gastosCuotasJuan + gastosCuotasVale).toFixed(2)),
-      juan: Number(gastosCuotasJuan.toFixed(2)),
-      vale: Number(gastosCuotasVale.toFixed(2)),
-      restante: Number(restanteCuotas.toFixed(2)),
+    ars: {
+      total: Number(totalArs.toFixed(0)),
+      juan: Number(juanArs.toFixed(0)),
+      vale: Number(valeArs.toFixed(0)),
+      diferencia: Number(diferenciaArs.toFixed(0)),
+      deudor: deudorArs,
+    },
+    totalGeneral: {
+      usd: Number(totalUsd.toFixed(2)),
+      ars: Number(totalArs.toFixed(0)),
     },
   };
 }

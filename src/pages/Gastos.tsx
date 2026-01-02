@@ -221,6 +221,8 @@ export function Gastos() {
     return acc;
   }, {} as Record<CategoriaGasto, number>);
 
+  const totalByCategory = Object.values(byCategory).reduce((sum, val) => sum + val, 0);
+
   return (
     <PageWrapper
       title="Gastos"
@@ -271,44 +273,128 @@ export function Gastos() {
               </div>
               <span style={{ fontWeight: 500, color: '#e9d5ff', fontSize: 18 }}>Balance Total</span>
             </div>
-            <motion.span
-              className="shimmer-text"
-              style={{ fontSize: 32, fontWeight: 700 }}
-              animate={{ scale: [1, 1.02, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              {formatCurrency(balance.total)}
-            </motion.span>
+            <div style={{ textAlign: 'right' }}>
+              <motion.span
+                className="shimmer-text"
+                style={{ fontSize: 28, fontWeight: 700, display: 'block' }}
+                animate={{ scale: [1, 1.02, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                {formatCurrency(balance.totalGeneral.usd)}
+              </motion.span>
+              {balance.totalGeneral.ars > 0 && (
+                <span style={{ fontSize: 16, color: 'rgba(192, 132, 252, 0.7)' }}>
+                  + {formatCurrency(balance.totalGeneral.ars, 'ARS')}
+                </span>
+              )}
+            </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
-            <div style={{
-              textAlign: 'center',
-              padding: 20,
-              borderRadius: 18,
-              background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(168, 85, 247, 0.1))',
-              border: '1px solid rgba(236, 72, 153, 0.2)'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 10 }}>
-                <Heart style={{ width: 16, height: 16, fill: '#f472b6', color: '#f472b6' }} />
-                <p style={{ color: 'rgba(192, 132, 252, 0.7)', fontSize: 14, fontWeight: 500 }}>Juan</p>
+          {/* Balance USD */}
+          {balance.usd.total > 0 && (
+            <>
+              <div style={{ marginBottom: 8 }}>
+                <span style={{ fontSize: 12, color: 'rgba(74, 222, 128, 0.8)', fontWeight: 600 }}>DOLARES (USD)</span>
               </div>
-              <p style={{ fontSize: 24, fontWeight: 700, color: 'white' }}>{formatCurrency(balance.juan)}</p>
-            </div>
-            <div style={{
-              textAlign: 'center',
-              padding: 20,
-              borderRadius: 18,
-              background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1))',
-              border: '1px solid rgba(168, 85, 247, 0.2)'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 10 }}>
-                <Heart style={{ width: 16, height: 16, fill: '#a855f7', color: '#a855f7' }} />
-                <p style={{ color: 'rgba(192, 132, 252, 0.7)', fontSize: 14, fontWeight: 500 }}>Vale</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <div style={{
+                  textAlign: 'center',
+                  padding: 16,
+                  borderRadius: 14,
+                  background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(168, 85, 247, 0.1))',
+                  border: '1px solid rgba(236, 72, 153, 0.2)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 8 }}>
+                    <Heart style={{ width: 14, height: 14, fill: '#f472b6', color: '#f472b6' }} />
+                    <p style={{ color: 'rgba(192, 132, 252, 0.7)', fontSize: 13, fontWeight: 500 }}>Juan</p>
+                  </div>
+                  <p style={{ fontSize: 20, fontWeight: 700, color: 'white' }}>{formatCurrency(balance.usd.juan)}</p>
+                </div>
+                <div style={{
+                  textAlign: 'center',
+                  padding: 16,
+                  borderRadius: 14,
+                  background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1))',
+                  border: '1px solid rgba(168, 85, 247, 0.2)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 8 }}>
+                    <Heart style={{ width: 14, height: 14, fill: '#a855f7', color: '#a855f7' }} />
+                    <p style={{ color: 'rgba(192, 132, 252, 0.7)', fontSize: 13, fontWeight: 500 }}>Vale</p>
+                  </div>
+                  <p style={{ fontSize: 20, fontWeight: 700, color: 'white' }}>{formatCurrency(balance.usd.vale)}</p>
+                </div>
               </div>
-              <p style={{ fontSize: 24, fontWeight: 700, color: 'white' }}>{formatCurrency(balance.vale)}</p>
-            </div>
-          </div>
+              {balance.usd.deudor && (
+                <div style={{
+                  padding: 12,
+                  borderRadius: 12,
+                  background: 'rgba(74, 222, 128, 0.1)',
+                  border: '1px solid rgba(74, 222, 128, 0.2)',
+                  marginBottom: balance.ars.total > 0 ? 20 : 16,
+                  textAlign: 'center'
+                }}>
+                  <span style={{ fontSize: 13, color: '#4ade80' }}>
+                    <span style={{ fontWeight: 600 }}>{balance.usd.deudor}</span> debe{' '}
+                    <span style={{ fontWeight: 600 }}>{formatCurrency(balance.usd.diferencia)}</span> a{' '}
+                    <span style={{ fontWeight: 600 }}>{balance.usd.deudor === 'Juan' ? 'Vale' : 'Juan'}</span>
+                  </span>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Balance ARS */}
+          {balance.ars.total > 0 && (
+            <>
+              <div style={{ marginBottom: 8 }}>
+                <span style={{ fontSize: 12, color: 'rgba(59, 130, 246, 0.8)', fontWeight: 600 }}>PESOS (ARS)</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <div style={{
+                  textAlign: 'center',
+                  padding: 16,
+                  borderRadius: 14,
+                  background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1))',
+                  border: '1px solid rgba(59, 130, 246, 0.2)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 8 }}>
+                    <Heart style={{ width: 14, height: 14, fill: '#f472b6', color: '#f472b6' }} />
+                    <p style={{ color: 'rgba(192, 132, 252, 0.7)', fontSize: 13, fontWeight: 500 }}>Juan</p>
+                  </div>
+                  <p style={{ fontSize: 20, fontWeight: 700, color: 'white' }}>{formatCurrency(balance.ars.juan, 'ARS')}</p>
+                </div>
+                <div style={{
+                  textAlign: 'center',
+                  padding: 16,
+                  borderRadius: 14,
+                  background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1))',
+                  border: '1px solid rgba(139, 92, 246, 0.2)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 8 }}>
+                    <Heart style={{ width: 14, height: 14, fill: '#a855f7', color: '#a855f7' }} />
+                    <p style={{ color: 'rgba(192, 132, 252, 0.7)', fontSize: 13, fontWeight: 500 }}>Vale</p>
+                  </div>
+                  <p style={{ fontSize: 20, fontWeight: 700, color: 'white' }}>{formatCurrency(balance.ars.vale, 'ARS')}</p>
+                </div>
+              </div>
+              {balance.ars.deudor && (
+                <div style={{
+                  padding: 12,
+                  borderRadius: 12,
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  border: '1px solid rgba(59, 130, 246, 0.2)',
+                  marginBottom: 16,
+                  textAlign: 'center'
+                }}>
+                  <span style={{ fontSize: 13, color: '#60a5fa' }}>
+                    <span style={{ fontWeight: 600 }}>{balance.ars.deudor}</span> debe{' '}
+                    <span style={{ fontWeight: 600 }}>{formatCurrency(balance.ars.diferencia, 'ARS')}</span> a{' '}
+                    <span style={{ fontWeight: 600 }}>{balance.ars.deudor === 'Juan' ? 'Vale' : 'Juan'}</span>
+                  </span>
+                </div>
+              )}
+            </>
+          )}
 
           {/* Resumen de cuotas pendientes */}
           {resumenCuotas.cantidad > 0 && (
@@ -316,28 +402,23 @@ export function Gastos() {
               style={{
                 padding: 16,
                 borderRadius: 14,
-                background: 'rgba(74, 222, 128, 0.1)',
-                border: '1px solid rgba(74, 222, 128, 0.2)',
-                marginBottom: balance.deudor ? 16 : 0
+                background: 'rgba(168, 85, 247, 0.1)',
+                border: '1px solid rgba(168, 85, 247, 0.2)'
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                <CreditCard style={{ width: 18, height: 18, color: '#4ade80' }} />
-                <span style={{ fontSize: 14, color: '#4ade80', fontWeight: 500 }}>
+                <CreditCard style={{ width: 18, height: 18, color: '#a855f7' }} />
+                <span style={{ fontSize: 14, color: '#c4b5fd', fontWeight: 500 }}>
                   {resumenCuotas.cantidad} gasto{resumenCuotas.cantidad > 1 ? 's' : ''} en cuotas
                 </span>
               </div>
-              <div style={{ marginBottom: 12 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(74, 222, 128, 0.8)', marginBottom: 6 }}>
-                  <span>Pagado: {formatCurrency(resumenCuotas.totalPagado)}</span>
-                  <span>Restante: {formatCurrency(resumenCuotas.totalRestante)}</span>
-                </div>
-                <div style={{ height: 8, borderRadius: 4, background: 'rgba(74, 222, 128, 0.1)', overflow: 'hidden' }}>
+              <div>
+                <div style={{ height: 8, borderRadius: 4, background: 'rgba(168, 85, 247, 0.1)', overflow: 'hidden' }}>
                   <motion.div
                     style={{
                       height: '100%',
                       borderRadius: 4,
-                      background: 'linear-gradient(to right, #22c55e, #4ade80)'
+                      background: 'linear-gradient(to right, #a855f7, #ec4899)'
                     }}
                     initial={{ width: 0 }}
                     animate={{ width: `${resumenCuotas.progresoGeneral}%` }}
@@ -345,34 +426,11 @@ export function Gastos() {
                   />
                 </div>
                 <div style={{ textAlign: 'center', marginTop: 6 }}>
-                  <span style={{ fontSize: 12, color: 'rgba(74, 222, 128, 0.8)' }}>
+                  <span style={{ fontSize: 12, color: 'rgba(196, 181, 253, 0.8)' }}>
                     {resumenCuotas.progresoGeneral}% completado
                   </span>
                 </div>
               </div>
-            </motion.div>
-          )}
-
-          {balance.deudor && (
-            <motion.div
-              style={{
-                padding: 20,
-                borderRadius: 18,
-                background: 'linear-gradient(to right, rgba(236, 72, 153, 0.2), rgba(168, 85, 247, 0.2))',
-                border: '1px solid rgba(236, 72, 153, 0.3)'
-              }}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-            >
-              <p style={{ textAlign: 'center', color: '#fbcfe8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <Sparkles style={{ width: 16, height: 16, color: '#fde047' }} />
-                <span>
-                  <span style={{ fontWeight: 600, color: 'white' }}>{balance.deudor}</span> le debe{' '}
-                  <span style={{ fontWeight: 600, color: '#f9a8d4' }}>{formatCurrency(balance.diferencia)}</span> a{' '}
-                  <span style={{ fontWeight: 600, color: 'white' }}>{balance.deudor === 'Juan' ? 'Vale' : 'Juan'}</span>
-                </span>
-                <Sparkles style={{ width: 16, height: 16, color: '#fde047' }} />
-              </p>
             </motion.div>
           )}
         </div>
@@ -405,7 +463,7 @@ export function Gastos() {
                 .map(([cat, total], index) => {
                   const Icon = CATEGORIA_ICONS[cat as CategoriaGasto];
                   const colors = CATEGORIA_COLORS[cat as CategoriaGasto];
-                  const percentage = (total / balance.total) * 100;
+                  const percentage = totalByCategory > 0 ? (total / totalByCategory) * 100 : 0;
                   return (
                     <motion.div
                       key={cat}

@@ -197,14 +197,22 @@ export const TIPOS_NOTA: Record<TipoNota, CategoryConfig> = {
   comprar: { label: 'Que comprar', icon: 'ShoppingCart', color: 'bg-pink-500' },
 };
 
-// Balance type (unificado)
-export interface Balance {
+// Balance por moneda
+export interface BalanceMoneda {
   total: number;
   juan: number;
   vale: number;
   diferencia: number;
   deudor: Pagador | null;
-  // Desglose
-  gastosUnicos: { total: number; juan: number; vale: number };
-  gastosCuotas: { total: number; juan: number; vale: number; restante: number };
+}
+
+// Balance type (separado por moneda)
+export interface Balance {
+  usd: BalanceMoneda;
+  ars: BalanceMoneda;
+  // Totales combinados (para mostrar resumen)
+  totalGeneral: {
+    usd: number;
+    ars: number;
+  };
 }

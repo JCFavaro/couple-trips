@@ -113,7 +113,7 @@ export function Home() {
         </div>
       </motion.div>
 
-      {/* Balance Card - Unificado */}
+      {/* Balance Card - Separado por moneda */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -134,73 +134,86 @@ export function Home() {
             </div>
 
             {/* Total gastado */}
-            <p style={{ fontSize: 32, fontWeight: 700, color: 'white', marginBottom: 8 }}>
-              {formatCurrency(balance.total)}
-            </p>
-
-            {/* Quien debe a quien */}
-            {balance.deudor && balance.diferencia > 0 && (
-              <div style={{
-                padding: '10px 14px',
-                background: balance.deudor === 'Juan' ? 'rgba(96, 165, 250, 0.15)' : 'rgba(244, 114, 182, 0.15)',
-                borderRadius: 12,
-                marginBottom: 16,
-                border: `1px solid ${balance.deudor === 'Juan' ? 'rgba(96, 165, 250, 0.3)' : 'rgba(244, 114, 182, 0.3)'}`
-              }}>
-                <p style={{
-                  fontSize: 14,
-                  color: balance.deudor === 'Juan' ? '#60a5fa' : '#f472b6',
-                  fontWeight: 500
-                }}>
-                  {balance.deudor} debe {formatCurrency(balance.diferencia)} a {balance.deudor === 'Juan' ? 'Vale' : 'Juan'}
+            <div style={{ marginBottom: 16 }}>
+              <p style={{ fontSize: 32, fontWeight: 700, color: 'white' }}>
+                {formatCurrency(balance.totalGeneral.usd)}
+              </p>
+              {balance.totalGeneral.ars > 0 && (
+                <p style={{ fontSize: 18, color: 'rgba(192, 132, 252, 0.7)', marginTop: 4 }}>
+                  + {formatCurrency(balance.totalGeneral.ars, 'ARS')}
                 </p>
-              </div>
+              )}
+            </div>
+
+            {/* Balance USD */}
+            {balance.usd.total > 0 && (
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 8 }}>
+                  <div style={{
+                    padding: 12,
+                    background: 'rgba(96, 165, 250, 0.1)',
+                    borderRadius: 12,
+                    textAlign: 'center'
+                  }}>
+                    <p style={{ fontSize: 11, color: 'rgba(96, 165, 250, 0.8)', marginBottom: 4 }}>Juan (USD)</p>
+                    <p style={{ fontSize: 16, fontWeight: 600, color: '#60a5fa' }}>
+                      {formatCurrency(balance.usd.juan)}
+                    </p>
+                  </div>
+                  <div style={{
+                    padding: 12,
+                    background: 'rgba(244, 114, 182, 0.1)',
+                    borderRadius: 12,
+                    textAlign: 'center'
+                  }}>
+                    <p style={{ fontSize: 11, color: 'rgba(244, 114, 182, 0.8)', marginBottom: 4 }}>Vale (USD)</p>
+                    <p style={{ fontSize: 16, fontWeight: 600, color: '#f472b6' }}>
+                      {formatCurrency(balance.usd.vale)}
+                    </p>
+                  </div>
+                </div>
+                {balance.usd.deudor && (
+                  <p style={{ fontSize: 12, color: '#4ade80', textAlign: 'center', marginBottom: 12 }}>
+                    {balance.usd.deudor} debe {formatCurrency(balance.usd.diferencia)} a {balance.usd.deudor === 'Juan' ? 'Vale' : 'Juan'}
+                  </p>
+                )}
+              </>
             )}
 
-            {/* Desglose Juan vs Vale */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
-              <div style={{
-                padding: 14,
-                background: 'rgba(96, 165, 250, 0.1)',
-                borderRadius: 12,
-                textAlign: 'center'
-              }}>
-                <p style={{ fontSize: 12, color: 'rgba(96, 165, 250, 0.8)', marginBottom: 4 }}>Juan pago</p>
-                <p style={{ fontSize: 18, fontWeight: 600, color: '#60a5fa' }}>
-                  {formatCurrency(balance.juan)}
-                </p>
-              </div>
-              <div style={{
-                padding: 14,
-                background: 'rgba(244, 114, 182, 0.1)',
-                borderRadius: 12,
-                textAlign: 'center'
-              }}>
-                <p style={{ fontSize: 12, color: 'rgba(244, 114, 182, 0.8)', marginBottom: 4 }}>Vale pago</p>
-                <p style={{ fontSize: 18, fontWeight: 600, color: '#f472b6' }}>
-                  {formatCurrency(balance.vale)}
-                </p>
-              </div>
-            </div>
-
-            {/* Desglose por tipo */}
-            <div style={{
-              display: 'flex',
-              gap: 16,
-              fontSize: 12,
-              color: 'rgba(192, 132, 252, 0.6)',
-              paddingTop: 12,
-              borderTop: '1px solid rgba(139, 92, 246, 0.2)'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <DollarSign style={{ width: 14, height: 14 }} />
-                Gastos unicos: {formatCurrency(balance.gastosUnicos.total)}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <CreditCard style={{ width: 14, height: 14 }} />
-                Cuotas: {formatCurrency(balance.gastosCuotas.total)}
-              </div>
-            </div>
+            {/* Balance ARS */}
+            {balance.ars.total > 0 && (
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 8 }}>
+                  <div style={{
+                    padding: 12,
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    borderRadius: 12,
+                    textAlign: 'center'
+                  }}>
+                    <p style={{ fontSize: 11, color: 'rgba(59, 130, 246, 0.8)', marginBottom: 4 }}>Juan (ARS)</p>
+                    <p style={{ fontSize: 16, fontWeight: 600, color: '#3b82f6' }}>
+                      {formatCurrency(balance.ars.juan, 'ARS')}
+                    </p>
+                  </div>
+                  <div style={{
+                    padding: 12,
+                    background: 'rgba(139, 92, 246, 0.1)',
+                    borderRadius: 12,
+                    textAlign: 'center'
+                  }}>
+                    <p style={{ fontSize: 11, color: 'rgba(139, 92, 246, 0.8)', marginBottom: 4 }}>Vale (ARS)</p>
+                    <p style={{ fontSize: 16, fontWeight: 600, color: '#8b5cf6' }}>
+                      {formatCurrency(balance.ars.vale, 'ARS')}
+                    </p>
+                  </div>
+                </div>
+                {balance.ars.deudor && (
+                  <p style={{ fontSize: 12, color: '#60a5fa', textAlign: 'center' }}>
+                    {balance.ars.deudor} debe {formatCurrency(balance.ars.diferencia, 'ARS')} a {balance.ars.deudor === 'Juan' ? 'Vale' : 'Juan'}
+                  </p>
+                )}
+              </>
+            )}
           </div>
         </Link>
       </motion.div>
