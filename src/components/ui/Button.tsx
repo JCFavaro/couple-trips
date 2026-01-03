@@ -25,14 +25,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles: Record<string, React.CSSProperties> = {
       primary: {
-        background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+        background: 'var(--tab-active-gradient)',
         color: 'white',
-        boxShadow: '0 4px 20px rgba(236, 72, 153, 0.4)',
+        boxShadow: '0 4px 20px var(--btn-shadow)',
       },
       secondary: {
         background: 'rgba(255, 255, 255, 0.1)',
         color: 'white',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
+        border: '1px solid var(--glass-border)',
       },
       ghost: {
         background: 'transparent',
@@ -72,7 +72,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
             style={{ marginRight: 8 }}
           >
-            <Sparkles style={{ width: 18, height: 18 }} />
+            <Sparkles style={{ width: 18, height: 18, color: 'white' }} />
           </motion.div>
         ) : null}
         {children}

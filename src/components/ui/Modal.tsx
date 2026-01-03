@@ -74,11 +74,11 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
               position: 'relative',
               width: '100%',
               ...sizeStyles[size],
-              background: 'linear-gradient(135deg, rgba(88, 28, 135, 0.95), rgba(131, 24, 67, 0.95))',
+              background: `linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary))`,
               backdropFilter: 'blur(20px)',
               borderRadius: 24,
-              border: '1px solid rgba(244, 114, 182, 0.3)',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(236, 72, 153, 0.2)',
+              border: '1px solid var(--glass-border)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px var(--glass-shadow)',
               padding: 28,
               maxHeight: '85vh',
               overflowY: 'auto'
@@ -97,7 +97,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
               animate={{ rotate: [360, 180, 0], scale: [1, 1.3, 1] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
             >
-              <Sparkles style={{ width: 12, height: 12, color: 'rgba(244, 114, 182, 0.5)' }} />
+              <Sparkles style={{ width: 12, height: 12, color: 'var(--theme-accent)', opacity: 0.5 }} />
             </motion.div>
 
             {/* Header */}
@@ -118,7 +118,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
                   alignItems: 'center',
                   gap: 10
                 }}>
-                  <Sparkles style={{ width: 20, height: 20, color: '#f472b6' }} />
+                  <Sparkles style={{ width: 20, height: 20, color: 'var(--theme-accent)' }} />
                   {title}
                 </h2>
               )}
@@ -154,7 +154,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
               left: 0,
               right: 0,
               height: 80,
-              background: 'linear-gradient(to top, rgba(236, 72, 153, 0.1), transparent)',
+              background: 'linear-gradient(to top, var(--glass-bg-1), transparent)',
               borderRadius: '0 0 24px 24px',
               pointerEvents: 'none'
             }} />

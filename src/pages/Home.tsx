@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { Sparkles, DollarSign, Calendar, MapPin, Heart, CreditCard, Wallet } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Sparkles, DollarSign, Calendar, MapPin, Heart, CreditCard, Wallet, ArrowLeftRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { PageWrapper } from '../components/layout';
 import { useItinerario, useLugares, useTripConfig, useGastos } from '../hooks';
+import { useTrip } from '../contexts';
 import { formatCurrency, formatDate } from '../lib/utils';
 
 // Disney Castle SVG - Pink version
@@ -38,8 +39,60 @@ function MiniCastle() {
   );
 }
 
+// Chile Mountains SVG
+function MiniMountain() {
+  return (
+    <svg viewBox="0 0 100 80" style={{ width: 80, height: 64 }}>
+      <defs>
+        <linearGradient id="mountainGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#e2e8f0" />
+          <stop offset="100%" stopColor="#475569" />
+        </linearGradient>
+        <linearGradient id="mountainGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#f1f5f9" />
+          <stop offset="100%" stopColor="#64748b" />
+        </linearGradient>
+        <linearGradient id="snowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="100%" stopColor="#e2e8f0" />
+        </linearGradient>
+      </defs>
+      {/* Back mountain */}
+      <polygon points="15,80 50,15 85,80" fill="url(#mountainGrad1)" />
+      <polygon points="40,30 50,15 60,30" fill="url(#snowGrad)" />
+      {/* Front mountain */}
+      <polygon points="0,80 35,25 70,80" fill="url(#mountainGrad2)" />
+      <polygon points="25,40 35,25 45,40" fill="url(#snowGrad)" />
+      {/* Condor */}
+      <path d="M75 25 Q80 22 88 24 Q82 26 88 28 Q80 30 75 25" fill="#1e293b" />
+    </svg>
+  );
+}
+
+// Theme-based trip icon
+function TripIcon({ theme }: { theme: string }) {
+  if (theme === 'orlando') return <MiniCastle />;
+  if (theme === 'chile') return <MiniMountain />;
+  return <span style={{ fontSize: 64 }}>✈️</span>;
+}
+
+// Countdown messages per theme
+function getCountdownMsg(theme: string, daysUntil: number, onTrip: boolean) {
+  if (onTrip) {
+    if (theme === 'orlando') return 'Viviendo la magia!';
+    if (theme === 'chile') return 'Explorando la aventura!';
+    return 'Disfrutando el viaje!';
+  }
+  if (daysUntil <= 0) return 'El viaje ya paso';
+  if (theme === 'orlando') return `Faltan ${daysUntil} dias para la magia`;
+  if (theme === 'chile') return `Faltan ${daysUntil} dias para la aventura`;
+  return `Faltan ${daysUntil} dias`;
+}
+
 export function Home() {
-  const { daysUntil, countdownMessage, onTrip, config } = useTripConfig();
+  const navigate = useNavigate();
+  const { currentTrip, clearTrip } = useTrip();
+  const { daysUntil, onTrip, config } = useTripConfig();
   const { balance, resumenCuotas } = useGastos();
   const { items: itinerario } = useItinerario();
   const { pendientes: lugaresPendientes } = useLugares();
@@ -47,8 +100,47 @@ export function Home() {
   const today = new Date().toISOString().split('T')[0];
   const nextActivity = itinerario.find((item) => item.fecha >= today);
 
+  const tripTheme = currentTrip?.theme || 'default';
+  const tripName = currentTrip?.nombre || 'Tu Viaje';
+  const countdownMsg = getCountdownMsg(tripTheme, daysUntil, onTrip);
+
+  const handleChangeTrip = () => {
+    clearTrip();
+    navigate('/trips');
+  };
+
   return (
     <PageWrapper>
+      {/* Trip Switcher Button - Fixed at top right */}
+      <motion.button
+        onClick={handleChangeTrip}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        style={{
+          position: 'fixed',
+          top: 16,
+          right: 16,
+          zIndex: 50,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '10px 16px',
+          borderRadius: 20,
+          background: 'var(--glass-bg-1)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid var(--glass-border)',
+          color: 'white',
+          fontSize: 13,
+          fontWeight: 500,
+          cursor: 'pointer',
+        }}
+        whileHover={{ scale: 1.05, borderColor: 'var(--glass-border-hover)' }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <span style={{ fontSize: 16 }}>{currentTrip?.emoji || '✈️'}</span>
+        <ArrowLeftRight style={{ width: 16, height: 16, color: 'var(--theme-accent)' }} />
+      </motion.button>
+
       {/* Header Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -60,13 +152,13 @@ export function Home() {
           transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
           style={{ display: 'inline-block', marginBottom: 20 }}
         >
-          <MiniCastle />
+          <TripIcon theme={tripTheme} />
         </motion.div>
         <h1 className="gradient-text" style={{ fontSize: 32, fontWeight: 700 }}>
-          Orlando 2026
+          {tripName}
         </h1>
         <p style={{
-          color: 'rgba(192, 132, 252, 0.7)',
+          color: 'var(--theme-text-muted)',
           fontSize: 14,
           display: 'flex',
           alignItems: 'center',
@@ -74,9 +166,9 @@ export function Home() {
           gap: 8,
           marginTop: 12
         }}>
-          <Heart style={{ width: 14, height: 14, fill: '#f472b6', color: '#f472b6' }} />
+          <Heart style={{ width: 14, height: 14, fill: 'var(--heart-color)', color: 'var(--heart-color)' }} />
           Juan & Vale
-          <Heart style={{ width: 14, height: 14, fill: '#f472b6', color: '#f472b6' }} />
+          <Heart style={{ width: 14, height: 14, fill: 'var(--heart-color)', color: 'var(--heart-color)' }} />
         </p>
       </motion.div>
 
@@ -89,8 +181,8 @@ export function Home() {
       >
         <div className="glass-card" style={{ padding: 32, position: 'relative', overflow: 'hidden' }}>
           {/* Decorative sparkles */}
-          <Sparkles className="sparkle" style={{ position: 'absolute', top: 20, left: 20, width: 20, height: 20, color: 'rgba(244, 114, 182, 0.4)' }} />
-          <Sparkles className="sparkle" style={{ position: 'absolute', top: 20, right: 20, width: 20, height: 20, color: 'rgba(168, 85, 247, 0.4)', animationDelay: '0.5s' }} />
+          <Sparkles className="sparkle" style={{ position: 'absolute', top: 20, left: 20, width: 20, height: 20, color: 'var(--theme-accent)', opacity: 0.4 }} />
+          <Sparkles className="sparkle" style={{ position: 'absolute', top: 20, right: 20, width: 20, height: 20, color: 'var(--theme-secondary)', opacity: 0.4, animationDelay: '0.5s' }} />
 
           <div style={{ textAlign: 'center', position: 'relative', zIndex: 10 }}>
             {!onTrip && daysUntil > 0 && (
@@ -103,10 +195,10 @@ export function Home() {
             )}
 
             <p style={{ fontSize: 20, color: 'white', marginTop: 16, fontWeight: 500 }}>
-              {countdownMessage}
+              {countdownMsg}
             </p>
 
-            <p style={{ color: 'rgba(192, 132, 252, 0.6)', fontSize: 14, marginTop: 12 }}>
+            <p style={{ color: 'var(--theme-text-muted)', fontSize: 14, marginTop: 12 }}>
               {formatDate(config.trip_start_date, "d 'de' MMMM")} - {formatDate(config.trip_end_date, "d 'de' MMMM, yyyy")}
             </p>
           </div>
@@ -126,11 +218,11 @@ export function Home() {
               <div style={{
                 padding: 10,
                 borderRadius: 14,
-                background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(168, 85, 247, 0.3))'
+                background: 'var(--glass-bg-1)'
               }}>
-                <Wallet style={{ width: 20, height: 20, color: '#f9a8d4' }} />
+                <Wallet style={{ width: 20, height: 20, color: 'var(--theme-accent)' }} />
               </div>
-              <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 14, fontWeight: 500 }}>Balance Total</span>
+              <span style={{ color: 'var(--theme-text-muted)', fontSize: 14, fontWeight: 500 }}>Balance Total</span>
             </div>
 
             {/* Total gastado */}
@@ -139,7 +231,7 @@ export function Home() {
                 {formatCurrency(balance.totalGeneral.usd)}
               </p>
               {balance.totalGeneral.ars > 0 && (
-                <p style={{ fontSize: 18, color: 'rgba(192, 132, 252, 0.7)', marginTop: 4 }}>
+                <p style={{ fontSize: 18, color: 'var(--theme-text-muted)', marginTop: 4 }}>
                   + {formatCurrency(balance.totalGeneral.ars, 'ARS')}
                 </p>
               )}
@@ -151,29 +243,29 @@ export function Home() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 8 }}>
                   <div style={{
                     padding: 12,
-                    background: 'rgba(96, 165, 250, 0.1)',
+                    background: 'var(--glass-bg-1)',
                     borderRadius: 12,
                     textAlign: 'center'
                   }}>
-                    <p style={{ fontSize: 11, color: 'rgba(96, 165, 250, 0.8)', marginBottom: 4 }}>Juan (USD)</p>
-                    <p style={{ fontSize: 16, fontWeight: 600, color: '#60a5fa' }}>
+                    <p style={{ fontSize: 11, color: 'var(--color-juan)', opacity: 0.8, marginBottom: 4 }}>Juan (USD)</p>
+                    <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-juan)' }}>
                       {formatCurrency(balance.usd.juan)}
                     </p>
                   </div>
                   <div style={{
                     padding: 12,
-                    background: 'rgba(244, 114, 182, 0.1)',
+                    background: 'var(--glass-bg-2)',
                     borderRadius: 12,
                     textAlign: 'center'
                   }}>
-                    <p style={{ fontSize: 11, color: 'rgba(244, 114, 182, 0.8)', marginBottom: 4 }}>Vale (USD)</p>
-                    <p style={{ fontSize: 16, fontWeight: 600, color: '#f472b6' }}>
+                    <p style={{ fontSize: 11, color: 'var(--color-vale)', opacity: 0.8, marginBottom: 4 }}>Vale (USD)</p>
+                    <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-vale)' }}>
                       {formatCurrency(balance.usd.vale)}
                     </p>
                   </div>
                 </div>
                 {balance.usd.deudor && (
-                  <p style={{ fontSize: 12, color: '#4ade80', textAlign: 'center', marginBottom: 12 }}>
+                  <p style={{ fontSize: 12, color: 'var(--success-color)', textAlign: 'center', marginBottom: 12 }}>
                     {balance.usd.deudor} debe {formatCurrency(balance.usd.diferencia)} a {balance.usd.deudor === 'Juan' ? 'Vale' : 'Juan'}
                   </p>
                 )}
@@ -186,29 +278,29 @@ export function Home() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 8 }}>
                   <div style={{
                     padding: 12,
-                    background: 'rgba(59, 130, 246, 0.1)',
+                    background: 'var(--glass-bg-1)',
                     borderRadius: 12,
                     textAlign: 'center'
                   }}>
-                    <p style={{ fontSize: 11, color: 'rgba(59, 130, 246, 0.8)', marginBottom: 4 }}>Juan (ARS)</p>
-                    <p style={{ fontSize: 16, fontWeight: 600, color: '#3b82f6' }}>
+                    <p style={{ fontSize: 11, color: 'var(--color-juan)', opacity: 0.8, marginBottom: 4 }}>Juan (ARS)</p>
+                    <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-juan)' }}>
                       {formatCurrency(balance.ars.juan, 'ARS')}
                     </p>
                   </div>
                   <div style={{
                     padding: 12,
-                    background: 'rgba(139, 92, 246, 0.1)',
+                    background: 'var(--glass-bg-2)',
                     borderRadius: 12,
                     textAlign: 'center'
                   }}>
-                    <p style={{ fontSize: 11, color: 'rgba(139, 92, 246, 0.8)', marginBottom: 4 }}>Vale (ARS)</p>
-                    <p style={{ fontSize: 16, fontWeight: 600, color: '#8b5cf6' }}>
+                    <p style={{ fontSize: 11, color: 'var(--color-vale)', opacity: 0.8, marginBottom: 4 }}>Vale (ARS)</p>
+                    <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-vale)' }}>
                       {formatCurrency(balance.ars.vale, 'ARS')}
                     </p>
                   </div>
                 </div>
                 {balance.ars.deudor && (
-                  <p style={{ fontSize: 12, color: '#60a5fa', textAlign: 'center' }}>
+                  <p style={{ fontSize: 12, color: 'var(--theme-accent)', textAlign: 'center' }}>
                     {balance.ars.deudor} debe {formatCurrency(balance.ars.diferencia, 'ARS')} a {balance.ars.deudor === 'Juan' ? 'Vale' : 'Juan'}
                   </p>
                 )}
@@ -234,21 +326,21 @@ export function Home() {
                   borderRadius: 12,
                   background: 'linear-gradient(135deg, rgba(74, 222, 128, 0.3), rgba(34, 197, 94, 0.3))'
                 }}>
-                  <CreditCard style={{ width: 18, height: 18, color: '#4ade80' }} />
+                  <CreditCard style={{ width: 18, height: 18, color: 'var(--success-color)' }} />
                 </div>
-                <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 13, fontWeight: 500 }}>Cuotas</span>
+                <span style={{ color: 'var(--theme-text-muted)', fontSize: 13, fontWeight: 500 }}>Cuotas</span>
               </div>
-              <p style={{ fontSize: 24, fontWeight: 700, color: '#4ade80', marginBottom: 4 }}>
+              <p style={{ fontSize: 24, fontWeight: 700, color: 'var(--success-color)', marginBottom: 4 }}>
                 {resumenCuotas.progresoGeneral}%
               </p>
-              <p style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.6)' }}>
+              <p style={{ fontSize: 11, color: 'var(--theme-text-muted)' }}>
                 {formatCurrency(resumenCuotas.totalPagado)} / {formatCurrency(resumenCuotas.totalAPagar)}
               </p>
               {/* Mini progress bar */}
               {resumenCuotas.cantidad > 0 && (
                 <div style={{
                   height: 6,
-                  background: 'rgba(139, 92, 246, 0.2)',
+                  background: 'var(--glass-bg-1)',
                   borderRadius: 999,
                   marginTop: 10,
                   overflow: 'hidden'
@@ -258,7 +350,7 @@ export function Home() {
                     height: '100%',
                     background: resumenCuotas.progresoGeneral >= 100
                       ? 'linear-gradient(90deg, #4ade80, #22c55e)'
-                      : 'linear-gradient(90deg, #ec4899, #a855f7)',
+                      : 'var(--tab-active-gradient)',
                     borderRadius: 999
                   }} />
                 </div>
@@ -279,16 +371,16 @@ export function Home() {
                 <div style={{
                   padding: 8,
                   borderRadius: 12,
-                  background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.3))'
+                  background: 'var(--glass-bg-1)'
                 }}>
-                  <MapPin style={{ width: 18, height: 18, color: '#c4b5fd' }} />
+                  <MapPin style={{ width: 18, height: 18, color: 'var(--theme-accent)' }} />
                 </div>
-                <span style={{ color: 'rgba(233, 213, 255, 0.7)', fontSize: 13, fontWeight: 500 }}>Lugares</span>
+                <span style={{ color: 'var(--theme-text-muted)', fontSize: 13, fontWeight: 500 }}>Lugares</span>
               </div>
               <p style={{ fontSize: 24, fontWeight: 700, color: 'white', marginBottom: 4 }}>
                 {lugaresPendientes}
               </p>
-              <p style={{ fontSize: 11, color: 'rgba(192, 132, 252, 0.6)' }}>por visitar</p>
+              <p style={{ fontSize: 11, color: 'var(--theme-text-muted)' }}>por visitar</p>
             </div>
           </Link>
         </motion.div>
@@ -303,7 +395,7 @@ export function Home() {
           style={{ marginBottom: 56 }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-            <Calendar style={{ width: 20, height: 20, color: '#f472b6' }} />
+            <Calendar style={{ width: 20, height: 20, color: 'var(--theme-accent)' }} />
             <h2 style={{ fontSize: 18, fontWeight: 600, color: 'white' }}>Proxima actividad</h2>
           </div>
           <Link to="/itinerario" style={{ textDecoration: 'none' }}>
@@ -315,7 +407,7 @@ export function Home() {
                   </p>
                   {nextActivity.descripcion && (
                     <p style={{
-                      color: 'rgba(192, 132, 252, 0.6)',
+                      color: 'var(--theme-text-muted)',
                       fontSize: 14,
                       marginTop: 8,
                       display: '-webkit-box',
@@ -331,15 +423,15 @@ export function Home() {
                   <div style={{
                     padding: '10px 16px',
                     borderRadius: 14,
-                    background: 'linear-gradient(to right, rgba(236, 72, 153, 0.2), rgba(168, 85, 247, 0.2))',
-                    border: '1px solid rgba(236, 72, 153, 0.3)'
+                    background: 'var(--glass-bg-1)',
+                    border: '1px solid var(--glass-border)'
                   }}>
-                    <p style={{ color: '#f9a8d4', fontSize: 14, fontWeight: 600 }}>
+                    <p style={{ color: 'var(--theme-accent)', fontSize: 14, fontWeight: 600 }}>
                       {formatDate(nextActivity.fecha, "d MMM")}
                     </p>
                   </div>
                   {nextActivity.hora && (
-                    <p style={{ color: 'rgba(192, 132, 252, 0.5)', fontSize: 12, marginTop: 8 }}>
+                    <p style={{ color: 'var(--theme-text-muted)', fontSize: 12, marginTop: 8 }}>
                       {nextActivity.hora}
                     </p>
                   )}
@@ -365,13 +457,13 @@ export function Home() {
           alignItems: 'center',
           gap: 10
         }}>
-          <Sparkles style={{ width: 20, height: 20, color: '#f472b6' }} />
+          <Sparkles style={{ width: 20, height: 20, color: 'var(--theme-accent)' }} />
           Accesos rapidos
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
           {[
-            { to: '/gastos', icon: DollarSign, label: 'Gastos', color: 'from-pink-500 to-rose-500' },
-            { to: '/itinerario', icon: Calendar, label: 'Itinerario', color: 'from-purple-500 to-pink-500' },
+            { to: '/gastos', icon: DollarSign, label: 'Gastos' },
+            { to: '/itinerario', icon: Calendar, label: 'Itinerario' },
           ].map((item) => (
             <motion.div
               key={item.to}
@@ -381,7 +473,6 @@ export function Home() {
               <Link to={item.to} style={{ textDecoration: 'none' }}>
                 <div className="glass-card" style={{ padding: 20, textAlign: 'center' }}>
                   <div
-                    className={`bg-gradient-to-br ${item.color}`}
                     style={{
                       width: 52,
                       height: 52,
@@ -390,12 +481,13 @@ export function Home() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      marginBottom: 12
+                      marginBottom: 12,
+                      background: 'var(--icon-bg-1)'
                     }}
                   >
                     <item.icon style={{ width: 24, height: 24, color: 'white' }} />
                   </div>
-                  <span style={{ fontSize: 12, color: 'rgba(233, 213, 255, 0.8)', fontWeight: 500 }}>
+                  <span style={{ fontSize: 12, color: 'var(--theme-text-muted)', fontWeight: 500 }}>
                     {item.label}
                   </span>
                 </div>

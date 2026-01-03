@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type {
+  Trip,
   Gasto,
   GastoPago,
   Itinerario,
@@ -23,7 +24,50 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
 
-// ============ TRIP CONFIG ============
+// ============ TRIPS ============
+export async function getTrips(): Promise<Trip[]> {
+  const { data, error } = await supabase
+    .from('trips')
+    .select('*')
+    .order('fecha_inicio', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching trips:', error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function getTrip(tripId: string): Promise<Trip | null> {
+  const { data, error } = await supabase
+    .from('trips')
+    .select('*')
+    .eq('id', tripId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching trip:', error);
+    return null;
+  }
+  return data;
+}
+
+export async function updateTrip(tripId: string, updates: Partial<Trip>): Promise<Trip | null> {
+  const { data, error } = await supabase
+    .from('trips')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', tripId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating trip:', error);
+    return null;
+  }
+  return data;
+}
+
+// ============ TRIP CONFIG (Legacy - now use trips table) ============
 export async function getTripConfig(): Promise<TripConfig | null> {
   const { data, error } = await supabase
     .from('trip_config')
@@ -53,10 +97,11 @@ export async function updateTripConfig(config: Partial<TripConfig>): Promise<Tri
 }
 
 // ============ GASTOS ============
-export async function getGastos(): Promise<Gasto[]> {
+export async function getGastos(tripId: string): Promise<Gasto[]> {
   const { data, error } = await supabase
     .from('gastos')
     .select('*')
+    .eq('trip_id', tripId)
     .order('fecha', { ascending: false });
 
   if (error) {
@@ -66,10 +111,11 @@ export async function getGastos(): Promise<Gasto[]> {
   return data || [];
 }
 
-export async function createGasto(gasto: GastoFormData, montoUsd: number): Promise<Gasto | null> {
+export async function createGasto(tripId: string, gasto: GastoFormData, montoUsd: number): Promise<Gasto | null> {
   const { data, error } = await supabase
     .from('gastos')
     .insert({
+      trip_id: tripId,
       fecha: gasto.fecha,
       concepto: gasto.concepto,
       categoria: gasto.categoria,
@@ -135,10 +181,11 @@ export async function deleteGasto(id: string): Promise<boolean> {
 }
 
 // ============ GASTO PAGOS (Cuotas) ============
-export async function getGastoPagos(): Promise<GastoPago[]> {
+export async function getGastoPagos(tripId: string): Promise<GastoPago[]> {
   const { data, error } = await supabase
     .from('gasto_pagos')
     .select('*')
+    .eq('trip_id', tripId)
     .order('fecha_pago', { ascending: false });
 
   if (error) {
@@ -162,10 +209,11 @@ export async function getGastoPagosByGasto(gastoId: string): Promise<GastoPago[]
   return data || [];
 }
 
-export async function createGastoPago(pago: GastoPagoFormData): Promise<GastoPago | null> {
+export async function createGastoPago(tripId: string, pago: GastoPagoFormData): Promise<GastoPago | null> {
   const { data, error } = await supabase
     .from('gasto_pagos')
     .insert({
+      trip_id: tripId,
       ...pago,
       created_at: new Date().toISOString(),
     })
@@ -193,10 +241,11 @@ export async function deleteGastoPago(id: string): Promise<boolean> {
 }
 
 // ============ ITINERARIO ============
-export async function getItinerario(): Promise<Itinerario[]> {
+export async function getItinerario(tripId: string): Promise<Itinerario[]> {
   const { data, error } = await supabase
     .from('itinerario')
     .select('*')
+    .eq('trip_id', tripId)
     .order('fecha', { ascending: true })
     .order('orden', { ascending: true });
 
@@ -207,11 +256,12 @@ export async function getItinerario(): Promise<Itinerario[]> {
   return data || [];
 }
 
-export async function createItinerario(item: ItinerarioFormData): Promise<Itinerario | null> {
+export async function createItinerario(tripId: string, item: ItinerarioFormData): Promise<Itinerario | null> {
   // Get max orden for the date
   const { data: existing } = await supabase
     .from('itinerario')
     .select('orden')
+    .eq('trip_id', tripId)
     .eq('fecha', item.fecha)
     .order('orden', { ascending: false })
     .limit(1);
@@ -221,6 +271,7 @@ export async function createItinerario(item: ItinerarioFormData): Promise<Itiner
   const { data, error } = await supabase
     .from('itinerario')
     .insert({
+      trip_id: tripId,
       ...item,
       orden: nextOrden,
       created_at: new Date().toISOString(),
@@ -264,10 +315,11 @@ export async function deleteItinerario(id: string): Promise<boolean> {
 }
 
 // ============ DOCUMENTOS ============
-export async function getDocumentos(): Promise<Documento[]> {
+export async function getDocumentos(tripId: string): Promise<Documento[]> {
   const { data, error } = await supabase
     .from('documentos')
     .select('*')
+    .eq('trip_id', tripId)
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -278,13 +330,14 @@ export async function getDocumentos(): Promise<Documento[]> {
 }
 
 export async function uploadDocumento(
+  tripId: string,
   file: File,
   nombre: string,
   categoria: string,
   uploadedBy?: string
 ): Promise<Documento | null> {
-  // Upload file to storage
-  const fileName = `${Date.now()}_${file.name}`;
+  // Upload file to storage (organized by trip)
+  const fileName = `${tripId}/${Date.now()}_${file.name}`;
   const { data: uploadData, error: uploadError } = await supabase.storage
     .from('documentos')
     .upload(fileName, file);
@@ -303,6 +356,7 @@ export async function uploadDocumento(
   const { data, error } = await supabase
     .from('documentos')
     .insert({
+      trip_id: tripId,
       nombre,
       categoria,
       archivo_url: urlData.publicUrl,
@@ -323,12 +377,14 @@ export async function uploadDocumento(
 export async function deleteDocumento(id: string, archivoUrl: string): Promise<boolean> {
   // Extract file path from URL
   const urlParts = archivoUrl.split('/');
-  const fileName = urlParts[urlParts.length - 1];
+  // The path includes trip_id/filename now
+  const pathIndex = urlParts.findIndex(p => p === 'documentos') + 1;
+  const filePath = urlParts.slice(pathIndex).join('/');
 
   // Delete from storage
   await supabase.storage
     .from('documentos')
-    .remove([fileName]);
+    .remove([filePath]);
 
   // Delete record
   const { error } = await supabase
@@ -344,10 +400,11 @@ export async function deleteDocumento(id: string, archivoUrl: string): Promise<b
 }
 
 // ============ LUGARES ============
-export async function getLugares(): Promise<Lugar[]> {
+export async function getLugares(tripId: string): Promise<Lugar[]> {
   const { data, error } = await supabase
     .from('lugares')
     .select('*')
+    .eq('trip_id', tripId)
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -357,10 +414,11 @@ export async function getLugares(): Promise<Lugar[]> {
   return data || [];
 }
 
-export async function createLugar(lugar: LugarFormData): Promise<Lugar | null> {
+export async function createLugar(tripId: string, lugar: LugarFormData): Promise<Lugar | null> {
   const { data, error } = await supabase
     .from('lugares')
     .insert({
+      trip_id: tripId,
       ...lugar,
       visitado: false,
       created_at: new Date().toISOString(),
@@ -404,10 +462,11 @@ export async function deleteLugar(id: string): Promise<boolean> {
 }
 
 // ============ NOTAS ============
-export async function getNotas(): Promise<Nota[]> {
+export async function getNotas(tripId: string): Promise<Nota[]> {
   const { data, error } = await supabase
     .from('notas')
     .select('*')
+    .eq('trip_id', tripId)
     .order('updated_at', { ascending: false });
 
   if (error) {
@@ -417,10 +476,11 @@ export async function getNotas(): Promise<Nota[]> {
   return data || [];
 }
 
-export async function createNota(nota: NotaFormData): Promise<Nota | null> {
+export async function createNota(tripId: string, nota: NotaFormData): Promise<Nota | null> {
   const { data, error } = await supabase
     .from('notas')
     .insert({
+      trip_id: tripId,
       ...nota,
       updated_at: new Date().toISOString(),
     })

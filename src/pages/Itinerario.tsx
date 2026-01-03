@@ -105,13 +105,13 @@ export function ItinerarioPage() {
             gap: 10,
             padding: '16px 28px',
             borderRadius: 16,
-            background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+            background: 'var(--tab-active-gradient)',
             color: 'white',
             fontWeight: 600,
             fontSize: 16,
             border: 'none',
             cursor: 'pointer',
-            boxShadow: '0 8px 24px rgba(236, 72, 153, 0.4)'
+            boxShadow: '0 8px 24px var(--btn-shadow)'
           }}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
@@ -128,9 +128,9 @@ export function ItinerarioPage() {
             transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
             style={{ display: 'inline-block' }}
           >
-            <Sparkles style={{ width: 40, height: 40, color: '#f472b6' }} />
+            <Sparkles style={{ width: 40, height: 40, color: 'var(--loader-color)' }} />
           </motion.div>
-          <p style={{ color: 'rgba(192, 132, 252, 0.5)', marginTop: 16 }}>Cargando...</p>
+          <p style={{ color: 'var(--theme-text-muted)', marginTop: 16 }}>Cargando...</p>
         </div>
       ) : items.length === 0 ? (
         <motion.div
@@ -139,9 +139,9 @@ export function ItinerarioPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <Calendar style={{ width: 56, height: 56, margin: '0 auto', color: 'rgba(168, 85, 247, 0.3)', marginBottom: 16 }} />
-          <p style={{ color: 'rgba(192, 132, 252, 0.6)', fontSize: 18 }}>No hay actividades en el itinerario</p>
-          <p style={{ color: 'rgba(168, 85, 247, 0.4)', fontSize: 14, marginTop: 8 }}>Agrega tu primera actividad magica</p>
+          <Calendar style={{ width: 56, height: 56, margin: '0 auto', color: 'var(--theme-secondary)', opacity: 0.3, marginBottom: 16 }} />
+          <p style={{ color: 'var(--theme-text-muted)', fontSize: 18 }}>No hay actividades en el itinerario</p>
+          <p style={{ color: 'var(--theme-secondary)', opacity: 0.4, fontSize: 14, marginTop: 8 }}>Agrega tu primera actividad magica</p>
         </motion.div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
@@ -159,34 +159,51 @@ export function ItinerarioPage() {
                 {/* Day Header */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
                   <motion.div
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-xl relative ${
-                      isToday
-                        ? 'bg-gradient-to-br from-pink-500 to-purple-500 text-white shadow-lg shadow-pink-500/40'
-                        : 'bg-gradient-to-br from-purple-500/20 to-pink-500/20 text-white border border-purple-500/30'
-                    }`}
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 16,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 700,
+                      fontSize: 20,
+                      position: 'relative',
+                      background: isToday ? 'var(--tab-active-gradient)' : 'var(--glass-bg-1)',
+                      color: 'white',
+                      boxShadow: isToday ? '0 8px 20px var(--btn-shadow)' : 'none',
+                      border: isToday ? 'none' : '1px solid var(--glass-border)'
+                    }}
                     animate={isToday ? { scale: [1, 1.05, 1] } : {}}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
                     {dayNum}
                     {isToday && (
-                      <Star className="absolute -top-1.5 -right-1.5 w-5 h-5 text-yellow-400 fill-yellow-400" />
+                      <Star style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, color: '#facc15', fill: '#facc15' }} />
                     )}
                   </motion.div>
                   <div>
-                    <p className="font-semibold text-white text-lg flex items-center gap-3">
+                    <p style={{ fontWeight: 600, color: 'white', fontSize: 18, display: 'flex', alignItems: 'center', gap: 12 }}>
                       Dia {dayNum}
                       {isToday && (
-                        <span className="px-3 py-1 rounded-full text-xs bg-gradient-to-r from-pink-500/30 to-purple-500/30 text-pink-300 border border-pink-500/30">
+                        <span style={{
+                          padding: '4px 12px',
+                          borderRadius: 20,
+                          fontSize: 12,
+                          background: 'var(--glass-bg-1)',
+                          color: 'var(--theme-accent)',
+                          border: '1px solid var(--glass-border)'
+                        }}>
                           Hoy
                         </span>
                       )}
                     </p>
-                    <p className="text-sm text-purple-300/60 mt-1">{formatDate(fecha, "EEEE, d 'de' MMMM")}</p>
+                    <p style={{ fontSize: 14, color: 'var(--theme-text-muted)', marginTop: 4 }}>{formatDate(fecha, "EEEE, d 'de' MMMM")}</p>
                   </div>
                 </div>
 
                 {/* Timeline */}
-                <div className="ml-7 pl-7 border-l-2 space-y-4" style={{ borderImage: 'linear-gradient(to bottom, rgba(236, 72, 153, 0.5), rgba(168, 85, 247, 0.5)) 1' }}>
+                <div style={{ marginLeft: 28, paddingLeft: 28, borderLeft: '2px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <AnimatePresence mode="popLayout">
                     {activities.map((activity, index) => (
                       <motion.div
@@ -196,24 +213,44 @@ export function ItinerarioPage() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -100 }}
                         transition={{ delay: index * 0.05 }}
-                        className="relative"
+                        style={{ position: 'relative' }}
                       >
                         {/* Timeline dot */}
-                        <div className="absolute -left-[31px] top-5 w-4 h-4 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 border-2 border-[#1a0a2e] shadow-lg shadow-pink-500/30" />
+                        <div style={{
+                          position: 'absolute',
+                          left: -35,
+                          top: 20,
+                          width: 16,
+                          height: 16,
+                          borderRadius: '50%',
+                          background: 'var(--tab-active-gradient)',
+                          border: '2px solid var(--theme-bg)',
+                          boxShadow: '0 4px 12px var(--btn-shadow)'
+                        }} />
 
-                        <div className="glass-card p-5 group hover:border-pink-500/40 transition-colors">
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
-                              <p className="font-semibold text-white text-base group-hover:text-pink-200 transition-colors">
+                        <div className="glass-card" style={{ padding: 20 }}>
+                          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+                            <div style={{ flex: 1 }}>
+                              <p style={{ fontWeight: 600, color: 'white', fontSize: 16 }}>
                                 {activity.titulo}
                               </p>
                               {activity.descripcion && (
-                                <p className="text-sm text-purple-300/60 mt-2 line-clamp-2">{activity.descripcion}</p>
+                                <p style={{ fontSize: 14, color: 'var(--theme-text-muted)', marginTop: 8 }}>{activity.descripcion}</p>
                               )}
-                              <div className="flex flex-wrap items-center gap-3 mt-4">
+                              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, marginTop: 16 }}>
                                 {activity.hora && (
-                                  <div className="flex items-center gap-2 text-purple-300/70 text-sm px-3 py-1.5 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                                    <Clock className="w-4 h-4 text-pink-400" />
+                                  <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    color: 'var(--theme-text-muted)',
+                                    fontSize: 14,
+                                    padding: '6px 12px',
+                                    borderRadius: 12,
+                                    background: 'var(--glass-bg-1)',
+                                    border: '1px solid var(--glass-border)'
+                                  }}>
+                                    <Clock style={{ width: 16, height: 16, color: 'var(--theme-accent)' }} />
                                     <span>{activity.hora}</span>
                                   </div>
                                 )}
@@ -222,33 +259,58 @@ export function ItinerarioPage() {
                                     href={activity.ubicacion_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-2 text-pink-300 text-sm px-3 py-1.5 rounded-xl bg-pink-500/10 border border-pink-500/20 hover:bg-pink-500/20 transition-colors"
+                                    style={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: 8,
+                                      color: 'var(--theme-accent)',
+                                      fontSize: 14,
+                                      padding: '6px 12px',
+                                      borderRadius: 12,
+                                      background: 'var(--glass-bg-2)',
+                                      border: '1px solid var(--glass-border)',
+                                      textDecoration: 'none'
+                                    }}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                   >
-                                    <MapPin className="w-4 h-4" />
+                                    <MapPin style={{ width: 16, height: 16 }} />
                                     <span>Ver mapa</span>
-                                    <ExternalLink className="w-3.5 h-3.5" />
+                                    <ExternalLink style={{ width: 14, height: 14 }} />
                                   </motion.a>
                                 )}
                               </div>
                             </div>
-                            <div className="flex gap-2">
+                            <div style={{ display: 'flex', gap: 8 }}>
                               <motion.button
                                 onClick={() => handleOpenModal(activity)}
-                                className="p-2.5 rounded-xl hover:bg-purple-500/20 text-purple-300/50 hover:text-purple-300 transition-colors"
+                                style={{
+                                  padding: 10,
+                                  borderRadius: 12,
+                                  background: 'var(--glass-bg-1)',
+                                  border: '1px solid var(--glass-border)',
+                                  color: 'var(--theme-text-muted)',
+                                  cursor: 'pointer'
+                                }}
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                               >
-                                <Edit2 className="w-4 h-4" />
+                                <Edit2 style={{ width: 16, height: 16 }} />
                               </motion.button>
                               <motion.button
                                 onClick={() => confirmDelete(activity.id)}
-                                className="p-2.5 rounded-xl hover:bg-red-500/20 text-purple-300/50 hover:text-red-400 transition-colors"
+                                style={{
+                                  padding: 10,
+                                  borderRadius: 12,
+                                  background: 'rgba(239, 68, 68, 0.1)',
+                                  border: '1px solid rgba(239, 68, 68, 0.2)',
+                                  color: 'rgba(248, 113, 113, 0.6)',
+                                  cursor: 'pointer'
+                                }}
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                               >
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 style={{ width: 16, height: 16 }} />
                               </motion.button>
                             </div>
                           </div>

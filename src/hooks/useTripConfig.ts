@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { getTripConfig, updateTripConfig, supabase } from '../lib/supabase';
+import { useMemo } from 'react';
+import { useTrip } from '../contexts';
 import type { TripConfig } from '../types';
 import { getDaysUntilTrip, getCountdownMessage, isOnTrip, isTripOver } from '../lib/utils';
 
@@ -13,74 +13,49 @@ const DEFAULT_CONFIG: TripConfig = {
 };
 
 export function useTripConfig() {
-  const [config, setConfig] = useState<TripConfig>(DEFAULT_CONFIG);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { currentTrip, updateTripDolarRate } = useTrip();
 
-  const fetchConfig = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await getTripConfig();
-      if (data) {
-        setConfig(data);
-      }
-      setError(null);
-    } catch (err) {
-      setError('Error al cargar la configuracion');
-      console.error(err);
-    } finally {
-      setLoading(false);
+  // Create a config-like object from the current trip for backwards compatibility
+  const config: TripConfig = useMemo(() => {
+    if (!currentTrip) {
+      return DEFAULT_CONFIG;
     }
-  }, []);
 
-  useEffect(() => {
-    fetchConfig();
-
-    // Subscribe to realtime changes
-    const subscription = supabase
-      .channel('trip_config-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'trip_config' },
-        () => {
-          fetchConfig();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
+    return {
+      id: currentTrip.id,
+      trip_start_date: currentTrip.fecha_inicio,
+      trip_end_date: currentTrip.fecha_fin,
+      dolar_blue_rate: currentTrip.dolar_blue_rate,
+      updated_at: currentTrip.updated_at,
     };
-  }, [fetchConfig]);
-
-  const update = async (data: Partial<TripConfig>): Promise<boolean> => {
-    try {
-      const result = await updateTripConfig({ ...config, ...data });
-      if (result) {
-        setConfig(result);
-        return true;
-      }
-      return false;
-    } catch (err) {
-      console.error('Error updating config:', err);
-      return false;
-    }
-  };
+  }, [currentTrip]);
 
   const daysUntil = getDaysUntilTrip(config.trip_start_date);
   const countdownMessage = getCountdownMessage(daysUntil, config.trip_start_date, config.trip_end_date);
   const onTrip = isOnTrip(config.trip_start_date, config.trip_end_date);
   const tripOver = isTripOver(config.trip_end_date);
 
+  const update = async (data: Partial<TripConfig>): Promise<boolean> => {
+    try {
+      if (data.dolar_blue_rate !== undefined) {
+        await updateTripDolarRate(data.dolar_blue_rate);
+      }
+      return true;
+    } catch (err) {
+      console.error('Error updating config:', err);
+      return false;
+    }
+  };
+
   return {
     config,
-    loading,
-    error,
+    loading: !currentTrip,
+    error: null,
     daysUntil,
     countdownMessage,
     onTrip,
     tripOver,
     update,
-    refresh: fetchConfig,
+    refresh: () => {}, // No longer needed - context handles updates
   };
 }

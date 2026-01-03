@@ -9,23 +9,34 @@ import {
   deleteGastoPago,
   supabase,
 } from '../lib/supabase';
-import { getDolarBlueRate, arsToUsd } from '../lib/dolarBlue';
+import { arsToUsd } from '../lib/dolarBlue';
+import { useTrip } from '../contexts';
 import type { Gasto, GastoPago, GastoConPagos, GastoFormData, GastoPagoFormData, Balance } from '../types';
 import { calculateBalance } from '../lib/utils';
 
 export function useGastos() {
+  const { currentTrip } = useTrip();
+  const tripId = currentTrip?.id;
+  const dolarRate = currentTrip?.dolar_blue_rate || 1200;
+
   const [gastosRaw, setGastosRaw] = useState<Gasto[]>([]);
   const [pagos, setPagos] = useState<GastoPago[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [dolarRate, setDolarRate] = useState<number>(1200);
 
   const fetchGastos = useCallback(async () => {
+    if (!tripId) {
+      setGastosRaw([]);
+      setPagos([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       const [gastosData, pagosData] = await Promise.all([
-        getGastos(),
-        getGastoPagos(),
+        getGastos(tripId),
+        getGastoPagos(tripId),
       ]);
       setGastosRaw(gastosData);
       setPagos(pagosData);
@@ -36,23 +47,19 @@ export function useGastos() {
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  const fetchDolarRate = useCallback(async () => {
-    const rate = await getDolarBlueRate();
-    setDolarRate(rate);
-  }, []);
+  }, [tripId]);
 
   useEffect(() => {
     fetchGastos();
-    fetchDolarRate();
 
-    // Subscribe to realtime changes for gastos
+    if (!tripId) return;
+
+    // Subscribe to realtime changes for gastos (filtered by trip)
     const gastosSubscription = supabase
-      .channel('gastos-changes')
+      .channel(`gastos-${tripId}-changes`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'gastos' },
+        { event: '*', schema: 'public', table: 'gastos', filter: `trip_id=eq.${tripId}` },
         () => {
           fetchGastos();
         }
@@ -61,10 +68,10 @@ export function useGastos() {
 
     // Subscribe to realtime changes for gasto_pagos
     const pagosSubscription = supabase
-      .channel('gasto-pagos-changes')
+      .channel(`gasto-pagos-${tripId}-changes`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'gasto_pagos' },
+        { event: '*', schema: 'public', table: 'gasto_pagos', filter: `trip_id=eq.${tripId}` },
         () => {
           fetchGastos();
         }
@@ -75,7 +82,7 @@ export function useGastos() {
       gastosSubscription.unsubscribe();
       pagosSubscription.unsubscribe();
     };
-  }, [fetchGastos, fetchDolarRate]);
+  }, [fetchGastos, tripId]);
 
   // Combinar gastos con sus pagos
   const gastos: GastoConPagos[] = useMemo(() => {
@@ -116,11 +123,11 @@ export function useGastos() {
   }, [gastosRaw, pagos, dolarRate]);
 
   const addGasto = async (data: GastoFormData): Promise<boolean> => {
+    if (!tripId) return false;
     try {
       const montoUsd = data.moneda === 'USD' ? data.monto : arsToUsd(data.monto, dolarRate);
-      const result = await createGasto(data, montoUsd);
+      const result = await createGasto(tripId, data, montoUsd);
       if (result) {
-        // Refresh para obtener datos actualizados
         await fetchGastos();
         return true;
       }
@@ -165,8 +172,9 @@ export function useGastos() {
 
   // Funciones para pagos de cuotas
   const addPago = async (data: GastoPagoFormData): Promise<boolean> => {
+    if (!tripId) return false;
     try {
-      const result = await createGastoPago(data);
+      const result = await createGastoPago(tripId, data);
       if (result) {
         await fetchGastos();
         return true;
@@ -227,6 +235,5 @@ export function useGastos() {
     addPago,
     removePago,
     refresh: fetchGastos,
-    refreshDolarRate: fetchDolarRate,
   };
 }

@@ -1,17 +1,27 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getItinerario, createItinerario, updateItinerario, deleteItinerario, supabase } from '../lib/supabase';
+import { useTrip } from '../contexts';
 import type { Itinerario, ItinerarioFormData } from '../types';
 import { groupByDate } from '../lib/utils';
 
 export function useItinerario() {
+  const { currentTrip } = useTrip();
+  const tripId = currentTrip?.id;
+
   const [items, setItems] = useState<Itinerario[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchItinerario = useCallback(async () => {
+    if (!tripId) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      const data = await getItinerario();
+      const data = await getItinerario(tripId);
       setItems(data);
       setError(null);
     } catch (err) {
@@ -20,17 +30,19 @@ export function useItinerario() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [tripId]);
 
   useEffect(() => {
     fetchItinerario();
 
+    if (!tripId) return;
+
     // Subscribe to realtime changes
     const subscription = supabase
-      .channel('itinerario-changes')
+      .channel(`itinerario-${tripId}-changes`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'itinerario' },
+        { event: '*', schema: 'public', table: 'itinerario', filter: `trip_id=eq.${tripId}` },
         () => {
           fetchItinerario();
         }
@@ -40,11 +52,12 @@ export function useItinerario() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [fetchItinerario]);
+  }, [fetchItinerario, tripId]);
 
   const addItem = async (data: ItinerarioFormData): Promise<boolean> => {
+    if (!tripId) return false;
     try {
-      const result = await createItinerario(data);
+      const result = await createItinerario(tripId, data);
       if (result) {
         setItems((prev) => [...prev, result].sort((a, b) => {
           const dateCompare = a.fecha.localeCompare(b.fecha);

@@ -11,16 +11,16 @@ export function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40">
-      {/* Background gradient fade - helps content transition smoothly */}
+      {/* Background gradient fade - uses theme bg */}
       <div
         className="absolute inset-x-0 bottom-0 pointer-events-none"
         style={{
           height: 120,
-          background: 'linear-gradient(to top, #1a0a2e 0%, #1a0a2e 40%, transparent 100%)',
+          background: 'linear-gradient(to top, var(--theme-bg) 0%, var(--theme-bg) 40%, transparent 100%)',
         }}
       />
 
-      {/* FAB - Floating Action Button - just slightly above nav */}
+      {/* FAB - Floating Action Button */}
       <motion.button
         onClick={handleFabClick}
         className="absolute left-1/2 -translate-x-1/2 z-20"
@@ -29,12 +29,12 @@ export function BottomNav() {
           width: 52,
           height: 52,
           borderRadius: '50%',
-          background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
-          boxShadow: '0 4px 16px rgba(236, 72, 153, 0.5)',
+          background: 'var(--fab-gradient)',
+          boxShadow: `0 4px 16px var(--fab-shadow)`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          border: '3px solid #1a0a2e',
+          border: '3px solid var(--theme-bg)',
         }}
         whileTap={{ scale: 0.92 }}
       >
@@ -43,11 +43,14 @@ export function BottomNav() {
 
       {/* Nav bar container */}
       <div
-        className="relative mx-3 rounded-t-2xl border-t border-x border-purple-500/20"
+        className="relative mx-3 rounded-t-2xl"
         style={{
-          background: 'rgba(26, 10, 46, 0.95)',
+          background: 'var(--nav-bg)',
           backdropFilter: 'blur(20px)',
           paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
+          borderTop: '1px solid var(--glass-border)',
+          borderLeft: '1px solid var(--glass-border)',
+          borderRight: '1px solid var(--glass-border)',
         }}
       >
         {/* Tab grid - 5 columns with center empty for FAB */}
@@ -101,7 +104,7 @@ function NavTab({ to, icon: Icon, label }: NavTabProps) {
             style={{
               width: 24,
               height: 24,
-              color: isActive ? '#ffffff' : 'rgba(168, 85, 247, 0.5)',
+              color: isActive ? 'var(--nav-active)' : 'var(--nav-inactive)',
               transition: 'color 0.2s',
             }}
           />
@@ -109,7 +112,7 @@ function NavTab({ to, icon: Icon, label }: NavTabProps) {
             style={{
               fontSize: 11,
               fontWeight: isActive ? 600 : 500,
-              color: isActive ? '#ffffff' : 'rgba(168, 85, 247, 0.5)',
+              color: isActive ? 'var(--nav-active)' : 'var(--nav-inactive)',
               transition: 'color 0.2s',
             }}
           >
@@ -122,7 +125,7 @@ function NavTab({ to, icon: Icon, label }: NavTabProps) {
                 width: 5,
                 height: 5,
                 borderRadius: '50%',
-                background: '#ec4899',
+                background: 'var(--nav-dot)',
               }}
               transition={{ type: 'spring', stiffness: 500, damping: 30 }}
             />

@@ -1,16 +1,26 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getNotas, createNota, updateNota, deleteNota, supabase } from '../lib/supabase';
+import { useTrip } from '../contexts';
 import type { Nota, NotaFormData, TipoNota } from '../types';
 
 export function useNotas() {
+  const { currentTrip } = useTrip();
+  const tripId = currentTrip?.id;
+
   const [notas, setNotas] = useState<Nota[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchNotas = useCallback(async () => {
+    if (!tripId) {
+      setNotas([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      const data = await getNotas();
+      const data = await getNotas(tripId);
       setNotas(data);
       setError(null);
     } catch (err) {
@@ -19,17 +29,19 @@ export function useNotas() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [tripId]);
 
   useEffect(() => {
     fetchNotas();
 
+    if (!tripId) return;
+
     // Subscribe to realtime changes
     const subscription = supabase
-      .channel('notas-changes')
+      .channel(`notas-${tripId}-changes`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'notas' },
+        { event: '*', schema: 'public', table: 'notas', filter: `trip_id=eq.${tripId}` },
         () => {
           fetchNotas();
         }
@@ -39,11 +51,12 @@ export function useNotas() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [fetchNotas]);
+  }, [fetchNotas, tripId]);
 
   const addNota = async (data: NotaFormData): Promise<boolean> => {
+    if (!tripId) return false;
     try {
-      const result = await createNota(data);
+      const result = await createNota(tripId, data);
       if (result) {
         setNotas((prev) => [result, ...prev]);
         return true;

@@ -15,14 +15,6 @@ const CATEGORIA_ICONS: Record<CategoriaDocumento, typeof FileText> = {
   otros: FileText,
 };
 
-const CATEGORIA_COLORS: Record<CategoriaDocumento, string> = {
-  reservas: 'from-purple-500/30 to-violet-500/30 text-purple-300 border-purple-500/30',
-  tickets: 'from-pink-500/30 to-rose-500/30 text-pink-300 border-pink-500/30',
-  vuelos: 'from-blue-500/30 to-cyan-500/30 text-blue-300 border-blue-500/30',
-  seguro: 'from-green-500/30 to-emerald-500/30 text-green-300 border-green-500/30',
-  otros: 'from-gray-500/30 to-slate-500/30 text-gray-300 border-gray-500/30',
-};
-
 const CATEGORIA_OPTIONS = [
   { value: 'reservas', label: 'Reservas' },
   { value: 'tickets', label: 'Tickets' },
@@ -120,13 +112,13 @@ export function Documentos() {
             gap: 10,
             padding: '16px 28px',
             borderRadius: 16,
-            background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+            background: 'var(--tab-active-gradient)',
             color: 'white',
             fontWeight: 600,
             fontSize: 16,
             border: 'none',
             cursor: 'pointer',
-            boxShadow: '0 8px 24px rgba(236, 72, 153, 0.4)'
+            boxShadow: '0 8px 24px var(--btn-shadow)'
           }}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
@@ -143,9 +135,9 @@ export function Documentos() {
             transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
             style={{ display: 'inline-block' }}
           >
-            <Sparkles style={{ width: 40, height: 40, color: '#f472b6' }} />
+            <Sparkles style={{ width: 40, height: 40, color: 'var(--loader-color)' }} />
           </motion.div>
-          <p style={{ color: 'rgba(192, 132, 252, 0.5)', marginTop: 16 }}>Cargando...</p>
+          <p style={{ color: 'var(--theme-text-muted)', marginTop: 16 }}>Cargando...</p>
         </div>
       ) : documentos.length === 0 ? (
         <motion.div
@@ -154,9 +146,9 @@ export function Documentos() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <FolderOpen style={{ width: 56, height: 56, margin: '0 auto', color: 'rgba(168, 85, 247, 0.3)', marginBottom: 16 }} />
-          <p style={{ color: 'rgba(192, 132, 252, 0.6)', fontSize: 18 }}>No hay documentos guardados</p>
-          <p style={{ color: 'rgba(168, 85, 247, 0.4)', fontSize: 14, marginTop: 8 }}>Sube reservas, tickets y mas</p>
+          <FolderOpen style={{ width: 56, height: 56, margin: '0 auto', color: 'var(--theme-secondary)', opacity: 0.3, marginBottom: 16 }} />
+          <p style={{ color: 'var(--theme-text-muted)', fontSize: 18 }}>No hay documentos guardados</p>
+          <p style={{ color: 'var(--theme-secondary)', opacity: 0.4, fontSize: 14, marginTop: 8 }}>Sube reservas, tickets y mas</p>
         </motion.div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
@@ -169,15 +161,20 @@ export function Documentos() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: groupIndex * 0.1 }}
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`p-2.5 rounded-xl bg-gradient-to-br ${CATEGORIA_COLORS[cat as CategoriaDocumento]} border`}>
-                    <Icon className="w-5 h-5" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                  <div style={{
+                    padding: 10,
+                    borderRadius: 12,
+                    background: 'var(--glass-bg-1)',
+                    border: '1px solid var(--glass-border)'
+                  }}>
+                    <Icon style={{ width: 20, height: 20, color: 'var(--theme-accent)' }} />
                   </div>
-                  <h3 className="font-semibold text-white text-lg capitalize">{cat}</h3>
-                  <span className="text-purple-400/50 text-sm">({docs.length})</span>
+                  <h3 style={{ fontWeight: 600, color: 'white', fontSize: 18, textTransform: 'capitalize' }}>{cat}</h3>
+                  <span style={{ color: 'var(--theme-text-muted)', fontSize: 14 }}>({docs.length})</span>
                 </div>
 
-                <div className="space-y-3">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <AnimatePresence mode="popLayout">
                     {docs.map((doc, index) => {
                       const isImage = isImageFile(doc.archivo_nombre || '');
@@ -193,30 +190,49 @@ export function Documentos() {
                           exit={{ opacity: 0, x: -100 }}
                           transition={{ delay: index * 0.03 }}
                         >
-                          <div className="glass-card p-5 group hover:border-pink-500/40 transition-colors">
-                            <div className="flex items-center gap-4">
+                          <div className="glass-card" style={{ padding: 20 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                               {/* Thumbnail or icon */}
-                              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                              <div style={{
+                                width: 64,
+                                height: 64,
+                                borderRadius: 12,
+                                background: 'var(--glass-bg-1)',
+                                border: '1px solid var(--glass-border)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                                overflow: 'hidden'
+                              }}>
                                 {isImage ? (
                                   <img
                                     src={doc.archivo_url}
                                     alt={doc.nombre}
-                                    className="w-full h-full object-cover rounded-xl"
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 12 }}
                                   />
                                 ) : (
-                                  <span className="text-sm font-bold text-purple-300/60">{ext}</span>
+                                  <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--theme-text-muted)' }}>{ext}</span>
                                 )}
                               </div>
 
                               {/* Info */}
-                              <div className="flex-1 min-w-0">
-                                <p className="font-medium text-white text-base truncate group-hover:text-pink-200 transition-colors">
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <p style={{ fontWeight: 500, color: 'white', fontSize: 16, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {doc.nombre}
                                 </p>
-                                <p className="text-sm text-purple-300/50 mt-2">
+                                <p style={{ fontSize: 14, color: 'var(--theme-text-muted)', marginTop: 8 }}>
                                   {formatDate(doc.created_at)}
                                   {doc.uploaded_by && (
-                                    <span className="ml-3 px-2.5 py-1 rounded-lg text-xs bg-purple-500/10 border border-purple-500/20 text-purple-300/60">
+                                    <span style={{
+                                      marginLeft: 12,
+                                      padding: '4px 10px',
+                                      borderRadius: 8,
+                                      fontSize: 12,
+                                      background: 'var(--glass-bg-1)',
+                                      border: '1px solid var(--glass-border)',
+                                      color: 'var(--theme-text-muted)'
+                                    }}>
                                       {doc.uploaded_by}
                                     </span>
                                   )}
@@ -224,35 +240,56 @@ export function Documentos() {
                               </div>
 
                               {/* Actions */}
-                              <div className="flex gap-2">
+                              <div style={{ display: 'flex', gap: 8 }}>
                                 {(isImage || isPdf) && (
                                   <motion.button
                                     onClick={() => openPreview(doc)}
-                                    className="p-2.5 rounded-xl hover:bg-purple-500/20 text-purple-300/50 hover:text-purple-300 transition-colors"
+                                    style={{
+                                      padding: 10,
+                                      borderRadius: 12,
+                                      background: 'var(--glass-bg-1)',
+                                      border: '1px solid var(--glass-border)',
+                                      color: 'var(--theme-text-muted)',
+                                      cursor: 'pointer'
+                                    }}
                                     title="Ver"
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                   >
-                                    <Eye className="w-4 h-4" />
+                                    <Eye style={{ width: 16, height: 16 }} />
                                   </motion.button>
                                 )}
                                 <motion.button
                                   onClick={() => downloadFile(doc)}
-                                  className="p-2.5 rounded-xl hover:bg-pink-500/20 text-purple-300/50 hover:text-pink-300 transition-colors"
+                                  style={{
+                                    padding: 10,
+                                    borderRadius: 12,
+                                    background: 'var(--glass-bg-2)',
+                                    border: '1px solid var(--glass-border)',
+                                    color: 'var(--theme-accent)',
+                                    cursor: 'pointer'
+                                  }}
                                   title="Descargar"
                                   whileHover={{ scale: 1.1 }}
                                   whileTap={{ scale: 0.9 }}
                                 >
-                                  <Download className="w-4 h-4" />
+                                  <Download style={{ width: 16, height: 16 }} />
                                 </motion.button>
                                 <motion.button
                                   onClick={() => confirmDelete(doc)}
-                                  className="p-2.5 rounded-xl hover:bg-red-500/20 text-purple-300/50 hover:text-red-400 transition-colors"
+                                  style={{
+                                    padding: 10,
+                                    borderRadius: 12,
+                                    background: 'rgba(239, 68, 68, 0.1)',
+                                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                                    color: 'rgba(248, 113, 113, 0.6)',
+                                    cursor: 'pointer'
+                                  }}
                                   title="Eliminar"
                                   whileHover={{ scale: 1.1 }}
                                   whileTap={{ scale: 0.9 }}
                                 >
-                                  <Trash2 className="w-4 h-4" />
+                                  <Trash2 style={{ width: 16, height: 16 }} />
                                 </motion.button>
                               </div>
                             </div>
@@ -274,38 +311,65 @@ export function Documentos() {
         onClose={handleCloseModal}
         title="Subir documento"
       >
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* File drop zone */}
           <motion.div
             onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-purple-500/30 rounded-2xl p-8 text-center cursor-pointer hover:border-pink-500/50 hover:bg-pink-500/5 transition-all"
-            whileHover={{ scale: 1.02 }}
+            style={{
+              border: '2px dashed var(--glass-border)',
+              borderRadius: 16,
+              padding: 32,
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            whileHover={{ scale: 1.02, borderColor: 'var(--theme-accent)' }}
             whileTap={{ scale: 0.98 }}
           >
             <input
               ref={fileInputRef}
               type="file"
-              className="hidden"
+              style={{ display: 'none' }}
               onChange={handleFileSelect}
               accept="image/*,.pdf,.doc,.docx"
             />
             {selectedFile ? (
               <div>
-                <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-pink-500/30 to-purple-500/30 flex items-center justify-center mb-4">
-                  <File className="w-7 h-7 text-pink-300" />
+                <div style={{
+                  width: 56,
+                  height: 56,
+                  margin: '0 auto',
+                  borderRadius: 12,
+                  background: 'var(--tab-active-gradient)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 16
+                }}>
+                  <File style={{ width: 28, height: 28, color: 'white' }} />
                 </div>
-                <p className="text-white font-medium text-lg">{selectedFile.name}</p>
-                <p className="text-purple-300/50 text-sm mt-2">
+                <p style={{ color: 'white', fontWeight: 500, fontSize: 18 }}>{selectedFile.name}</p>
+                <p style={{ color: 'var(--theme-text-muted)', fontSize: 14, marginTop: 8 }}>
                   {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                 </p>
               </div>
             ) : (
               <div>
-                <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
-                  <Upload className="w-7 h-7 text-purple-300/70" />
+                <div style={{
+                  width: 56,
+                  height: 56,
+                  margin: '0 auto',
+                  borderRadius: 12,
+                  background: 'var(--glass-bg-1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 16
+                }}>
+                  <Upload style={{ width: 28, height: 28, color: 'var(--theme-text-muted)' }} />
                 </div>
-                <p className="text-purple-200/70 text-lg">Toca para seleccionar archivo</p>
-                <p className="text-purple-400/40 text-sm mt-2">PDF, imagenes o documentos</p>
+                <p style={{ color: 'var(--theme-accent)', fontSize: 18 }}>Toca para seleccionar archivo</p>
+                <p style={{ color: 'var(--theme-text-muted)', fontSize: 14, marginTop: 8 }}>PDF, imagenes o documentos</p>
               </div>
             )}
           </motion.div>

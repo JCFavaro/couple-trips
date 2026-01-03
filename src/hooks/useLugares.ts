@@ -1,16 +1,26 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getLugares, createLugar, updateLugar, deleteLugar, supabase } from '../lib/supabase';
+import { useTrip } from '../contexts';
 import type { Lugar, LugarFormData, TipoLugar } from '../types';
 
 export function useLugares() {
+  const { currentTrip } = useTrip();
+  const tripId = currentTrip?.id;
+
   const [lugares, setLugares] = useState<Lugar[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchLugares = useCallback(async () => {
+    if (!tripId) {
+      setLugares([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      const data = await getLugares();
+      const data = await getLugares(tripId);
       setLugares(data);
       setError(null);
     } catch (err) {
@@ -19,17 +29,19 @@ export function useLugares() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [tripId]);
 
   useEffect(() => {
     fetchLugares();
 
+    if (!tripId) return;
+
     // Subscribe to realtime changes
     const subscription = supabase
-      .channel('lugares-changes')
+      .channel(`lugares-${tripId}-changes`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'lugares' },
+        { event: '*', schema: 'public', table: 'lugares', filter: `trip_id=eq.${tripId}` },
         () => {
           fetchLugares();
         }
@@ -39,11 +51,12 @@ export function useLugares() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [fetchLugares]);
+  }, [fetchLugares, tripId]);
 
   const addLugar = async (data: LugarFormData): Promise<boolean> => {
+    if (!tripId) return false;
     try {
-      const result = await createLugar(data);
+      const result = await createLugar(tripId, data);
       if (result) {
         setLugares((prev) => [result, ...prev]);
         return true;

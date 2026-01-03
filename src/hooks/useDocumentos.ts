@@ -1,17 +1,27 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getDocumentos, uploadDocumento, deleteDocumento, supabase } from '../lib/supabase';
+import { useTrip } from '../contexts';
 import type { Documento, CategoriaDocumento } from '../types';
 
 export function useDocumentos() {
+  const { currentTrip } = useTrip();
+  const tripId = currentTrip?.id;
+
   const [documentos, setDocumentos] = useState<Documento[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
   const fetchDocumentos = useCallback(async () => {
+    if (!tripId) {
+      setDocumentos([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      const data = await getDocumentos();
+      const data = await getDocumentos(tripId);
       setDocumentos(data);
       setError(null);
     } catch (err) {
@@ -20,17 +30,19 @@ export function useDocumentos() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [tripId]);
 
   useEffect(() => {
     fetchDocumentos();
 
+    if (!tripId) return;
+
     // Subscribe to realtime changes
     const subscription = supabase
-      .channel('documentos-changes')
+      .channel(`documentos-${tripId}-changes`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'documentos' },
+        { event: '*', schema: 'public', table: 'documentos', filter: `trip_id=eq.${tripId}` },
         () => {
           fetchDocumentos();
         }
@@ -40,7 +52,7 @@ export function useDocumentos() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [fetchDocumentos]);
+  }, [fetchDocumentos, tripId]);
 
   const upload = async (
     file: File,
@@ -48,9 +60,10 @@ export function useDocumentos() {
     categoria: CategoriaDocumento,
     uploadedBy?: string
   ): Promise<boolean> => {
+    if (!tripId) return false;
     try {
       setUploading(true);
-      const result = await uploadDocumento(file, nombre, categoria, uploadedBy);
+      const result = await uploadDocumento(tripId, file, nombre, categoria, uploadedBy);
       if (result) {
         setDocumentos((prev) => [result, ...prev]);
         return true;

@@ -1,14 +1,16 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Trash2, Edit2, MapPin, Check, ExternalLink,
   StickyNote, Luggage, ShoppingCart, ChevronRight,
   Settings, DollarSign, Calendar, UtensilsCrossed, Store, Sparkles, Lightbulb, LogOut, User, Heart,
-  FileText, Download, Eye, Upload, File, FolderOpen, Plane, Ticket, Shield, CalendarCheck
+  FileText, Download, Eye, Upload, File, FolderOpen, Plane, Ticket, Shield, CalendarCheck, ArrowLeftRight
 } from 'lucide-react';
 import { PageWrapper } from '../components/layout';
 import { Button, Input, Select, Modal, ConfirmModal, Textarea } from '../components/ui';
 import { useLugares, useNotas, useTripConfig, useAuth, useDocumentos } from '../hooks';
+import { useTrip } from '../contexts';
 import { setManualDolarRate, getFormattedRate } from '../lib/dolarBlue';
 import { formatDate, isImageFile, isPdfFile, getFileExtension } from '../lib/utils';
 import type { Lugar, LugarFormData, TipoLugar, Nota, NotaFormData, TipoNota, Documento, CategoriaDocumento } from '../types';
@@ -87,11 +89,11 @@ export function Config() {
               position: 'relative',
               overflow: 'hidden',
               background: activeTab === tab.id
-                ? 'linear-gradient(135deg, #ec4899, #a855f7)'
-                : 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1))',
-              color: activeTab === tab.id ? 'white' : 'rgba(192, 132, 252, 0.7)',
-              border: activeTab === tab.id ? 'none' : '1px solid rgba(168, 85, 247, 0.2)',
-              boxShadow: activeTab === tab.id ? '0 4px 16px rgba(236, 72, 153, 0.3)' : 'none',
+                ? 'var(--tab-active-gradient)'
+                : 'var(--glass-bg-1)',
+              color: activeTab === tab.id ? 'white' : 'var(--theme-text-muted)',
+              border: activeTab === tab.id ? 'none' : '1px solid var(--glass-border)',
+              boxShadow: activeTab === tab.id ? '0 4px 16px var(--btn-shadow)' : 'none',
             }}
             whileTap={{ scale: 0.97 }}
           >
@@ -191,11 +193,11 @@ function LugaresTab() {
           >
             {pendientes}
           </motion.p>
-          <p className="text-sm text-purple-300/60 mt-1">Por visitar</p>
+          <p style={{ fontSize: 14, color: 'var(--theme-text-muted)', marginTop: 4 }}>Por visitar</p>
         </div>
         <div className="glass-card" style={{ padding: 20, textAlign: 'center' }}>
-          <p style={{ fontSize: 36, fontWeight: 700, color: '#4ade80' }}>{visitados}</p>
-          <p style={{ fontSize: 14, color: 'rgba(192, 132, 252, 0.6)', marginTop: 4 }}>Visitados</p>
+          <p style={{ fontSize: 36, fontWeight: 700, color: 'var(--success-color)' }}>{visitados}</p>
+          <p style={{ fontSize: 14, color: 'var(--theme-text-muted)', marginTop: 4 }}>Visitados</p>
         </div>
       </div>
 
@@ -208,13 +210,13 @@ function LugaresTab() {
             gap: 10,
             padding: '16px 28px',
             borderRadius: 16,
-            background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+            background: 'var(--tab-active-gradient)',
             color: 'white',
             fontWeight: 600,
             fontSize: 16,
             border: 'none',
             cursor: 'pointer',
-            boxShadow: '0 8px 24px rgba(236, 72, 153, 0.4)'
+            boxShadow: '0 8px 24px var(--btn-shadow)'
           }}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
@@ -231,9 +233,9 @@ function LugaresTab() {
             transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
             className="inline-block"
           >
-            <Sparkles className="w-8 h-8 text-pink-400" />
+            <Sparkles style={{ width: 32, height: 32, color: 'var(--loader-color)' }} />
           </motion.div>
-          <p className="text-purple-300/50 mt-3">Cargando...</p>
+          <p style={{ color: 'var(--theme-text-muted)', marginTop: 12 }}>Cargando...</p>
         </div>
       ) : lugares.length === 0 ? (
         <motion.div
@@ -241,9 +243,9 @@ function LugaresTab() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <MapPin className="w-14 h-14 mx-auto text-purple-400/30 mb-4" />
-          <p className="text-purple-300/60 text-lg">No hay lugares guardados</p>
-          <p className="text-purple-400/40 text-sm mt-2">Agrega lugares para visitar</p>
+          <MapPin style={{ width: 56, height: 56, margin: '0 auto', color: 'var(--theme-accent)', opacity: 0.3, marginBottom: 16 }} />
+          <p style={{ color: 'var(--theme-text-muted)', fontSize: 18 }}>No hay lugares guardados</p>
+          <p style={{ color: 'var(--theme-text-muted)', opacity: 0.6, fontSize: 14, marginTop: 8 }}>Agrega lugares para visitar</p>
         </motion.div>
       ) : (
         <div className="space-y-3">
@@ -503,13 +505,13 @@ function NotasTab() {
             gap: 10,
             padding: '16px 28px',
             borderRadius: 16,
-            background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+            background: 'var(--tab-active-gradient)',
             color: 'white',
             fontWeight: 600,
             fontSize: 16,
             border: 'none',
             cursor: 'pointer',
-            boxShadow: '0 8px 24px rgba(236, 72, 153, 0.4)'
+            boxShadow: '0 8px 24px var(--btn-shadow)'
           }}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
@@ -526,9 +528,9 @@ function NotasTab() {
             transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
             className="inline-block"
           >
-            <Sparkles className="w-8 h-8 text-pink-400" />
+            <Sparkles style={{ width: 32, height: 32, color: 'var(--loader-color)' }} />
           </motion.div>
-          <p className="text-purple-300/50 mt-3">Cargando...</p>
+          <p style={{ color: 'var(--theme-text-muted)', marginTop: 12 }}>Cargando...</p>
         </div>
       ) : notas.length === 0 ? (
         <motion.div
@@ -536,9 +538,9 @@ function NotasTab() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <StickyNote className="w-14 h-14 mx-auto text-purple-400/30 mb-4" />
-          <p className="text-purple-300/60 text-lg">No hay notas guardadas</p>
-          <p className="text-purple-400/40 text-sm mt-2">Crea notas para recordar cosas importantes</p>
+          <StickyNote style={{ width: 56, height: 56, margin: '0 auto', color: 'var(--theme-accent)', opacity: 0.3, marginBottom: 16 }} />
+          <p style={{ color: 'var(--theme-text-muted)', fontSize: 18 }}>No hay notas guardadas</p>
+          <p style={{ color: 'var(--theme-text-muted)', opacity: 0.6, fontSize: 14, marginTop: 8 }}>Crea notas para recordar cosas importantes</p>
         </motion.div>
       ) : (
         <div className="space-y-3">
@@ -742,7 +744,7 @@ function DocumentosTab() {
       exit={{ opacity: 0, x: -20 }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <p style={{ fontSize: 14, color: 'rgba(192, 132, 252, 0.6)' }}>{documentos.length} archivos</p>
+        <p style={{ fontSize: 14, color: 'var(--theme-text-muted)' }}>{documentos.length} archivos</p>
         <motion.button
           onClick={() => setShowModal(true)}
           style={{
@@ -751,13 +753,13 @@ function DocumentosTab() {
             gap: 10,
             padding: '16px 28px',
             borderRadius: 16,
-            background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+            background: 'var(--tab-active-gradient)',
             color: 'white',
             fontWeight: 600,
             fontSize: 16,
             border: 'none',
             cursor: 'pointer',
-            boxShadow: '0 8px 24px rgba(236, 72, 153, 0.4)'
+            boxShadow: '0 8px 24px var(--btn-shadow)'
           }}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
@@ -774,9 +776,9 @@ function DocumentosTab() {
             transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
             className="inline-block"
           >
-            <Sparkles className="w-8 h-8 text-pink-400" />
+            <Sparkles style={{ width: 32, height: 32, color: 'var(--loader-color)' }} />
           </motion.div>
-          <p className="text-purple-300/50 mt-3">Cargando...</p>
+          <p style={{ color: 'var(--theme-text-muted)', marginTop: 12 }}>Cargando...</p>
         </div>
       ) : documentos.length === 0 ? (
         <motion.div
@@ -784,9 +786,9 @@ function DocumentosTab() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <FolderOpen className="w-14 h-14 mx-auto text-purple-400/30 mb-4" />
-          <p className="text-purple-300/60 text-lg">No hay documentos</p>
-          <p className="text-purple-400/40 text-sm mt-2">Sube reservas, tickets y mas</p>
+          <FolderOpen style={{ width: 56, height: 56, margin: '0 auto', color: 'var(--theme-accent)', opacity: 0.3, marginBottom: 16 }} />
+          <p style={{ color: 'var(--theme-text-muted)', fontSize: 18 }}>No hay documentos</p>
+          <p style={{ color: 'var(--theme-text-muted)', opacity: 0.6, fontSize: 14, marginTop: 8 }}>Sube reservas, tickets y mas</p>
         </motion.div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -978,6 +980,8 @@ function DocumentosTab() {
 
 // ============ CONFIG TAB ============
 function ConfigTab() {
+  const navigate = useNavigate();
+  const { currentTrip, clearTrip } = useTrip();
   const { config, update } = useTripConfig();
   const [manualRate, setManualRate] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -996,6 +1000,11 @@ function ConfigTab() {
     }
   };
 
+  const handleChangeTrip = () => {
+    clearTrip();
+    navigate('/trips');
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -1003,20 +1012,66 @@ function ConfigTab() {
       exit={{ opacity: 0, x: -20 }}
       style={{ display: 'flex', flexDirection: 'column', gap: 20 }}
     >
+      {/* Change Trip Button */}
+      <motion.button
+        onClick={handleChangeTrip}
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 16,
+          padding: 20,
+          borderRadius: 20,
+          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15))',
+          border: '1px solid rgba(99, 102, 241, 0.3)',
+          cursor: 'pointer',
+        }}
+        whileHover={{ scale: 1.02, borderColor: 'rgba(168, 85, 247, 0.5)' }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <div style={{
+          width: 56,
+          height: 56,
+          borderRadius: '50%',
+          background: `linear-gradient(135deg, ${currentTrip?.color_primary || '#ec4899'}20, ${currentTrip?.color_secondary || '#8b5cf6'}20)`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 28,
+        }}>
+          {currentTrip?.emoji || '✈️'}
+        </div>
+        <div style={{ flex: 1, textAlign: 'left' }}>
+          <p style={{ fontWeight: 600, color: 'white', fontSize: 17, marginBottom: 4 }}>
+            {currentTrip?.nombre || 'Viaje'}
+          </p>
+          <p style={{ fontSize: 14, color: 'rgba(192, 132, 252, 0.6)' }}>
+            {currentTrip?.destino || 'Destino'}
+          </p>
+        </div>
+        <div style={{
+          padding: 12,
+          borderRadius: 12,
+          background: 'rgba(168, 85, 247, 0.2)',
+        }}>
+          <ArrowLeftRight style={{ width: 20, height: 20, color: '#c4b5fd' }} />
+        </div>
+      </motion.button>
+
       {/* Trip dates */}
       <div className="glass-card" style={{ padding: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{
             padding: 14,
             borderRadius: 16,
-            background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(168, 85, 247, 0.3))',
-            border: '1px solid rgba(236, 72, 153, 0.3)'
+            background: 'var(--glass-bg-1)',
+            border: '1px solid var(--glass-border)'
           }}>
-            <Calendar style={{ width: 28, height: 28, color: '#f9a8d4' }} />
+            <Calendar style={{ width: 28, height: 28, color: 'var(--theme-accent)' }} />
           </div>
           <div>
             <p style={{ fontWeight: 600, color: 'white', fontSize: 18, marginBottom: 6 }}>Fechas del viaje</p>
-            <p style={{ fontSize: 15, color: 'rgba(192, 132, 252, 0.7)' }}>
+            <p style={{ fontSize: 15, color: 'var(--theme-text-muted)' }}>
               {formatDate(config.trip_start_date, "d 'de' MMMM")} - {formatDate(config.trip_end_date, "d 'de' MMMM, yyyy")}
             </p>
           </div>
@@ -1032,11 +1087,11 @@ function ConfigTab() {
             background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(16, 185, 129, 0.3))',
             border: '1px solid rgba(34, 197, 94, 0.3)'
           }}>
-            <DollarSign style={{ width: 28, height: 28, color: '#86efac' }} />
+            <DollarSign style={{ width: 28, height: 28, color: 'var(--success-color)' }} />
           </div>
           <div>
             <p style={{ fontWeight: 600, color: 'white', fontSize: 18, marginBottom: 6 }}>Dolar Blue</p>
-            <p style={{ fontSize: 15, color: 'rgba(192, 132, 252, 0.7)' }}>{getFormattedRate()}</p>
+            <p style={{ fontSize: 15, color: 'var(--theme-text-muted)' }}>{getFormattedRate()}</p>
           </div>
         </div>
 
@@ -1081,14 +1136,14 @@ function UserSection() {
           <div style={{
             padding: 14,
             borderRadius: 16,
-            background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.3))',
-            border: '1px solid rgba(168, 85, 247, 0.3)'
+            background: 'var(--glass-bg-1)',
+            border: '1px solid var(--glass-border)'
           }}>
-            <User style={{ width: 28, height: 28, color: '#c4b5fd' }} />
+            <User style={{ width: 28, height: 28, color: 'var(--theme-accent)' }} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{ fontWeight: 600, color: 'white', fontSize: 18, marginBottom: 6 }}>Sesion activa</p>
-            <p style={{ fontSize: 15, color: 'rgba(192, 132, 252, 0.7)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
+            <p style={{ fontSize: 15, color: 'var(--theme-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
           </div>
         </div>
       </div>
@@ -1107,7 +1162,7 @@ function UserSection() {
           borderRadius: 16,
           background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(236, 72, 153, 0.15))',
           border: '1px solid rgba(239, 68, 68, 0.3)',
-          color: '#fca5a5',
+          color: 'var(--theme-accent)',
           fontWeight: 600,
           fontSize: 16,
           cursor: isLoggingOut ? 'not-allowed' : 'pointer',
@@ -1121,7 +1176,7 @@ function UserSection() {
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
           >
-            <Sparkles style={{ width: 22, height: 22 }} />
+            <Sparkles style={{ width: 22, height: 22, color: 'var(--loader-color)' }} />
           </motion.div>
         ) : (
           <>
@@ -1133,10 +1188,10 @@ function UserSection() {
 
       {/* App info */}
       <div style={{ textAlign: 'center', paddingTop: 24 }}>
-        <p style={{ fontSize: 14, color: 'rgba(168, 85, 247, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-          <Heart style={{ width: 16, height: 16, fill: 'rgba(236, 72, 153, 0.5)', color: 'rgba(236, 72, 153, 0.5)' }} />
-          Orlando Trip 2026 - Juan & Vale
-          <Heart style={{ width: 16, height: 16, fill: 'rgba(236, 72, 153, 0.5)', color: 'rgba(236, 72, 153, 0.5)' }} />
+        <p style={{ fontSize: 14, color: 'var(--theme-text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+          <Heart style={{ width: 16, height: 16, fill: 'var(--heart-color)', color: 'var(--heart-color)', opacity: 0.5 }} />
+          Trips J&V - Juan & Vale
+          <Heart style={{ width: 16, height: 16, fill: 'var(--heart-color)', color: 'var(--heart-color)', opacity: 0.5 }} />
         </p>
       </div>
     </div>

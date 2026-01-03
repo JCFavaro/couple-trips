@@ -1,24 +1,130 @@
 @import "tailwindcss";
 
-/* Disney Magic Theme - Pink & Purple */
+/* Dynamic Theme - CSS Variables set by TripContext */
+:root {
+  /* Default theme (neutral) */
+  --theme-primary: #6366f1;
+  --theme-secondary: #8b5cf6;
+  --theme-bg: #18181b;
+  --theme-bg-secondary: #27272a;
+  --theme-bg-tertiary: #3f3f46;
+  --theme-accent: #a78bfa;
+  --theme-text-muted: rgba(161, 161, 170, 0.8);
+  /* Glass effects */
+  --glass-bg-1: rgba(99, 102, 241, 0.15);
+  --glass-bg-2: rgba(139, 92, 246, 0.15);
+  --glass-border: rgba(139, 92, 246, 0.2);
+  --glass-border-hover: rgba(139, 92, 246, 0.4);
+  --glass-shadow: rgba(99, 102, 241, 0.1);
+  --glass-shadow-hover: rgba(99, 102, 241, 0.2);
+  --btn-shadow: rgba(99, 102, 241, 0.4);
+  --btn-shadow-hover: rgba(99, 102, 241, 0.5);
+  --input-focus-shadow: rgba(167, 139, 250, 0.15);
+  /* Nav colors */
+  --nav-bg: rgba(24, 24, 27, 0.95);
+  --nav-active: #ffffff;
+  --nav-inactive: rgba(161, 161, 170, 0.5);
+  --nav-dot: #a78bfa;
+  --fab-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+  --fab-shadow: rgba(99, 102, 241, 0.4);
+  /* Icon & UI colors */
+  --icon-primary: #6366f1;
+  --icon-secondary: #8b5cf6;
+  --icon-bg-1: linear-gradient(135deg, #6366f1, #8b5cf6);
+  --icon-bg-2: linear-gradient(135deg, #8b5cf6, #6366f1);
+  --tab-active-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+  --loader-color: #a78bfa;
+  --stat-number: #a78bfa;
+  --success-color: #10b981;
+  /* Person colors (Juan/Vale) */
+  --color-juan: #6366f1;
+  --color-vale: #a78bfa;
+  --heart-color: #6366f1;
+}
+
+/* Orlando Theme */
+[data-theme="orlando"] {
+  --theme-primary: #ec4899;
+  --theme-secondary: #8b5cf6;
+  --theme-bg: #1a0a2e;
+  --theme-bg-secondary: #2d1b4e;
+  --theme-bg-tertiary: #4a1942;
+  --theme-accent: #f472b6;
+  --theme-text-muted: rgba(192, 132, 252, 0.7);
+  /* Glass effects */
+  --glass-bg-1: rgba(168, 85, 247, 0.15);
+  --glass-bg-2: rgba(244, 114, 182, 0.15);
+  --glass-border: rgba(244, 114, 182, 0.2);
+  --glass-border-hover: rgba(244, 114, 182, 0.4);
+  --glass-shadow: rgba(168, 85, 247, 0.1);
+  --glass-shadow-hover: rgba(244, 114, 182, 0.2);
+  --btn-shadow: rgba(236, 72, 153, 0.4);
+  --btn-shadow-hover: rgba(236, 72, 153, 0.5);
+  --input-focus-shadow: rgba(244, 114, 182, 0.15);
+  /* Nav colors */
+  --nav-bg: rgba(26, 10, 46, 0.95);
+  --nav-active: #ffffff;
+  --nav-inactive: rgba(168, 85, 247, 0.5);
+  --nav-dot: #ec4899;
+  --fab-gradient: linear-gradient(135deg, #ec4899, #8b5cf6);
+  --fab-shadow: rgba(236, 72, 153, 0.4);
+  /* Icon & UI colors */
+  --icon-primary: #ec4899;
+  --icon-secondary: #a855f7;
+  --icon-bg-1: linear-gradient(135deg, #ec4899, #a855f7);
+  --icon-bg-2: linear-gradient(135deg, #a855f7, #ec4899);
+  --tab-active-gradient: linear-gradient(135deg, #ec4899, #a855f7);
+  --loader-color: #f472b6;
+  --stat-number: #f472b6;
+  --success-color: #10b981;
+  /* Person colors (Juan/Vale) */
+  --color-juan: #f472b6;
+  --color-vale: #c084fc;
+  --heart-color: #ec4899;
+}
+
+/* Chile Theme - Cyan/Blue Patagonia (todo celeste, sin rojo) */
+[data-theme="chile"] {
+  --theme-primary: #0ea5e9;
+  --theme-secondary: #38bdf8;
+  --theme-bg: #0c4a6e;
+  --theme-bg-secondary: #0369a1;
+  --theme-bg-tertiary: #0891b2;
+  --theme-accent: #7dd3fc;
+  --theme-text-muted: rgba(186, 230, 253, 0.7);
+  /* Glass effects - white/cyan tinted */
+  --glass-bg-1: rgba(255, 255, 255, 0.12);
+  --glass-bg-2: rgba(14, 165, 233, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-border-hover: rgba(255, 255, 255, 0.35);
+  --glass-shadow: rgba(7, 89, 133, 0.2);
+  --glass-shadow-hover: rgba(7, 89, 133, 0.3);
+  --btn-shadow: rgba(14, 165, 233, 0.4);
+  --btn-shadow-hover: rgba(14, 165, 233, 0.5);
+  --input-focus-shadow: rgba(56, 189, 248, 0.2);
+  /* Nav colors */
+  --nav-bg: rgba(7, 89, 133, 0.95);
+  --nav-active: #ffffff;
+  --nav-inactive: rgba(186, 230, 253, 0.5);
+  --nav-dot: #38bdf8;
+  --fab-gradient: linear-gradient(135deg, #0ea5e9, #38bdf8);
+  --fab-shadow: rgba(14, 165, 233, 0.4);
+  /* Icon & UI colors - all cyan/blue */
+  --icon-primary: #0ea5e9;
+  --icon-secondary: #38bdf8;
+  --icon-bg-1: linear-gradient(135deg, #0ea5e9, #38bdf8);
+  --icon-bg-2: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  --tab-active-gradient: linear-gradient(135deg, #0ea5e9, #38bdf8);
+  --loader-color: #7dd3fc;
+  --stat-number: #7dd3fc;
+  --success-color: #10b981;
+  /* Person colors (Juan/Vale) - cyan tones */
+  --color-juan: #0ea5e9;
+  --color-vale: #7dd3fc;
+  --heart-color: #0ea5e9;
+}
+
 @theme {
-  /* Background colors - Magical Night */
-  --color-magic-dark: #1a0a2e;
-  --color-magic-purple: #2d1b4e;
-  --color-magic-pink: #4a1942;
-
-  /* Accent colors */
-  --color-accent-gold: #ffd700;
-  --color-accent-pink: #ff69b4;
-  --color-accent-rose: #f472b6;
-  --color-accent-purple: #a855f7;
-  --color-accent-lavender: #c4b5fd;
-
-  /* Text colors */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #e9d5ff;
-  --color-text-muted: #a78bfa;
-
   /* Font family */
   --font-disney: 'Poppins', system-ui, sans-serif;
 }
@@ -37,9 +143,10 @@ html {
 
 body {
   min-height: 100vh;
-  background: linear-gradient(180deg, #1a0a2e 0%, #2d1b4e 40%, #4a1942 100%);
+  background: linear-gradient(180deg, var(--theme-bg) 0%, var(--theme-bg-secondary) 40%, var(--theme-bg-tertiary) 100%);
   background-attachment: fixed;
   color: white;
+  transition: background 0.3s ease;
 }
 
 #root {
@@ -100,7 +207,7 @@ body {
 }
 
 .shimmer-text {
-  background: linear-gradient(90deg, #f472b6, #e879f9, #f472b6, #e879f9, #f472b6);
+  background: linear-gradient(90deg, var(--theme-primary), var(--theme-accent), var(--theme-primary), var(--theme-accent), var(--theme-primary));
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -117,23 +224,23 @@ body {
   animation: shimmer 3s linear infinite;
 }
 
-/* Glass morphism card - Pink theme */
+/* Glass morphism card - Dynamic theme */
 .glass-card {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(244, 114, 182, 0.15) 100%);
+  background: linear-gradient(135deg, var(--glass-bg-1, rgba(168, 85, 247, 0.15)) 0%, var(--glass-bg-2, rgba(244, 114, 182, 0.15)) 100%);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(244, 114, 182, 0.2);
+  border: 1px solid var(--glass-border, rgba(244, 114, 182, 0.2));
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(168, 85, 247, 0.1);
+  box-shadow: 0 8px 32px var(--glass-shadow, rgba(168, 85, 247, 0.1));
 }
 
 .glass-card:hover {
-  border-color: rgba(244, 114, 182, 0.4);
-  box-shadow: 0 8px 32px rgba(244, 114, 182, 0.2);
+  border-color: var(--glass-border-hover, rgba(244, 114, 182, 0.4));
+  box-shadow: 0 8px 32px var(--glass-shadow-hover, rgba(244, 114, 182, 0.2));
 }
 
-/* Magic button - Pink gradient */
+/* Magic button - Dynamic gradient */
 .magic-btn {
-  background: linear-gradient(135deg, #ec4899, #a855f7);
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
   color: white;
   font-weight: 600;
   padding: 12px 24px;
@@ -141,12 +248,12 @@ body {
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
+  box-shadow: 0 4px 20px var(--btn-shadow, rgba(236, 72, 153, 0.4));
 }
 
 .magic-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(236, 72, 153, 0.5);
+  box-shadow: 0 6px 25px var(--btn-shadow-hover, rgba(236, 72, 153, 0.5));
 }
 
 .magic-btn:active {
@@ -156,7 +263,7 @@ body {
 /* Secondary button */
 .secondary-btn {
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(244, 114, 182, 0.3);
+  border: 1px solid var(--glass-border, rgba(244, 114, 182, 0.3));
   color: white;
   font-weight: 500;
   padding: 12px 24px;
@@ -166,14 +273,14 @@ body {
 }
 
 .secondary-btn:hover {
-  background: rgba(244, 114, 182, 0.2);
-  border-color: rgba(244, 114, 182, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--glass-border-hover, rgba(244, 114, 182, 0.5));
 }
 
-/* Input styles - Pink focus */
+/* Input styles - Dynamic focus */
 .magic-input {
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(244, 114, 182, 0.2);
+  border: 1px solid var(--glass-border, rgba(244, 114, 182, 0.2));
   border-radius: 16px;
   padding: 14px 18px;
   color: white;
@@ -183,9 +290,9 @@ body {
 
 .magic-input:focus {
   outline: none;
-  border-color: #f472b6;
+  border-color: var(--theme-accent);
   background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.15);
+  box-shadow: 0 0 0 3px var(--input-focus-shadow, rgba(244, 114, 182, 0.15));
 }
 
 .magic-input::placeholder {
@@ -195,14 +302,14 @@ body {
 /* Select styles */
 .magic-select {
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(244, 114, 182, 0.2);
+  border: 1px solid var(--glass-border, rgba(244, 114, 182, 0.2));
   border-radius: 16px;
   padding: 14px 18px;
   color: white;
   font-size: 1rem;
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f472b6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6,9 12,15 18,9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a78bfa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6,9 12,15 18,9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 18px;
@@ -211,16 +318,16 @@ body {
 
 .magic-select:focus {
   outline: none;
-  border-color: #f472b6;
-  box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.15);
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 0 3px var(--input-focus-shadow, rgba(244, 114, 182, 0.15));
 }
 
 .magic-select option {
-  background: #2d1b4e;
+  background: var(--theme-bg-secondary);
   color: white;
 }
 
-/* Custom scrollbar - Pink */
+/* Custom scrollbar - Dynamic */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -231,12 +338,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #ec4899, #a855f7);
+  background: linear-gradient(180deg, var(--theme-primary), var(--theme-secondary));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #f472b6, #c084fc);
+  background: linear-gradient(180deg, var(--theme-accent), var(--theme-secondary));
 }
 
 /* Category badges */
@@ -253,17 +360,17 @@ body {
 }
 
 /* Glowing effect */
-.glow-pink {
-  box-shadow: 0 0 20px rgba(236, 72, 153, 0.5);
+.glow-primary {
+  box-shadow: 0 0 20px var(--btn-shadow);
 }
 
-.glow-purple {
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+.glow-secondary {
+  box-shadow: 0 0 20px var(--glass-shadow);
 }
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #f472b6, #e879f9, #c4b5fd);
+  background: linear-gradient(135deg, var(--theme-accent), var(--theme-primary), var(--theme-secondary));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -275,11 +382,11 @@ body {
 }
 
 /* Pulse animation */
-@keyframes pulse-pink {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(236, 72, 153, 0); }
+@keyframes pulse-theme {
+  0%, 100% { box-shadow: 0 0 0 0 var(--btn-shadow); }
+  50% { box-shadow: 0 0 0 10px transparent; }
 }
 
-.pulse-pink {
-  animation: pulse-pink 2s infinite;
+.pulse-theme {
+  animation: pulse-theme 2s infinite;
 }

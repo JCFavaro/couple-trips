@@ -1,5 +1,73 @@
 // Database types for Supabase
 
+// ============ TRIPS ============
+export interface Trip {
+  id: string;
+  nombre: string;
+  destino: string;
+  emoji: string;
+  theme: TripTheme;
+  fecha_inicio: string;
+  fecha_fin: string;
+  dolar_blue_rate: number;
+  color_primary: string;
+  color_secondary: string;
+  color_bg: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type TripTheme = 'orlando' | 'chile' | 'default';
+
+export interface TripThemeConfig {
+  name: string;
+  primary: string;
+  secondary: string;
+  bg: string;
+  bgGradient: string;
+  cardBg: string;
+  textPrimary: string;
+  textSecondary: string;
+  accent: string;
+}
+
+export const TRIP_THEMES: Record<TripTheme, TripThemeConfig> = {
+  orlando: {
+    name: 'Orlando Magic',
+    primary: '#ec4899',
+    secondary: '#8b5cf6',
+    bg: '#1a0a2e',
+    bgGradient: 'linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 100%)',
+    cardBg: 'rgba(139, 92, 246, 0.1)',
+    textPrimary: '#ffffff',
+    textSecondary: 'rgba(192, 132, 252, 0.7)',
+    accent: '#f472b6',
+  },
+  chile: {
+    name: 'Chile Adventure',
+    primary: '#dc2626',
+    secondary: '#1d4ed8',
+    bg: '#0f172a',
+    bgGradient: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+    cardBg: 'rgba(30, 58, 138, 0.15)',
+    textPrimary: '#ffffff',
+    textSecondary: 'rgba(148, 163, 184, 0.8)',
+    accent: '#f87171',
+  },
+  default: {
+    name: 'Classic',
+    primary: '#6366f1',
+    secondary: '#8b5cf6',
+    bg: '#18181b',
+    bgGradient: 'linear-gradient(135deg, #18181b 0%, #27272a 100%)',
+    cardBg: 'rgba(99, 102, 241, 0.1)',
+    textPrimary: '#ffffff',
+    textSecondary: 'rgba(161, 161, 170, 0.8)',
+    accent: '#a78bfa',
+  },
+};
+
+// Legacy - keeping for backwards compatibility during migration
 export interface TripConfig {
   id: string;
   trip_start_date: string;
@@ -10,6 +78,7 @@ export interface TripConfig {
 
 export interface Gasto {
   id: string;
+  trip_id: string;
   fecha: string;
   concepto: string;
   categoria: CategoriaGasto;
@@ -26,6 +95,7 @@ export interface Gasto {
 // Pago de cuota individual
 export interface GastoPago {
   id: string;
+  trip_id: string;
   gasto_id: string;
   numero_cuota: number;
   monto: number;
@@ -48,6 +118,7 @@ export interface GastoConPagos extends Gasto {
 
 export interface Itinerario {
   id: string;
+  trip_id: string;
   fecha: string;
   titulo: string;
   descripcion?: string;
@@ -59,6 +130,7 @@ export interface Itinerario {
 
 export interface Documento {
   id: string;
+  trip_id: string;
   nombre: string;
   categoria: CategoriaDocumento;
   archivo_url: string;
@@ -69,6 +141,7 @@ export interface Documento {
 
 export interface Lugar {
   id: string;
+  trip_id: string;
   nombre: string;
   tipo: TipoLugar;
   maps_url?: string;
@@ -79,6 +152,7 @@ export interface Lugar {
 
 export interface Nota {
   id: string;
+  trip_id: string;
   titulo: string;
   contenido?: string;
   tipo: TipoNota;
