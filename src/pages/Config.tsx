@@ -59,8 +59,13 @@ export function Config() {
 
   return (
     <PageWrapper title="Configuracion">
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 32, flexWrap: 'wrap' }}>
+      {/* Tabs - 2x2 grid for better touch targets */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 12,
+        marginBottom: 28
+      }}>
         {[
           { id: 'lugares' as const, label: 'Lugares', icon: MapPin },
           { id: 'notas' as const, label: 'Notas', icon: StickyNote },
@@ -70,23 +75,28 @@ export function Config() {
           <motion.button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-2xl text-sm font-medium transition-all relative overflow-hidden ${
-              activeTab === tab.id
-                ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg shadow-pink-500/30'
-                : 'bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-300/70 hover:text-white border border-purple-500/20'
-            }`}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 10,
+              padding: '14px 16px',
+              borderRadius: 16,
+              fontSize: 15,
+              fontWeight: 600,
+              position: 'relative',
+              overflow: 'hidden',
+              background: activeTab === tab.id
+                ? 'linear-gradient(135deg, #ec4899, #a855f7)'
+                : 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1))',
+              color: activeTab === tab.id ? 'white' : 'rgba(192, 132, 252, 0.7)',
+              border: activeTab === tab.id ? 'none' : '1px solid rgba(168, 85, 247, 0.2)',
+              boxShadow: activeTab === tab.id ? '0 4px 16px rgba(236, 72, 153, 0.3)' : 'none',
+            }}
+            whileTap={{ scale: 0.97 }}
           >
-            <tab.icon className="w-5 h-5" />
+            <tab.icon style={{ width: 20, height: 20 }} />
             {tab.label}
-            {activeTab === tab.id && (
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                animate={{ x: ['-100%', '100%'] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-              />
-            )}
           </motion.button>
         ))}
       </div>
@@ -249,64 +259,111 @@ function LugaresTab() {
                   exit={{ opacity: 0, x: -100 }}
                   transition={{ delay: index * 0.03 }}
                 >
-                  <div className={`glass-card p-5 group hover:border-pink-500/40 transition-colors ${lugar.visitado ? 'opacity-60' : ''}`}>
-                    <div className="flex items-start gap-4">
+                  <div
+                    className={`glass-card group hover:border-pink-500/40 transition-colors ${lugar.visitado ? 'opacity-60' : ''}`}
+                    style={{ padding: 20 }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
                       <motion.button
                         onClick={() => toggleVisitado(lugar.id)}
-                        className={`w-8 h-8 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
-                          lugar.visitado
-                            ? 'bg-gradient-to-br from-green-500 to-emerald-500 border-green-500 shadow-lg shadow-green-500/30'
-                            : 'border-purple-500/40 hover:border-pink-500 hover:bg-pink-500/10'
-                        }`}
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: '50%',
+                          border: lugar.visitado ? 'none' : '2px solid rgba(168, 85, 247, 0.4)',
+                          background: lugar.visitado
+                            ? 'linear-gradient(135deg, #22c55e, #10b981)'
+                            : 'transparent',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          boxShadow: lugar.visitado ? '0 4px 12px rgba(34, 197, 94, 0.3)' : 'none',
+                        }}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
-                        {lugar.visitado && <Check className="w-5 h-5 text-white" />}
+                        {lugar.visitado && <Check style={{ width: 18, height: 18, color: 'white' }} />}
                       </motion.button>
 
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2.5">
-                          <div className={`p-2 rounded-lg bg-gradient-to-br ${TIPO_LUGAR_COLORS[lugar.tipo]} border`}>
-                            <Icon className="w-4 h-4" />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+                          <div
+                            className={`bg-gradient-to-br ${TIPO_LUGAR_COLORS[lugar.tipo]} border`}
+                            style={{ padding: 8, borderRadius: 10 }}
+                          >
+                            <Icon style={{ width: 18, height: 18 }} />
                           </div>
-                          <p className={`font-medium ${lugar.visitado ? 'text-purple-300/60 line-through' : 'text-white group-hover:text-pink-200'} transition-colors`}>
+                          <p
+                            style={{
+                              fontWeight: 500,
+                              fontSize: 16,
+                              color: lugar.visitado ? 'rgba(192, 132, 252, 0.6)' : 'white',
+                              textDecoration: lugar.visitado ? 'line-through' : 'none',
+                            }}
+                          >
                             {lugar.nombre}
                           </p>
                         </div>
                         {lugar.notas && (
-                          <p className="text-sm text-purple-300/50 mt-1.5 line-clamp-1">{lugar.notas}</p>
+                          <p style={{ fontSize: 14, color: 'rgba(192, 132, 252, 0.5)', marginTop: 8 }} className="line-clamp-1">{lugar.notas}</p>
                         )}
                         {lugar.maps_url && (
                           <motion.a
                             href={lugar.maps_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-pink-300 text-sm mt-3 px-3 py-1 rounded-lg bg-pink-500/10 border border-pink-500/20 hover:bg-pink-500/20 transition-colors"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 8,
+                              color: '#f9a8d4',
+                              fontSize: 14,
+                              marginTop: 12,
+                              padding: '8px 14px',
+                              borderRadius: 10,
+                              background: 'rgba(236, 72, 153, 0.1)',
+                              border: '1px solid rgba(236, 72, 153, 0.2)',
+                            }}
                             whileHover={{ scale: 1.02 }}
                           >
-                            <MapPin className="w-3.5 h-3.5" />
+                            <MapPin style={{ width: 16, height: 16 }} />
                             Ver en mapa
-                            <ExternalLink className="w-3.5 h-3.5" />
+                            <ExternalLink style={{ width: 14, height: 14 }} />
                           </motion.a>
                         )}
                       </div>
 
-                      <div className="flex gap-2">
+                      <div style={{ display: 'flex', gap: 8 }}>
                         <motion.button
                           onClick={() => handleOpenModal(lugar)}
-                          className="p-2.5 rounded-xl hover:bg-purple-500/20 text-purple-300/50 hover:text-purple-300 transition-colors"
-                          whileHover={{ scale: 1.1 }}
+                          style={{
+                            padding: 10,
+                            borderRadius: 12,
+                            background: 'transparent',
+                            border: 'none',
+                            color: 'rgba(192, 132, 252, 0.5)',
+                            cursor: 'pointer',
+                          }}
+                          whileHover={{ scale: 1.1, backgroundColor: 'rgba(168, 85, 247, 0.2)' }}
                           whileTap={{ scale: 0.9 }}
                         >
-                          <Edit2 className="w-5 h-5" />
+                          <Edit2 style={{ width: 20, height: 20 }} />
                         </motion.button>
                         <motion.button
                           onClick={() => { setDeleteId(lugar.id); setShowDeleteModal(true); }}
-                          className="p-2.5 rounded-xl hover:bg-red-500/20 text-purple-300/50 hover:text-red-400 transition-colors"
-                          whileHover={{ scale: 1.1 }}
+                          style={{
+                            padding: 10,
+                            borderRadius: 12,
+                            background: 'transparent',
+                            border: 'none',
+                            color: 'rgba(192, 132, 252, 0.5)',
+                            cursor: 'pointer',
+                          }}
+                          whileHover={{ scale: 1.1, backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#f87171' }}
                           whileTap={{ scale: 0.9 }}
                         >
-                          <Trash2 className="w-5 h-5" />
+                          <Trash2 style={{ width: 20, height: 20 }} />
                         </motion.button>
                       </div>
                     </div>

@@ -20,26 +20,25 @@ export function BottomNav() {
         }}
       />
 
-      {/* FAB - Floating Action Button */}
+      {/* FAB - Floating Action Button - just slightly above nav */}
       <motion.button
         onClick={handleFabClick}
         className="absolute left-1/2 -translate-x-1/2 z-20"
         style={{
-          bottom: 'calc(72px + max(12px, env(safe-area-inset-bottom)))',
-          width: 56,
-          height: 56,
+          bottom: 'calc(52px + max(8px, env(safe-area-inset-bottom)))',
+          width: 52,
+          height: 52,
           borderRadius: '50%',
           background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
-          boxShadow: '0 4px 20px rgba(236, 72, 153, 0.5)',
+          boxShadow: '0 4px 16px rgba(236, 72, 153, 0.5)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          border: '3px solid rgba(26, 10, 46, 0.9)',
+          border: '3px solid #1a0a2e',
         }}
         whileTap={{ scale: 0.92 }}
-        whileHover={{ scale: 1.05 }}
       >
-        <Plus className="w-7 h-7 text-white" strokeWidth={2.5} />
+        <Plus className="w-6 h-6 text-white" strokeWidth={2.5} />
       </motion.button>
 
       {/* Nav bar container */}
