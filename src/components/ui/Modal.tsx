@@ -44,12 +44,13 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
         <div style={{
           position: 'fixed',
           inset: 0,
-          zIndex: 50,
+          zIndex: 100,
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           justifyContent: 'center',
-          padding: '24px 16px',
-          paddingBottom: 100
+          padding: '48px 16px',
+          paddingBottom: 120,
+          overflowY: 'auto'
         }}>
           {/* Backdrop */}
           <motion.div
@@ -81,8 +82,10 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
               border: '1px solid var(--glass-border)',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px var(--glass-shadow)',
               padding: 28,
-              maxHeight: '85vh',
-              overflowY: 'auto'
+              maxHeight: 'calc(100vh - 180px)',
+              overflowY: 'auto',
+              marginTop: 'auto',
+              marginBottom: 'auto'
             }}
           >
             {/* Decorative sparkles */}
@@ -147,18 +150,6 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
             <div style={{ position: 'relative', zIndex: 10 }}>
               {children}
             </div>
-
-            {/* Bottom gradient decoration */}
-            <div style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: 80,
-              background: 'linear-gradient(to top, var(--glass-bg-1), transparent)',
-              borderRadius: '0 0 24px 24px',
-              pointerEvents: 'none'
-            }} />
           </motion.div>
         </div>
       )}
