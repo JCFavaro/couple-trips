@@ -944,17 +944,22 @@ function ConfigTab() {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="space-y-5"
+      style={{ display: 'flex', flexDirection: 'column', gap: 20 }}
     >
       {/* Trip dates */}
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-pink-500/30 to-purple-500/30">
-            <Calendar className="w-6 h-6 text-pink-300" />
+      <div className="glass-card" style={{ padding: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            padding: 14,
+            borderRadius: 16,
+            background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(168, 85, 247, 0.3))',
+            border: '1px solid rgba(236, 72, 153, 0.3)'
+          }}>
+            <Calendar style={{ width: 28, height: 28, color: '#f9a8d4' }} />
           </div>
           <div>
-            <p className="font-semibold text-white text-lg">Fechas del viaje</p>
-            <p className="text-sm text-purple-300/60 mt-1">
+            <p style={{ fontWeight: 600, color: 'white', fontSize: 18, marginBottom: 6 }}>Fechas del viaje</p>
+            <p style={{ fontSize: 15, color: 'rgba(192, 132, 252, 0.7)' }}>
               {formatDate(config.trip_start_date, "d 'de' MMMM")} - {formatDate(config.trip_end_date, "d 'de' MMMM, yyyy")}
             </p>
           </div>
@@ -962,18 +967,23 @@ function ConfigTab() {
       </div>
 
       {/* Dolar rate */}
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-4 mb-5">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-green-500/30 to-emerald-500/30">
-            <DollarSign className="w-6 h-6 text-green-300" />
+      <div className="glass-card" style={{ padding: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+          <div style={{
+            padding: 14,
+            borderRadius: 16,
+            background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(16, 185, 129, 0.3))',
+            border: '1px solid rgba(34, 197, 94, 0.3)'
+          }}>
+            <DollarSign style={{ width: 28, height: 28, color: '#86efac' }} />
           </div>
           <div>
-            <p className="font-semibold text-white text-lg">Dolar Blue</p>
-            <p className="text-sm text-purple-300/60 mt-1">{getFormattedRate()}</p>
+            <p style={{ fontWeight: 600, color: 'white', fontSize: 18, marginBottom: 6 }}>Dolar Blue</p>
+            <p style={{ fontSize: 15, color: 'rgba(192, 132, 252, 0.7)' }}>{getFormattedRate()}</p>
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div style={{ display: 'flex', gap: 12 }}>
           <Input
             placeholder="Nuevo valor..."
             type="number"
@@ -985,7 +995,7 @@ function ConfigTab() {
             Guardar
           </Button>
         </div>
-        <p className="text-xs text-purple-400/40 mt-4">
+        <p style={{ fontSize: 13, color: 'rgba(168, 85, 247, 0.5)', marginTop: 16 }}>
           La tasa se actualiza automaticamente desde la API, pero puedes establecer una manualmente.
         </p>
       </div>
@@ -1007,16 +1017,21 @@ function UserSection() {
   };
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       {/* User info */}
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/30 to-pink-500/30">
-            <User className="w-6 h-6 text-purple-300" />
+      <div className="glass-card" style={{ padding: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            padding: 14,
+            borderRadius: 16,
+            background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.3))',
+            border: '1px solid rgba(168, 85, 247, 0.3)'
+          }}>
+            <User style={{ width: 28, height: 28, color: '#c4b5fd' }} />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-white text-lg">Sesion activa</p>
-            <p className="text-sm text-purple-300/60 truncate mt-1">{user?.email}</p>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontWeight: 600, color: 'white', fontSize: 18, marginBottom: 6 }}>Sesion activa</p>
+            <p style={{ fontSize: 15, color: 'rgba(192, 132, 252, 0.7)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
           </div>
         </div>
       </div>
@@ -1025,7 +1040,22 @@ function UserSection() {
       <motion.button
         onClick={handleLogout}
         disabled={isLoggingOut}
-        className="w-full flex items-center justify-center gap-2.5 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-red-500/20 to-pink-500/20 border border-red-500/30 text-red-300 font-medium hover:from-red-500/30 hover:to-pink-500/30 transition-all disabled:opacity-50"
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 12,
+          padding: '18px 24px',
+          borderRadius: 16,
+          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(236, 72, 153, 0.15))',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
+          color: '#fca5a5',
+          fontWeight: 600,
+          fontSize: 16,
+          cursor: isLoggingOut ? 'not-allowed' : 'pointer',
+          opacity: isLoggingOut ? 0.5 : 1,
+        }}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >
@@ -1034,24 +1064,24 @@ function UserSection() {
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
           >
-            <Sparkles className="w-5 h-5" />
+            <Sparkles style={{ width: 22, height: 22 }} />
           </motion.div>
         ) : (
           <>
-            <LogOut className="w-5 h-5" />
+            <LogOut style={{ width: 22, height: 22 }} />
             Cerrar sesion
           </>
         )}
       </motion.button>
 
       {/* App info */}
-      <div className="text-center pt-6">
-        <p className="text-purple-400/40 text-sm flex items-center justify-center gap-2">
-          <Heart className="w-4 h-4 fill-pink-500/50 text-pink-500/50" />
+      <div style={{ textAlign: 'center', paddingTop: 24 }}>
+        <p style={{ fontSize: 14, color: 'rgba(168, 85, 247, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+          <Heart style={{ width: 16, height: 16, fill: 'rgba(236, 72, 153, 0.5)', color: 'rgba(236, 72, 153, 0.5)' }} />
           Orlando Trip 2026 - Juan & Vale
-          <Heart className="w-4 h-4 fill-pink-500/50 text-pink-500/50" />
+          <Heart style={{ width: 16, height: 16, fill: 'rgba(236, 72, 153, 0.5)', color: 'rgba(236, 72, 153, 0.5)' }} />
         </p>
       </div>
-    </>
+    </div>
   );
 }

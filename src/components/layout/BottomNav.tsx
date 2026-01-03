@@ -11,124 +11,125 @@ export function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40">
-      {/* Background gradient fade */}
-      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#1a0a2e] via-[#1a0a2e]/90 to-transparent pointer-events-none" />
+      {/* Background gradient fade - helps content transition smoothly */}
+      <div
+        className="absolute inset-x-0 bottom-0 pointer-events-none"
+        style={{
+          height: 120,
+          background: 'linear-gradient(to top, #1a0a2e 0%, #1a0a2e 40%, transparent 100%)',
+        }}
+      />
 
-      {/* FAB - Floating Action Button - FUERA de la barra */}
+      {/* FAB - Floating Action Button */}
       <motion.button
         onClick={handleFabClick}
         className="absolute left-1/2 -translate-x-1/2 z-20"
         style={{
-          bottom: 'calc(68px + max(16px, env(safe-area-inset-bottom)))',
-          width: 64,
-          height: 64,
+          bottom: 'calc(72px + max(12px, env(safe-area-inset-bottom)))',
+          width: 56,
+          height: 56,
           borderRadius: '50%',
           background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
-          boxShadow: '0 8px 32px rgba(236, 72, 153, 0.6)',
+          boxShadow: '0 4px 20px rgba(236, 72, 153, 0.5)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          border: '3px solid rgba(26, 10, 46, 0.9)',
         }}
         whileTap={{ scale: 0.92 }}
+        whileHover={{ scale: 1.05 }}
       >
-        <Plus className="w-8 h-8 text-white" strokeWidth={2.5} />
+        <Plus className="w-7 h-7 text-white" strokeWidth={2.5} />
       </motion.button>
 
-      {/* Nav bar */}
+      {/* Nav bar container */}
       <div
-        className="relative mx-4 rounded-t-3xl border-t border-x border-purple-500/20 backdrop-blur-xl"
+        className="relative mx-3 rounded-t-2xl border-t border-x border-purple-500/20"
         style={{
-          background: 'rgba(26, 10, 46, 0.98)',
-          paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+          background: 'rgba(26, 10, 46, 0.95)',
+          backdropFilter: 'blur(20px)',
+          paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
         }}
       >
-        <div className="flex items-center justify-around px-2 pt-4 pb-2">
-          {/* Left tabs */}
-          <NavLink
-            to="/"
-            className="flex flex-col items-center gap-2 px-6 py-3 rounded-2xl transition-all"
-          >
-            {({ isActive }) => (
-              <>
-                <Home className={`w-7 h-7 ${isActive ? 'text-white' : 'text-purple-400/60'}`} />
-                <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-purple-400/60'}`}>
-                  Inicio
-                </span>
-                {isActive && (
-                  <motion.div
-                    className="w-2 h-2 rounded-full bg-pink-500"
-                    layoutId="dot"
-                  />
-                )}
-              </>
-            )}
-          </NavLink>
+        {/* Tab grid - 5 columns with center empty for FAB */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 72px 1fr 1fr',
+            alignItems: 'center',
+            paddingTop: 8,
+            paddingBottom: 4,
+          }}
+        >
+          <NavTab to="/" icon={Home} label="Inicio" />
+          <NavTab to="/gastos" icon={DollarSign} label="Gastos" />
 
-          <NavLink
-            to="/gastos"
-            className="flex flex-col items-center gap-2 px-6 py-3 rounded-2xl transition-all"
-          >
-            {({ isActive }) => (
-              <>
-                <DollarSign className={`w-7 h-7 ${isActive ? 'text-white' : 'text-purple-400/60'}`} />
-                <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-purple-400/60'}`}>
-                  Gastos
-                </span>
-                {isActive && (
-                  <motion.div
-                    className="w-2 h-2 rounded-full bg-pink-500"
-                    layoutId="dot"
-                  />
-                )}
-              </>
-            )}
-          </NavLink>
+          {/* Empty center space for FAB */}
+          <div />
 
-          {/* Spacer for FAB */}
-          <div className="w-20" />
-
-          {/* Right tabs */}
-          <NavLink
-            to="/itinerario"
-            className="flex flex-col items-center gap-2 px-6 py-3 rounded-2xl transition-all"
-          >
-            {({ isActive }) => (
-              <>
-                <Calendar className={`w-7 h-7 ${isActive ? 'text-white' : 'text-purple-400/60'}`} />
-                <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-purple-400/60'}`}>
-                  Viaje
-                </span>
-                {isActive && (
-                  <motion.div
-                    className="w-2 h-2 rounded-full bg-pink-500"
-                    layoutId="dot"
-                  />
-                )}
-              </>
-            )}
-          </NavLink>
-
-          <NavLink
-            to="/config"
-            className="flex flex-col items-center gap-2 px-6 py-3 rounded-2xl transition-all"
-          >
-            {({ isActive }) => (
-              <>
-                <Settings className={`w-7 h-7 ${isActive ? 'text-white' : 'text-purple-400/60'}`} />
-                <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-purple-400/60'}`}>
-                  Config
-                </span>
-                {isActive && (
-                  <motion.div
-                    className="w-2 h-2 rounded-full bg-pink-500"
-                    layoutId="dot"
-                  />
-                )}
-              </>
-            )}
-          </NavLink>
+          <NavTab to="/itinerario" icon={Calendar} label="Viaje" />
+          <NavTab to="/config" icon={Settings} label="Config" />
         </div>
       </div>
     </nav>
+  );
+}
+
+interface NavTabProps {
+  to: string;
+  icon: typeof Home;
+  label: string;
+}
+
+function NavTab({ to, icon: Icon, label }: NavTabProps) {
+  return (
+    <NavLink
+      to={to}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 4,
+        padding: '8px 4px',
+        minHeight: 56,
+        textDecoration: 'none',
+      }}
+    >
+      {({ isActive }) => (
+        <>
+          <Icon
+            style={{
+              width: 24,
+              height: 24,
+              color: isActive ? '#ffffff' : 'rgba(168, 85, 247, 0.5)',
+              transition: 'color 0.2s',
+            }}
+          />
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: isActive ? 600 : 500,
+              color: isActive ? '#ffffff' : 'rgba(168, 85, 247, 0.5)',
+              transition: 'color 0.2s',
+            }}
+          >
+            {label}
+          </span>
+          {isActive && (
+            <motion.div
+              layoutId="navDot"
+              style={{
+                width: 5,
+                height: 5,
+                borderRadius: '50%',
+                background: '#ec4899',
+              }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+            />
+          )}
+        </>
+      )}
+    </NavLink>
   );
 }
