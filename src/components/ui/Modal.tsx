@@ -48,7 +48,8 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 16
+          padding: '24px 16px',
+          paddingBottom: 100
         }}>
           {/* Backdrop */}
           <motion.div

@@ -281,33 +281,33 @@ export function Gastos() {
           <Sparkles className="sparkle" style={{ position: 'absolute', top: 16, right: 16, width: 20, height: 20, color: 'var(--theme-accent)', opacity: 0.4 }} />
           <DollarSign style={{ position: 'absolute', bottom: 16, left: 16, width: 32, height: 32, color: 'var(--theme-secondary)', opacity: 0.2 }} />
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <div style={{
-                padding: 14,
-                borderRadius: 16,
-                background: 'var(--icon-bg-1)',
-                opacity: 0.8
-              }}>
-                <TrendingUp style={{ width: 24, height: 24, color: 'var(--theme-accent)' }} />
-              </div>
-              <span style={{ fontWeight: 500, color: 'var(--theme-accent)', fontSize: 18 }}>Balance Total</span>
+          {/* Header con icono y titulo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
+            <div style={{
+              padding: 12,
+              borderRadius: 14,
+              background: 'var(--icon-bg-1)',
+            }}>
+              <TrendingUp style={{ width: 22, height: 22, color: 'white' }} />
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <motion.span
-                className="shimmer-text"
-                style={{ fontSize: 28, fontWeight: 700, display: 'block' }}
-                animate={{ scale: [1, 1.02, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                {formatCurrency(balance.totalGeneral.usd)}
-              </motion.span>
-              {balance.totalGeneral.ars > 0 && (
-                <span style={{ fontSize: 16, color: 'var(--theme-text-muted)' }}>
-                  + {formatCurrency(balance.totalGeneral.ars, 'ARS')}
-                </span>
-              )}
-            </div>
+            <span style={{ fontWeight: 600, color: 'var(--theme-accent)', fontSize: 16 }}>Balance Total</span>
+          </div>
+
+          {/* Monto total grande */}
+          <div style={{ marginBottom: 24 }}>
+            <motion.span
+              className="shimmer-text"
+              style={{ fontSize: 36, fontWeight: 700, display: 'block', lineHeight: 1.1 }}
+              animate={{ scale: [1, 1.02, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              {formatCurrency(balance.totalGeneral.usd)}
+            </motion.span>
+            {balance.totalGeneral.ars > 0 && (
+              <span style={{ fontSize: 16, color: 'var(--theme-text-muted)', marginTop: 4, display: 'block' }}>
+                + {formatCurrency(balance.totalGeneral.ars, 'ARS')}
+              </span>
+            )}
           </div>
 
           {/* Balance USD */}
