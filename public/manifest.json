@@ -1,7 +1,7 @@
 {
-  "name": "Orlando 2026 - Juan & Vale",
-  "short_name": "Orlando 2026",
-  "description": "Trip planner para nuestro viaje a Orlando",
+  "name": "Trips J&V",
+  "short_name": "Trips J&V",
+  "description": "Trip planner para nuestros viajes",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
