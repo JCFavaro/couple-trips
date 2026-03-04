@@ -40,6 +40,45 @@
   --color-juan: #6366f1;
   --color-vale: #a78bfa;
   --heart-color: #6366f1;
+
+  /* ── Typography Scale ── */
+  --text-display: 36px;
+  --text-h1: 24px;
+  --text-h2: 18px;
+  --text-body: 15px;
+  --text-sm: 13px;
+  --text-caption: 11px;
+
+  /* ── Font Weights ── */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* ── Text Colors (high contrast) ── */
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.75);
+  --text-muted: rgba(255, 255, 255, 0.45);
+
+  /* ── Spacing Scale ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+
+  /* ── Card Levels ── */
+  --card-flat: rgba(255, 255, 255, 0.04);
+  --card-flat-border: rgba(255, 255, 255, 0.06);
+  --card-elevated-border: rgba(255, 255, 255, 0.15);
+  --card-elevated-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+  /* ── Touch Targets ── */
+  --touch-min: 44px;
 }
 
 /* Orlando Theme */
@@ -236,6 +275,23 @@ body {
 .glass-card:hover {
   border-color: var(--glass-border-hover, rgba(244, 114, 182, 0.4));
   box-shadow: 0 8px 32px var(--glass-shadow-hover, rgba(244, 114, 182, 0.2));
+}
+
+.card-flat {
+  background: var(--card-flat);
+  border: 1px solid var(--card-flat-border);
+  border-radius: 16px;
+  padding: var(--space-4);
+}
+
+.card-elevated {
+  background: linear-gradient(135deg, var(--glass-bg-1), var(--glass-bg-2));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-elevated-border);
+  border-radius: 20px;
+  box-shadow: var(--card-elevated-shadow);
+  padding: var(--space-6);
 }
 
 /* Magic button - Dynamic gradient */
