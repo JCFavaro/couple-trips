@@ -2,18 +2,31 @@ import { forwardRef, type HTMLAttributes } from 'react';
 import { motion } from 'framer-motion';
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'interactive';
+  variant?: 'default' | 'interactive' | 'flat' | 'elevated';
 }
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className = '', variant = 'default', children, ...props }, ref) => {
-    const baseStyles = 'glass-card p-4';
+    function getCardClass(v: CardProps['variant']): string {
+      switch (v) {
+        case 'flat':
+          return 'card-flat';
+        case 'elevated':
+          return 'card-elevated';
+        case 'interactive':
+        case 'default':
+        default:
+          return 'glass-card';
+      }
+    }
+
+    const cardClass = getCardClass(variant);
 
     if (variant === 'interactive') {
       return (
         <motion.div
           ref={ref}
-          className={`${baseStyles} cursor-pointer hover:bg-disney-card-hover ${className}`}
+          className={`${cardClass} p-4 cursor-pointer hover:bg-disney-card-hover ${className}`}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           {...(props as any)}
@@ -24,7 +37,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     }
 
     return (
-      <div ref={ref} className={`${baseStyles} ${className}`} {...props}>
+      <div ref={ref} className={`${cardClass} p-4 ${className}`} {...props}>
         {children}
       </div>
     );
@@ -50,9 +63,14 @@ CardHeader.displayName = 'CardHeader';
 interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {}
 
 export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
-  ({ className = '', children, ...props }, ref) => {
+  ({ className = '', style, children, ...props }, ref) => {
     return (
-      <h3 ref={ref} className={`text-lg font-semibold text-white ${className}`} {...props}>
+      <h3
+        ref={ref}
+        className={`font-semibold ${className}`}
+        style={{ fontSize: 18, color: 'var(--text-primary)', ...style }}
+        {...props}
+      >
         {children}
       </h3>
     );
@@ -64,9 +82,14 @@ CardTitle.displayName = 'CardTitle';
 interface CardContentProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
-  ({ className = '', children, ...props }, ref) => {
+  ({ className = '', style, children, ...props }, ref) => {
     return (
-      <div ref={ref} className={className} {...props}>
+      <div
+        ref={ref}
+        className={className}
+        style={{ padding: '4px 20px 16px', ...style }}
+        {...props}
+      >
         {children}
       </div>
     );
