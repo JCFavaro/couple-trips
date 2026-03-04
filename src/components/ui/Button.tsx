@@ -21,6 +21,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       cursor: disabled || isLoading ? 'not-allowed' : 'pointer',
       opacity: disabled || isLoading ? 0.5 : 1,
       transition: 'all 0.3s ease',
+      letterSpacing: '0.01em',
     };
 
     const variantStyles: Record<string, React.CSSProperties> = {
@@ -46,9 +47,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const sizeStyles: Record<string, React.CSSProperties> = {
-      sm: { padding: '14px 20px', fontSize: 15 },
-      md: { padding: '18px 28px', fontSize: 16 },
-      lg: { padding: '22px 36px', fontSize: 17 },
+      sm: { padding: '10px 16px', fontSize: 13, minHeight: '40px' },
+      md: { padding: '12px 20px', fontSize: 15, minHeight: '44px' },
+      lg: { padding: '16px 24px', fontSize: 16, minHeight: '50px' },
     };
 
     return (
