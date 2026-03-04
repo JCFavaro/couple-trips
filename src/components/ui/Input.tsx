@@ -12,9 +12,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label style={{
             display: 'block',
-            fontSize: 14,
-            fontWeight: 500,
-            color: 'rgba(255, 255, 255, 0.8)',
+            fontSize: 13,
+            fontWeight: 600,
+            color: 'var(--text-secondary)',
+            letterSpacing: '0.02em',
             marginBottom: 10
           }}>
             {label}
@@ -26,10 +27,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             width: '100%',
             background: 'rgba(255, 255, 255, 0.08)',
             border: error ? '1px solid #f87171' : '1px solid rgba(244, 114, 182, 0.2)',
-            borderRadius: 14,
-            padding: '16px 18px',
-            color: 'white',
-            fontSize: 16,
+            borderRadius: 12,
+            padding: '14px 18px',
+            color: '#FFFFFF',
+            fontSize: 15,
+            minHeight: '44px',
             outline: 'none',
             transition: 'all 0.3s ease',
             ...style
@@ -38,7 +40,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {error && (
-          <p style={{ marginTop: 8, fontSize: 13, color: '#f87171' }}>{error}</p>
+          <p style={{ marginTop: 8, fontSize: 11, color: '#f87171' }}>{error}</p>
         )}
       </div>
     );
@@ -59,9 +61,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label style={{
             display: 'block',
-            fontSize: 14,
-            fontWeight: 500,
-            color: 'rgba(255, 255, 255, 0.8)',
+            fontSize: 13,
+            fontWeight: 600,
+            color: 'var(--text-secondary)',
+            letterSpacing: '0.02em',
             marginBottom: 10
           }}>
             {label}
@@ -74,10 +77,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             minHeight: 120,
             background: 'rgba(255, 255, 255, 0.08)',
             border: error ? '1px solid #f87171' : '1px solid rgba(244, 114, 182, 0.2)',
-            borderRadius: 14,
-            padding: '16px 18px',
-            color: 'white',
-            fontSize: 16,
+            borderRadius: 12,
+            padding: '14px 18px',
+            color: '#FFFFFF',
+            fontSize: 15,
             outline: 'none',
             resize: 'none',
             transition: 'all 0.3s ease',
@@ -87,7 +90,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           {...props}
         />
         {error && (
-          <p style={{ marginTop: 8, fontSize: 13, color: '#f87171' }}>{error}</p>
+          <p style={{ marginTop: 8, fontSize: 11, color: '#f87171' }}>{error}</p>
         )}
       </div>
     );
@@ -109,9 +112,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label style={{
             display: 'block',
-            fontSize: 14,
-            fontWeight: 500,
-            color: 'rgba(255, 255, 255, 0.8)',
+            fontSize: 13,
+            fontWeight: 600,
+            color: 'var(--text-secondary)',
+            letterSpacing: '0.02em',
             marginBottom: 10
           }}>
             {label}
@@ -123,11 +127,12 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             width: '100%',
             background: 'rgba(255, 255, 255, 0.08)',
             border: error ? '1px solid #f87171' : '1px solid rgba(244, 114, 182, 0.2)',
-            borderRadius: 14,
-            padding: '16px 18px',
+            borderRadius: 12,
+            padding: '14px 18px',
             paddingRight: 45,
-            color: 'white',
-            fontSize: 16,
+            color: '#FFFFFF',
+            fontSize: 15,
+            minHeight: '44px',
             outline: 'none',
             cursor: 'pointer',
             appearance: 'none',
@@ -148,7 +153,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ))}
         </select>
         {error && (
-          <p style={{ marginTop: 8, fontSize: 13, color: '#f87171' }}>{error}</p>
+          <p style={{ marginTop: 8, fontSize: 11, color: '#f87171' }}>{error}</p>
         )}
       </div>
     );
