@@ -81,7 +81,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
               borderRadius: 24,
               border: '1px solid var(--glass-border)',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px var(--glass-shadow)',
-              padding: 28,
+              padding: 0,
               maxHeight: 'calc(100vh - 180px)',
               overflowY: 'auto',
               marginTop: 'auto',
@@ -109,15 +109,16 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginBottom: 28,
-              paddingBottom: 20,
-              borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+              padding: '24px 24px 16px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+              position: 'relative',
+              zIndex: 10
             }}>
               {title && (
                 <h2 style={{
-                  fontSize: 22,
-                  fontWeight: 600,
-                  color: 'white',
+                  fontSize: 24,
+                  fontWeight: 700,
+                  color: '#FFFFFF',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 10
@@ -129,7 +130,9 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
               <motion.button
                 onClick={onClose}
                 style={{
-                  padding: 10,
+                  width: 40,
+                  height: 40,
+                  padding: 0,
                   borderRadius: 12,
                   background: 'rgba(255, 255, 255, 0.1)',
                   border: 'none',
@@ -147,7 +150,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
             </div>
 
             {/* Content */}
-            <div style={{ position: 'relative', zIndex: 10 }}>
+            <div style={{ position: 'relative', zIndex: 10, padding: '20px 24px 24px' }}>
               {children}
             </div>
           </motion.div>
@@ -185,13 +188,14 @@ export function ConfirmModal({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm">
-      <p style={{ color: 'rgba(255, 255, 255, 0.7)', marginBottom: 28, fontSize: 15, lineHeight: 1.6 }}>
+      <p style={{ color: 'rgba(255, 255, 255, 0.75)', marginBottom: 28, fontSize: 15, lineHeight: 1.6 }}>
         {message}
       </p>
-      <div style={{ display: 'flex', gap: 16, justifyContent: 'flex-end' }}>
+      <div style={{ display: 'flex', gap: 16 }}>
         <motion.button
           onClick={onClose}
           style={{
+            flex: 1,
             padding: '18px 28px',
             borderRadius: 16,
             background: 'rgba(255, 255, 255, 0.1)',
@@ -209,6 +213,7 @@ export function ConfirmModal({
         <motion.button
           onClick={handleConfirm}
           style={{
+            flex: 1,
             padding: '18px 28px',
             borderRadius: 16,
             background: variant === 'danger'
