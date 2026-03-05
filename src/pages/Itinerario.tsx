@@ -160,14 +160,14 @@ export function ItinerarioPage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
                   <motion.div
                     style={{
-                      width: 56,
-                      height: 56,
+                      width: 44,
+                      height: 44,
                       borderRadius: 16,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontWeight: 700,
-                      fontSize: 20,
+                      fontSize: 18,
                       position: 'relative',
                       background: isToday ? 'var(--tab-active-gradient)' : 'var(--glass-bg-1)',
                       color: 'white',
@@ -183,27 +183,28 @@ export function ItinerarioPage() {
                     )}
                   </motion.div>
                   <div>
-                    <p style={{ fontWeight: 600, color: 'white', fontSize: 18, display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <p style={{ fontWeight: 700, color: '#FFFFFF', fontSize: 18, display: 'flex', alignItems: 'center', gap: 12 }}>
                       Dia {dayNum}
                       {isToday && (
                         <span style={{
-                          padding: '4px 12px',
-                          borderRadius: 20,
-                          fontSize: 12,
-                          background: 'var(--glass-bg-1)',
-                          color: 'var(--theme-accent)',
-                          border: '1px solid var(--glass-border)'
+                          padding: '2px 8px',
+                          borderRadius: 6,
+                          fontSize: 11,
+                          fontWeight: 700,
+                          background: 'var(--tab-active-gradient)',
+                          color: '#FFFFFF',
+                          border: 'none'
                         }}>
-                          Hoy
+                          HOY
                         </span>
                       )}
                     </p>
-                    <p style={{ fontSize: 14, color: 'var(--theme-text-muted)', marginTop: 4 }}>{formatDate(fecha, "EEEE, d 'de' MMMM")}</p>
+                    <p style={{ fontSize: 13, color: 'rgba(255, 255, 255, 0.45)', marginTop: 4 }}>{formatDate(fecha, "EEEE, d 'de' MMMM")}</p>
                   </div>
                 </div>
 
                 {/* Timeline */}
-                <div style={{ marginLeft: 28, paddingLeft: 28, borderLeft: '2px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ marginLeft: 22, paddingLeft: 28, borderLeft: '3px solid rgba(255, 255, 255, 0.06)', display: 'flex', flexDirection: 'column', gap: 20 }}>
                   <AnimatePresence mode="popLayout">
                     {activities.map((activity, index) => (
                       <motion.div
@@ -218,24 +219,33 @@ export function ItinerarioPage() {
                         {/* Timeline dot */}
                         <div style={{
                           position: 'absolute',
-                          left: -35,
+                          left: -34,
                           top: 20,
-                          width: 16,
-                          height: 16,
+                          width: 12,
+                          height: 12,
                           borderRadius: '50%',
-                          background: 'var(--tab-active-gradient)',
+                          background: 'linear-gradient(135deg, var(--theme-primary), var(--theme-secondary))',
                           border: '2px solid var(--theme-bg)',
                           boxShadow: '0 4px 12px var(--btn-shadow)'
                         }} />
 
-                        <div className="glass-card" style={{ padding: 20 }}>
+                        <div className="glass-card" style={{ padding: 16 }}>
                           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
                             <div style={{ flex: 1 }}>
-                              <p style={{ fontWeight: 600, color: 'white', fontSize: 16 }}>
+                              <p style={{ fontWeight: 600, color: '#FFFFFF', fontSize: 15 }}>
                                 {activity.titulo}
                               </p>
                               {activity.descripcion && (
-                                <p style={{ fontSize: 14, color: 'var(--theme-text-muted)', marginTop: 8 }}>{activity.descripcion}</p>
+                                <p style={{
+                                  fontSize: 13,
+                                  color: 'rgba(255, 255, 255, 0.75)',
+                                  marginTop: 8,
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  display: '-webkit-box',
+                                  WebkitLineClamp: 2,
+                                  WebkitBoxOrient: 'vertical'
+                                }}>{activity.descripcion}</p>
                               )}
                               <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, marginTop: 16 }}>
                                 {activity.hora && (
@@ -244,13 +254,13 @@ export function ItinerarioPage() {
                                     alignItems: 'center',
                                     gap: 8,
                                     color: 'var(--theme-text-muted)',
-                                    fontSize: 14,
+                                    fontSize: 11,
                                     padding: '6px 12px',
                                     borderRadius: 12,
-                                    background: 'var(--glass-bg-1)',
+                                    background: 'rgba(255, 255, 255, 0.04)',
                                     border: '1px solid var(--glass-border)'
                                   }}>
-                                    <Clock style={{ width: 16, height: 16, color: 'var(--theme-accent)' }} />
+                                    <Clock style={{ width: 14, height: 14, color: 'var(--theme-accent)' }} />
                                     <span>{activity.hora}</span>
                                   </div>
                                 )}
@@ -264,19 +274,19 @@ export function ItinerarioPage() {
                                       alignItems: 'center',
                                       gap: 8,
                                       color: 'var(--theme-accent)',
-                                      fontSize: 14,
+                                      fontSize: 11,
                                       padding: '6px 12px',
                                       borderRadius: 12,
-                                      background: 'var(--glass-bg-2)',
+                                      background: 'rgba(255, 255, 255, 0.04)',
                                       border: '1px solid var(--glass-border)',
                                       textDecoration: 'none'
                                     }}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                   >
-                                    <MapPin style={{ width: 16, height: 16 }} />
+                                    <MapPin style={{ width: 14, height: 14 }} />
                                     <span>Ver mapa</span>
-                                    <ExternalLink style={{ width: 14, height: 14 }} />
+                                    <ExternalLink style={{ width: 12, height: 12 }} />
                                   </motion.a>
                                 )}
                               </div>
@@ -285,8 +295,13 @@ export function ItinerarioPage() {
                               <motion.button
                                 onClick={() => handleOpenModal(activity)}
                                 style={{
-                                  padding: 10,
-                                  borderRadius: 12,
+                                  width: 32,
+                                  height: 32,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  padding: 0,
+                                  borderRadius: 8,
                                   background: 'var(--glass-bg-1)',
                                   border: '1px solid var(--glass-border)',
                                   color: 'var(--theme-text-muted)',
@@ -295,13 +310,18 @@ export function ItinerarioPage() {
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                               >
-                                <Edit2 style={{ width: 16, height: 16 }} />
+                                <Edit2 style={{ width: 14, height: 14 }} />
                               </motion.button>
                               <motion.button
                                 onClick={() => confirmDelete(activity.id)}
                                 style={{
-                                  padding: 10,
-                                  borderRadius: 12,
+                                  width: 32,
+                                  height: 32,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  padding: 0,
+                                  borderRadius: 8,
                                   background: 'rgba(239, 68, 68, 0.1)',
                                   border: '1px solid rgba(239, 68, 68, 0.2)',
                                   color: 'rgba(248, 113, 113, 0.6)',
@@ -310,7 +330,7 @@ export function ItinerarioPage() {
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                               >
-                                <Trash2 style={{ width: 16, height: 16 }} />
+                                <Trash2 style={{ width: 14, height: 14 }} />
                               </motion.button>
                             </div>
                           </div>
