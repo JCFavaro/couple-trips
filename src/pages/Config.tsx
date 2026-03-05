@@ -12,7 +12,7 @@ import { Button, Input, Select, Modal, ConfirmModal, Textarea } from '../compone
 import { useLugares, useNotas, useTripConfig, useAuth, useDocumentos } from '../hooks';
 import { useTrip } from '../contexts';
 import { setManualDolarRate, getFormattedRate } from '../lib/dolarBlue';
-import { formatDate, isImageFile, isPdfFile, getFileExtension } from '../lib/utils';
+import { formatDate, isImageFile, isPdfFile } from '../lib/utils';
 import type { Lugar, LugarFormData, TipoLugar, Nota, NotaFormData, TipoNota, Documento, CategoriaDocumento } from '../types';
 
 const TIPO_LUGAR_ICONS: Record<TipoLugar, typeof MapPin> = {
@@ -185,7 +185,7 @@ function LugaresTab() {
       style={{ paddingTop: 20 }}
     >
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
         <div className="glass-card" style={{ padding: 20, textAlign: 'center' }}>
           <motion.p
             className="text-4xl font-bold shimmer-text"
@@ -194,11 +194,11 @@ function LugaresTab() {
           >
             {pendientes}
           </motion.p>
-          <p style={{ fontSize: 14, color: 'var(--theme-text-muted)', marginTop: 4 }}>Por visitar</p>
+          <p style={{ fontSize: 13, color: 'var(--theme-text-muted)', marginTop: 4 }}>Por visitar</p>
         </div>
         <div className="glass-card" style={{ padding: 20, textAlign: 'center' }}>
           <p style={{ fontSize: 36, fontWeight: 700, color: 'var(--success-color)' }}>{visitados}</p>
-          <p style={{ fontSize: 14, color: 'var(--theme-text-muted)', marginTop: 4 }}>Visitados</p>
+          <p style={{ fontSize: 13, color: 'var(--theme-text-muted)', marginTop: 4 }}>Visitados</p>
         </div>
       </div>
 
@@ -212,9 +212,9 @@ function LugaresTab() {
             padding: '16px 28px',
             borderRadius: 16,
             background: 'var(--tab-active-gradient)',
-            color: 'white',
+            color: '#FFFFFF',
             fontWeight: 600,
-            fontSize: 16,
+            fontSize: 15,
             border: 'none',
             cursor: 'pointer',
             boxShadow: '0 8px 24px var(--btn-shadow)'
@@ -246,7 +246,7 @@ function LugaresTab() {
         >
           <MapPin style={{ width: 56, height: 56, margin: '0 auto', color: 'var(--theme-accent)', opacity: 0.3, marginBottom: 16 }} />
           <p style={{ color: 'var(--theme-text-muted)', fontSize: 18 }}>No hay lugares guardados</p>
-          <p style={{ color: 'var(--theme-text-muted)', opacity: 0.6, fontSize: 14, marginTop: 8 }}>Agrega lugares para visitar</p>
+          <p style={{ color: 'var(--theme-text-muted)', opacity: 0.6, fontSize: 13, marginTop: 8 }}>Agrega lugares para visitar</p>
         </motion.div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -311,7 +311,7 @@ function LugaresTab() {
                           </p>
                         </div>
                         {lugar.notas && (
-                          <p style={{ fontSize: 14, color: 'rgba(192, 132, 252, 0.5)', marginTop: 8 }} className="line-clamp-1">{lugar.notas}</p>
+                          <p style={{ fontSize: 13, color: 'rgba(192, 132, 252, 0.5)', marginTop: 8 }} className="line-clamp-1">{lugar.notas}</p>
                         )}
                         {lugar.maps_url && (
                           <motion.a
@@ -323,7 +323,7 @@ function LugaresTab() {
                               alignItems: 'center',
                               gap: 8,
                               color: '#f9a8d4',
-                              fontSize: 14,
+                              fontSize: 13,
                               marginTop: 12,
                               padding: '8px 14px',
                               borderRadius: 10,
@@ -510,9 +510,9 @@ function NotasTab() {
             padding: '16px 28px',
             borderRadius: 16,
             background: 'var(--tab-active-gradient)',
-            color: 'white',
+            color: '#FFFFFF',
             fontWeight: 600,
-            fontSize: 16,
+            fontSize: 15,
             border: 'none',
             cursor: 'pointer',
             boxShadow: '0 8px 24px var(--btn-shadow)'
@@ -544,7 +544,7 @@ function NotasTab() {
         >
           <StickyNote style={{ width: 56, height: 56, margin: '0 auto', color: 'var(--theme-accent)', opacity: 0.3, marginBottom: 16 }} />
           <p style={{ color: 'var(--theme-text-muted)', fontSize: 18 }}>No hay notas guardadas</p>
-          <p style={{ color: 'var(--theme-text-muted)', opacity: 0.6, fontSize: 14, marginTop: 8 }}>Crea notas para recordar cosas importantes</p>
+          <p style={{ color: 'var(--theme-text-muted)', opacity: 0.6, fontSize: 13, marginTop: 8 }}>Crea notas para recordar cosas importantes</p>
         </motion.div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -757,7 +757,7 @@ function DocumentosTab() {
       style={{ paddingTop: 20 }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <p style={{ fontSize: 14, color: 'var(--theme-text-muted)' }}>{documentos.length} archivos</p>
+        <p style={{ fontSize: 13, color: 'var(--theme-text-muted)' }}>{documentos.length} archivos</p>
         <motion.button
           onClick={() => setShowModal(true)}
           style={{
@@ -767,9 +767,9 @@ function DocumentosTab() {
             padding: '16px 28px',
             borderRadius: 16,
             background: 'var(--tab-active-gradient)',
-            color: 'white',
+            color: '#FFFFFF',
             fontWeight: 600,
-            fontSize: 16,
+            fontSize: 15,
             border: 'none',
             cursor: 'pointer',
             boxShadow: '0 8px 24px var(--btn-shadow)'
@@ -801,7 +801,7 @@ function DocumentosTab() {
         >
           <FolderOpen style={{ width: 56, height: 56, margin: '0 auto', color: 'var(--theme-accent)', opacity: 0.3, marginBottom: 16 }} />
           <p style={{ color: 'var(--theme-text-muted)', fontSize: 18 }}>No hay documentos</p>
-          <p style={{ color: 'var(--theme-text-muted)', opacity: 0.6, fontSize: 14, marginTop: 8 }}>Sube reservas, tickets y mas</p>
+          <p style={{ color: 'var(--theme-text-muted)', opacity: 0.6, fontSize: 13, marginTop: 8 }}>Sube reservas, tickets y mas</p>
         </motion.div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -827,7 +827,6 @@ function DocumentosTab() {
                     {docs.map((doc, index) => {
                       const isImage = isImageFile(doc.archivo_nombre || '');
                       const isPdf = isPdfFile(doc.archivo_nombre || '');
-                      const ext = getFileExtension(doc.archivo_nombre || '').toUpperCase();
 
                       return (
                         <motion.div
@@ -1055,10 +1054,10 @@ function ConfigTab() {
           {currentTrip?.emoji || '✈️'}
         </div>
         <div style={{ flex: 1, textAlign: 'left' }}>
-          <p style={{ fontWeight: 600, color: 'white', fontSize: 17, marginBottom: 4 }}>
+          <p style={{ fontWeight: 600, color: '#FFFFFF', fontSize: 15, marginBottom: 4 }}>
             {currentTrip?.nombre || 'Viaje'}
           </p>
-          <p style={{ fontSize: 14, color: 'rgba(192, 132, 252, 0.6)' }}>
+          <p style={{ fontSize: 13, color: 'rgba(255, 255, 255, 0.45)' }}>
             {currentTrip?.destino || 'Destino'}
           </p>
         </div>
@@ -1083,7 +1082,7 @@ function ConfigTab() {
             <Calendar style={{ width: 28, height: 28, color: 'var(--theme-accent)' }} />
           </div>
           <div>
-            <p style={{ fontWeight: 600, color: 'white', fontSize: 18, marginBottom: 6 }}>Fechas del viaje</p>
+            <p style={{ fontWeight: 600, color: '#FFFFFF', fontSize: 18, marginBottom: 6 }}>Fechas del viaje</p>
             <p style={{ fontSize: 15, color: 'var(--theme-text-muted)' }}>
               {formatDate(config.trip_start_date, "d 'de' MMMM")} - {formatDate(config.trip_end_date, "d 'de' MMMM, yyyy")}
             </p>
@@ -1103,7 +1102,7 @@ function ConfigTab() {
             <DollarSign style={{ width: 28, height: 28, color: 'var(--success-color)' }} />
           </div>
           <div>
-            <p style={{ fontWeight: 600, color: 'white', fontSize: 18, marginBottom: 6 }}>Dolar Blue</p>
+            <p style={{ fontWeight: 600, color: '#FFFFFF', fontSize: 18, marginBottom: 6 }}>Dolar Blue</p>
             <p style={{ fontSize: 15, color: 'var(--theme-text-muted)' }}>{getFormattedRate()}</p>
           </div>
         </div>
@@ -1155,7 +1154,7 @@ function UserSection() {
             <User style={{ width: 28, height: 28, color: 'var(--theme-accent)' }} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontWeight: 600, color: 'white', fontSize: 18, marginBottom: 6 }}>Sesion activa</p>
+            <p style={{ fontWeight: 600, color: '#FFFFFF', fontSize: 18, marginBottom: 6 }}>Sesion activa</p>
             <p style={{ fontSize: 15, color: 'var(--theme-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
           </div>
         </div>
