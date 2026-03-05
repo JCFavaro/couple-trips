@@ -275,7 +275,7 @@ export function Gastos() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ marginBottom: 48 }}
+        style={{ marginBottom: 16 }}
       >
         <div className="glass-card" style={{ padding: 28, position: 'relative', overflow: 'hidden' }}>
           <Sparkles className="sparkle" style={{ position: 'absolute', top: 16, right: 16, width: 20, height: 20, color: 'var(--theme-accent)', opacity: 0.4 }} />
@@ -321,27 +321,29 @@ export function Gastos() {
                   textAlign: 'center',
                   padding: 16,
                   borderRadius: 14,
-                  background: 'var(--glass-bg-1)',
-                  border: '1px solid var(--glass-border)'
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  borderTop: '3px solid var(--color-juan)'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 8 }}>
                     <Heart style={{ width: 14, height: 14, fill: 'var(--color-juan)', color: 'var(--color-juan)' }} />
-                    <p style={{ color: 'var(--theme-text-muted)', fontSize: 13, fontWeight: 500 }}>Juan</p>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Juan</p>
                   </div>
-                  <p style={{ fontSize: 20, fontWeight: 700, color: 'white' }}>{formatCurrency(balance.usd.juan)}</p>
+                  <p style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF' }}>{formatCurrency(balance.usd.juan)}</p>
                 </div>
                 <div style={{
                   textAlign: 'center',
                   padding: 16,
                   borderRadius: 14,
-                  background: 'var(--glass-bg-2)',
-                  border: '1px solid var(--glass-border)'
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  borderTop: '3px solid var(--color-vale)'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 8 }}>
                     <Heart style={{ width: 14, height: 14, fill: 'var(--color-vale)', color: 'var(--color-vale)' }} />
-                    <p style={{ color: 'var(--theme-text-muted)', fontSize: 13, fontWeight: 500 }}>Vale</p>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Vale</p>
                   </div>
-                  <p style={{ fontSize: 20, fontWeight: 700, color: 'white' }}>{formatCurrency(balance.usd.vale)}</p>
+                  <p style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF' }}>{formatCurrency(balance.usd.vale)}</p>
                 </div>
               </div>
               {balance.usd.deudor && (
@@ -374,27 +376,29 @@ export function Gastos() {
                   textAlign: 'center',
                   padding: 16,
                   borderRadius: 14,
-                  background: 'var(--glass-bg-1)',
-                  border: '1px solid var(--glass-border)'
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  borderTop: '3px solid var(--color-juan)'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 8 }}>
                     <Heart style={{ width: 14, height: 14, fill: 'var(--color-juan)', color: 'var(--color-juan)' }} />
-                    <p style={{ color: 'var(--theme-text-muted)', fontSize: 13, fontWeight: 500 }}>Juan</p>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Juan</p>
                   </div>
-                  <p style={{ fontSize: 20, fontWeight: 700, color: 'white' }}>{formatCurrency(balance.ars.juan, 'ARS')}</p>
+                  <p style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF' }}>{formatCurrency(balance.ars.juan, 'ARS')}</p>
                 </div>
                 <div style={{
                   textAlign: 'center',
                   padding: 16,
                   borderRadius: 14,
-                  background: 'var(--glass-bg-2)',
-                  border: '1px solid var(--glass-border)'
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  borderTop: '3px solid var(--color-vale)'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 8 }}>
                     <Heart style={{ width: 14, height: 14, fill: 'var(--color-vale)', color: 'var(--color-vale)' }} />
-                    <p style={{ color: 'var(--theme-text-muted)', fontSize: 13, fontWeight: 500 }}>Vale</p>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Vale</p>
                   </div>
-                  <p style={{ fontSize: 20, fontWeight: 700, color: 'white' }}>{formatCurrency(balance.ars.vale, 'ARS')}</p>
+                  <p style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF' }}>{formatCurrency(balance.ars.vale, 'ARS')}</p>
                 </div>
               </div>
               {balance.ars.deudor && (
@@ -433,11 +437,11 @@ export function Gastos() {
                 </span>
               </div>
               <div>
-                <div style={{ height: 8, borderRadius: 4, background: 'var(--glass-bg-1)', overflow: 'hidden' }}>
+                <div style={{ height: 6, borderRadius: 3, background: 'var(--glass-bg-1)', overflow: 'hidden' }}>
                   <motion.div
                     style={{
                       height: '100%',
-                      borderRadius: 4,
+                      borderRadius: 3,
                       background: 'var(--tab-active-gradient)'
                     }}
                     initial={{ width: 0 }}
@@ -462,7 +466,7 @@ export function Gastos() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          style={{ marginBottom: 48 }}
+          style={{ marginBottom: 16 }}
         >
           <div className="glass-card" style={{ padding: 24 }}>
             <h3 style={{
@@ -505,7 +509,7 @@ export function Gastos() {
                         </div>
                         <span style={{ color: 'white', fontWeight: 600 }}>{formatCurrency(total)}</span>
                       </div>
-                      <div style={{ height: 8, borderRadius: 4, background: 'rgba(255, 255, 255, 0.05)', overflow: 'hidden' }}>
+                      <div style={{ height: 6, borderRadius: 3, background: 'rgba(255, 255, 255, 0.05)', overflow: 'hidden' }}>
                         <motion.div
                           style={{
                             height: '100%',
@@ -535,7 +539,7 @@ export function Gastos() {
           fontSize: 14,
           fontWeight: 600,
           color: 'var(--theme-text-muted)',
-          marginBottom: 24,
+          marginBottom: 16,
           display: 'flex',
           alignItems: 'center',
           gap: 8
@@ -543,7 +547,7 @@ export function Gastos() {
           <DollarSign style={{ width: 16, height: 16, color: 'var(--theme-accent)' }} />
           Historial de gastos
         </h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <AnimatePresence mode="popLayout">
             {loading ? (
               <div style={{ textAlign: 'center', padding: 48 }}>
@@ -598,8 +602,8 @@ export function Gastos() {
                         <div style={{ flex: 1 }}>
                           <p style={{
                             fontWeight: 600,
-                            color: 'white',
-                            fontSize: 16,
+                            color: '#FFFFFF',
+                            fontSize: 15,
                             lineHeight: 1.4,
                             wordBreak: 'break-word'
                           }}>
@@ -617,37 +621,37 @@ export function Gastos() {
                         flexWrap: 'wrap'
                       }}>
                         <span style={{
-                          fontSize: 13,
-                          color: 'var(--theme-text-muted)',
+                          fontSize: 11,
+                          color: 'rgba(255, 255, 255, 0.45)',
                           whiteSpace: 'nowrap'
                         }}>
                           {formatDate(gasto.fecha)}
                         </span>
                         {!isEnCuotas && gasto.pagador && (
-                          <>
-                            <span style={{ color: 'var(--theme-secondary)', opacity: 0.4 }}>•</span>
-                            <span style={{
-                              fontSize: 13,
-                              color: gasto.pagador === 'Juan' ? 'var(--color-juan)' : 'var(--color-vale)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 4,
-                              whiteSpace: 'nowrap'
-                            }}>
-                              <Heart style={{ width: 11, height: 11, fill: 'currentColor' }} />
-                              {gasto.pagador}
-                            </span>
-                          </>
+                          <span style={{
+                            fontSize: 11,
+                            fontWeight: 500,
+                            color: gasto.pagador === 'Juan' ? 'var(--color-juan)' : 'var(--color-vale)',
+                            background: gasto.pagador === 'Juan' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(236, 72, 153, 0.15)',
+                            padding: '3px 8px',
+                            borderRadius: 6,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            whiteSpace: 'nowrap'
+                          }}>
+                            <Heart style={{ width: 10, height: 10, fill: 'currentColor' }} />
+                            {gasto.pagador}
+                          </span>
                         )}
                         {isEnCuotas && (
                           <span style={{
-                            fontSize: 10,
-                            fontWeight: 600,
+                            fontSize: 11,
+                            fontWeight: 500,
                             color: gasto.progreso === 100 ? '#4ade80' : '#fbbf24',
                             background: gasto.progreso === 100 ? 'rgba(74, 222, 128, 0.2)' : 'rgba(251, 191, 36, 0.2)',
                             padding: '4px 10px',
                             borderRadius: 6,
-                            textTransform: 'uppercase',
                             whiteSpace: 'nowrap'
                           }}>
                             {gasto.progreso === 100 ? 'Pagado' : `${gasto.cuotas_pagadas}/${gasto.cuotas_total} cuotas`}
@@ -659,16 +663,21 @@ export function Gastos() {
                       <div style={{
                         display: 'flex',
                         alignItems: 'baseline',
-                        gap: 8,
+                        justifyContent: 'space-between',
                         paddingTop: 12,
                         borderTop: '1px solid rgba(255, 255, 255, 0.05)'
                       }}>
-                        <p style={{ fontWeight: 700, color: 'white', fontSize: 24 }}>
-                          {formatCurrency(gasto.monto, gasto.moneda)}
-                        </p>
+                        <div>
+                          <p style={{ fontWeight: 700, color: '#FFFFFF', fontSize: 18 }}>
+                            {formatCurrency(gasto.monto, gasto.moneda)}
+                          </p>
+                          <span style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.45)' }}>
+                            {gasto.moneda}
+                          </span>
+                        </div>
                         {gasto.moneda === 'ARS' && (
-                          <span style={{ fontSize: 13, color: 'var(--theme-secondary)', opacity: 0.5 }}>
-                            (~{formatCurrency(gasto.monto_usd, 'USD')})
+                          <span style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.45)', textAlign: 'right' }}>
+                            ~{formatCurrency(gasto.monto_usd, 'USD')}
                           </span>
                         )}
                       </div>
@@ -678,11 +687,11 @@ export function Gastos() {
                         <div style={{ marginTop: 12 }}>
                           {/* Progress bar con porcentaje */}
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                            <div style={{ flex: 1, height: 8, borderRadius: 4, background: 'rgba(255, 255, 255, 0.1)', overflow: 'hidden' }}>
+                            <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(255, 255, 255, 0.1)', overflow: 'hidden' }}>
                               <motion.div
                                 style={{
                                   height: '100%',
-                                  borderRadius: 4,
+                                  borderRadius: 3,
                                   background: gasto.progreso === 100
                                     ? 'linear-gradient(to right, #22c55e, #4ade80)'
                                     : 'var(--tab-active-gradient)'
@@ -692,7 +701,7 @@ export function Gastos() {
                                 transition={{ duration: 0.5 }}
                               />
                             </div>
-                            <span style={{ fontSize: 12, color: 'var(--theme-text-muted)', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                            <span style={{ fontSize: 13, color: 'var(--theme-text-muted)', fontWeight: 600, whiteSpace: 'nowrap' }}>
                               {gasto.progreso}%
                             </span>
                           </div>
@@ -788,9 +797,9 @@ export function Gastos() {
                           <motion.button
                             onClick={() => handleOpenModal(gasto)}
                             style={{
-                              width: 44,
-                              height: 44,
-                              borderRadius: 12,
+                              width: 32,
+                              height: 32,
+                              borderRadius: 8,
                               background: 'var(--glass-bg-1)',
                               border: '1px solid var(--glass-border)',
                               cursor: 'pointer',
@@ -801,14 +810,14 @@ export function Gastos() {
                             }}
                             whileTap={{ scale: 0.95 }}
                           >
-                            <Edit2 style={{ width: 18, height: 18 }} />
+                            <Edit2 style={{ width: 14, height: 14 }} />
                           </motion.button>
                           <motion.button
                             onClick={() => confirmDelete(gasto.id)}
                             style={{
-                              width: 44,
-                              height: 44,
-                              borderRadius: 12,
+                              width: 32,
+                              height: 32,
+                              borderRadius: 8,
                               background: 'rgba(239, 68, 68, 0.1)',
                               border: '1px solid rgba(239, 68, 68, 0.2)',
                               cursor: 'pointer',
@@ -819,7 +828,7 @@ export function Gastos() {
                             }}
                             whileTap={{ scale: 0.95 }}
                           >
-                            <Trash2 style={{ width: 18, height: 18 }} />
+                            <Trash2 style={{ width: 14, height: 14 }} />
                           </motion.button>
                         </div>
                       </div>
@@ -983,6 +992,7 @@ export function Gastos() {
                 onClick={() => setTipoPago('unico')}
                 style={{
                   padding: '14px 16px',
+                  minHeight: '44px',
                   borderRadius: 12,
                   border: tipoPago === 'unico' ? '2px solid var(--theme-primary)' : '2px solid var(--glass-border)',
                   background: tipoPago === 'unico' ? 'var(--glass-bg-1)' : 'transparent',
@@ -1001,6 +1011,7 @@ export function Gastos() {
                 onClick={() => setTipoPago('cuotas')}
                 style={{
                   padding: '14px 16px',
+                  minHeight: '44px',
                   borderRadius: 12,
                   border: tipoPago === 'cuotas' ? '2px solid var(--theme-primary)' : '2px solid var(--glass-border)',
                   background: tipoPago === 'cuotas' ? 'var(--glass-bg-1)' : 'transparent',
@@ -1051,8 +1062,8 @@ export function Gastos() {
                 textAlign: 'center',
                 padding: 16,
                 borderRadius: 14,
-                background: 'var(--glass-bg-1)',
-                border: '1px solid var(--glass-border)'
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.06)'
               }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
