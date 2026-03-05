@@ -25,12 +25,12 @@ export function BottomNav() {
         onClick={handleFabClick}
         className="absolute left-1/2 -translate-x-1/2 z-20"
         style={{
-          bottom: 'calc(52px + max(8px, env(safe-area-inset-bottom)))',
-          width: 52,
-          height: 52,
+          bottom: 'calc(56px + max(8px, env(safe-area-inset-bottom)))',
+          width: 56,
+          height: 56,
           borderRadius: '50%',
           background: 'var(--fab-gradient)',
-          boxShadow: `0 4px 16px var(--fab-shadow)`,
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -38,7 +38,7 @@ export function BottomNav() {
         }}
         whileTap={{ scale: 0.92 }}
       >
-        <Plus className="w-6 h-6 text-white" strokeWidth={2.5} />
+        <Plus style={{ width: 26, height: 26 }} className="text-white" strokeWidth={2.5} />
       </motion.button>
 
       {/* Nav bar container */}
@@ -92,9 +92,9 @@ function NavTab({ to, icon: Icon, label }: NavTabProps) {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 4,
+        gap: 6,
         padding: '8px 4px',
-        minHeight: 56,
+        minHeight: '44px',
         textDecoration: 'none',
       }}
     >
@@ -104,7 +104,7 @@ function NavTab({ to, icon: Icon, label }: NavTabProps) {
             style={{
               width: 24,
               height: 24,
-              color: isActive ? 'var(--nav-active)' : 'var(--nav-inactive)',
+              color: isActive ? 'var(--nav-dot)' : 'rgba(255, 255, 255, 0.45)',
               transition: 'color 0.2s',
             }}
           />
@@ -112,7 +112,7 @@ function NavTab({ to, icon: Icon, label }: NavTabProps) {
             style={{
               fontSize: 11,
               fontWeight: isActive ? 600 : 500,
-              color: isActive ? 'var(--nav-active)' : 'var(--nav-inactive)',
+              color: isActive ? '#FFFFFF' : 'rgba(255, 255, 255, 0.45)',
               transition: 'color 0.2s',
             }}
           >
