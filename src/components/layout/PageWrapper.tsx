@@ -31,16 +31,16 @@ export function PageWrapper({ children, title, subtitle, rightAction }: PageWrap
             display: 'flex',
             alignItems: 'flex-start',
             justifyContent: 'space-between',
-            marginBottom: 40,
+            marginBottom: 24,
           }}
         >
           <div>
             {title && (
               <h1
-                className="gradient-text"
                 style={{
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: 700,
+                  color: '#FFFFFF',
                   lineHeight: 1.2,
                 }}
               >
@@ -50,9 +50,9 @@ export function PageWrapper({ children, title, subtitle, rightAction }: PageWrap
             {subtitle && (
               <p
                 style={{
-                  color: 'rgba(192, 132, 252, 0.6)',
-                  fontSize: 14,
-                  marginTop: 8,
+                  color: 'rgba(255, 255, 255, 0.45)',
+                  fontSize: 13,
+                  marginTop: 4,
                 }}
               >
                 {subtitle}
