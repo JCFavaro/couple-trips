@@ -61,12 +61,13 @@ export function Config() {
 
   return (
     <PageWrapper title="Configuracion">
-      {/* Tabs - 2x2 grid for better touch targets */}
+      {/* Tabs */}
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: 12,
-        marginBottom: 28
+        display: 'flex',
+        gap: 20,
+        marginBottom: 28,
+        borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+        paddingBottom: 0,
       }}>
         {[
           { id: 'lugares' as const, label: 'Lugares', icon: MapPin },
@@ -81,23 +82,22 @@ export function Config() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 10,
-              padding: '14px 16px',
-              borderRadius: 16,
-              fontSize: 15,
+              gap: 8,
+              padding: '10px 4px',
+              minHeight: 44,
+              fontSize: 13,
               fontWeight: 600,
               position: 'relative',
-              overflow: 'hidden',
-              background: activeTab === tab.id
-                ? 'var(--tab-active-gradient)'
-                : 'var(--glass-bg-1)',
-              color: activeTab === tab.id ? 'white' : 'var(--theme-text-muted)',
-              border: activeTab === tab.id ? 'none' : '1px solid var(--glass-border)',
-              boxShadow: activeTab === tab.id ? '0 4px 16px var(--btn-shadow)' : 'none',
+              background: 'transparent',
+              color: activeTab === tab.id ? 'var(--theme-accent)' : 'rgba(255, 255, 255, 0.45)',
+              border: 'none',
+              borderBottom: activeTab === tab.id ? '3px solid var(--theme-accent)' : '3px solid transparent',
+              cursor: 'pointer',
+              flex: 1,
             }}
             whileTap={{ scale: 0.97 }}
           >
-            <tab.icon style={{ width: 20, height: 20 }} />
+            <tab.icon style={{ width: 18, height: 18 }} />
             {tab.label}
           </motion.button>
         ))}
@@ -182,6 +182,7 @@ function LugaresTab() {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
+      style={{ paddingTop: 20 }}
     >
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
@@ -248,7 +249,7 @@ function LugaresTab() {
           <p style={{ color: 'var(--theme-text-muted)', opacity: 0.6, fontSize: 14, marginTop: 8 }}>Agrega lugares para visitar</p>
         </motion.div>
       ) : (
-        <div className="space-y-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <AnimatePresence mode="popLayout">
             {lugares.map((lugar, index) => {
               const Icon = TIPO_LUGAR_ICONS[lugar.tipo];
@@ -271,6 +272,8 @@ function LugaresTab() {
                         style={{
                           width: 32,
                           height: 32,
+                          minWidth: 44,
+                          minHeight: 44,
                           borderRadius: '50%',
                           border: lugar.visitado ? 'none' : '2px solid rgba(168, 85, 247, 0.4)',
                           background: lugar.visitado
@@ -292,14 +295,14 @@ function LugaresTab() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
                           <div
                             className={`bg-gradient-to-br ${TIPO_LUGAR_COLORS[lugar.tipo]} border`}
-                            style={{ padding: 8, borderRadius: 10 }}
+                            style={{ padding: 8, borderRadius: 999, background: 'rgba(255, 255, 255, 0.04)', fontSize: 11 }}
                           >
                             <Icon style={{ width: 18, height: 18 }} />
                           </div>
                           <p
                             style={{
                               fontWeight: 500,
-                              fontSize: 16,
+                              fontSize: 15,
                               color: lugar.visitado ? 'rgba(192, 132, 252, 0.6)' : 'white',
                               textDecoration: lugar.visitado ? 'line-through' : 'none',
                             }}
@@ -495,6 +498,7 @@ function NotasTab() {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
+      style={{ paddingTop: 20 }}
     >
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>
         <motion.button
@@ -543,7 +547,7 @@ function NotasTab() {
           <p style={{ color: 'var(--theme-text-muted)', opacity: 0.6, fontSize: 14, marginTop: 8 }}>Crea notas para recordar cosas importantes</p>
         </motion.div>
       ) : (
-        <div className="space-y-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <AnimatePresence mode="popLayout">
             {notas.map((nota, index) => {
               const Icon = TIPO_NOTA_ICONS[nota.tipo];
@@ -567,9 +571,17 @@ function NotasTab() {
                         <Icon className="w-5 h-5" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-white group-hover:text-pink-200 transition-colors text-lg">{nota.titulo}</p>
+                        <p style={{ fontSize: 15, fontWeight: 600 }} className="text-white group-hover:text-pink-200 transition-colors">{nota.titulo}</p>
                         {nota.contenido && (
-                          <p className="text-sm text-purple-300/50 mt-2 line-clamp-2">{nota.contenido}</p>
+                          <p style={{
+                            fontSize: 13,
+                            color: 'rgba(255, 255, 255, 0.75)',
+                            marginTop: 8,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          }}>{nota.contenido}</p>
                         )}
                       </div>
                       <ChevronRight className="w-6 h-6 text-purple-400/30 group-hover:text-pink-400 transition-colors" />
@@ -742,6 +754,7 @@ function DocumentosTab() {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
+      style={{ paddingTop: 20 }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <p style={{ fontSize: 14, color: 'var(--theme-text-muted)' }}>{documentos.length} archivos</p>
@@ -809,7 +822,7 @@ function DocumentosTab() {
                   <span className="text-purple-400/50 text-sm">({docs.length})</span>
                 </div>
 
-                <div className="space-y-3">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <AnimatePresence mode="popLayout">
                     {docs.map((doc, index) => {
                       const isImage = isImageFile(doc.archivo_nombre || '');
@@ -835,15 +848,15 @@ function DocumentosTab() {
                                     className="w-full h-full object-cover rounded-xl"
                                   />
                                 ) : (
-                                  <span className="text-sm font-bold text-purple-300/60">{ext}</span>
+                                  <File style={{ width: 24, height: 24 }} className="text-purple-300/60" />
                                 )}
                               </div>
 
                               <div className="flex-1 min-w-0">
-                                <p className="font-medium text-white text-base truncate group-hover:text-pink-200 transition-colors">
+                                <p style={{ fontWeight: 500, fontSize: 15 }} className="text-white truncate group-hover:text-pink-200 transition-colors">
                                   {doc.nombre}
                                 </p>
-                                <p className="text-sm text-purple-300/50 mt-1">
+                                <p style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.45)', marginTop: 4 }}>
                                   {formatDate(doc.created_at)}
                                 </p>
                               </div>
@@ -1010,7 +1023,7 @@ function ConfigTab() {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      style={{ display: 'flex', flexDirection: 'column', gap: 20 }}
+      style={{ display: 'flex', flexDirection: 'column', gap: 20, paddingTop: 20 }}
     >
       {/* Change Trip Button */}
       <motion.button
