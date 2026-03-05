@@ -145,7 +145,7 @@ export function Home() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ textAlign: 'center', marginBottom: 56 }}
+        style={{ textAlign: 'center', marginBottom: 24 }}
       >
         <motion.div
           animate={{ y: [0, -8, 0] }}
@@ -154,12 +154,12 @@ export function Home() {
         >
           <TripIcon theme={tripTheme} />
         </motion.div>
-        <h1 className="gradient-text" style={{ fontSize: 32, fontWeight: 700 }}>
+        <h1 className="gradient-text" style={{ fontSize: 28, fontWeight: 700 }}>
           {tripName}
         </h1>
         <p style={{
-          color: 'var(--theme-text-muted)',
-          fontSize: 14,
+          color: 'rgba(255, 255, 255, 0.75)',
+          fontSize: 13,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -177,9 +177,9 @@ export function Home() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
-        style={{ marginBottom: 56 }}
+        style={{ marginBottom: 24 }}
       >
-        <div className="glass-card" style={{ padding: 32, position: 'relative', overflow: 'hidden' }}>
+        <div className="card-elevated" style={{ padding: '28px 24px', position: 'relative', overflow: 'hidden' }}>
           {/* Decorative sparkles */}
           <Sparkles className="sparkle" style={{ position: 'absolute', top: 20, left: 20, width: 20, height: 20, color: 'var(--theme-accent)', opacity: 0.4 }} />
           <Sparkles className="sparkle" style={{ position: 'absolute', top: 20, right: 20, width: 20, height: 20, color: 'var(--theme-secondary)', opacity: 0.4, animationDelay: '0.5s' }} />
@@ -194,11 +194,11 @@ export function Home() {
               </motion.div>
             )}
 
-            <p style={{ fontSize: 20, color: 'white', marginTop: 16, fontWeight: 500 }}>
+            <p style={{ fontSize: 15, color: 'rgba(255, 255, 255, 0.75)', marginTop: 16, fontWeight: 500 }}>
               {countdownMsg}
             </p>
 
-            <p style={{ color: 'var(--theme-text-muted)', fontSize: 14, marginTop: 12 }}>
+            <p style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 13, marginTop: 12 }}>
               {formatDate(config.trip_start_date, "d 'de' MMMM")} - {formatDate(config.trip_end_date, "d 'de' MMMM, yyyy")}
             </p>
           </div>
@@ -210,7 +210,7 @@ export function Home() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        style={{ marginBottom: 32 }}
+        style={{ marginBottom: 24 }}
       >
         <Link to="/gastos" style={{ textDecoration: 'none' }}>
           <div className="glass-card" style={{ padding: 24 }}>
@@ -222,16 +222,16 @@ export function Home() {
               }}>
                 <Wallet style={{ width: 20, height: 20, color: 'var(--theme-accent)' }} />
               </div>
-              <span style={{ color: 'var(--theme-text-muted)', fontSize: 14, fontWeight: 500 }}>Balance Total</span>
+              <span style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 13, fontWeight: 500 }}>Balance Total</span>
             </div>
 
             {/* Total gastado */}
             <div style={{ marginBottom: 16 }}>
-              <p style={{ fontSize: 32, fontWeight: 700, color: 'white' }}>
+              <p style={{ fontSize: 24, fontWeight: 700, color: '#FFFFFF' }}>
                 {formatCurrency(balance.totalGeneral.usd)}
               </p>
               {balance.totalGeneral.ars > 0 && (
-                <p style={{ fontSize: 18, color: 'var(--theme-text-muted)', marginTop: 4 }}>
+                <p style={{ fontSize: 13, color: 'rgba(255, 255, 255, 0.45)', marginTop: 4 }}>
                   + {formatCurrency(balance.totalGeneral.ars, 'ARS')}
                 </p>
               )}
@@ -245,10 +245,11 @@ export function Home() {
                     padding: 12,
                     background: 'var(--glass-bg-1)',
                     borderRadius: 12,
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    borderLeft: '3px solid var(--color-juan)'
                   }}>
-                    <p style={{ fontSize: 11, color: 'var(--color-juan)', opacity: 0.8, marginBottom: 4 }}>Juan (USD)</p>
-                    <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-juan)' }}>
+                    <p style={{ fontSize: 13, color: 'var(--color-juan)', fontWeight: 600, marginBottom: 4 }}>Juan (USD)</p>
+                    <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-juan)' }}>
                       {formatCurrency(balance.usd.juan)}
                     </p>
                   </div>
@@ -256,10 +257,11 @@ export function Home() {
                     padding: 12,
                     background: 'var(--glass-bg-2)',
                     borderRadius: 12,
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    borderLeft: '3px solid var(--color-vale)'
                   }}>
-                    <p style={{ fontSize: 11, color: 'var(--color-vale)', opacity: 0.8, marginBottom: 4 }}>Vale (USD)</p>
-                    <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-vale)' }}>
+                    <p style={{ fontSize: 13, color: 'var(--color-vale)', fontWeight: 600, marginBottom: 4 }}>Vale (USD)</p>
+                    <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-vale)' }}>
                       {formatCurrency(balance.usd.vale)}
                     </p>
                   </div>
@@ -280,10 +282,11 @@ export function Home() {
                     padding: 12,
                     background: 'var(--glass-bg-1)',
                     borderRadius: 12,
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    borderLeft: '3px solid var(--color-juan)'
                   }}>
-                    <p style={{ fontSize: 11, color: 'var(--color-juan)', opacity: 0.8, marginBottom: 4 }}>Juan (ARS)</p>
-                    <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-juan)' }}>
+                    <p style={{ fontSize: 13, color: 'var(--color-juan)', fontWeight: 600, marginBottom: 4 }}>Juan (ARS)</p>
+                    <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-juan)' }}>
                       {formatCurrency(balance.ars.juan, 'ARS')}
                     </p>
                   </div>
@@ -291,10 +294,11 @@ export function Home() {
                     padding: 12,
                     background: 'var(--glass-bg-2)',
                     borderRadius: 12,
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    borderLeft: '3px solid var(--color-vale)'
                   }}>
-                    <p style={{ fontSize: 11, color: 'var(--color-vale)', opacity: 0.8, marginBottom: 4 }}>Vale (ARS)</p>
-                    <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-vale)' }}>
+                    <p style={{ fontSize: 13, color: 'var(--color-vale)', fontWeight: 600, marginBottom: 4 }}>Vale (ARS)</p>
+                    <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-vale)' }}>
                       {formatCurrency(balance.ars.vale, 'ARS')}
                     </p>
                   </div>
@@ -311,7 +315,7 @@ export function Home() {
       </motion.div>
 
       {/* Quick Stats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
         {/* Cuotas Card */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -319,7 +323,7 @@ export function Home() {
           transition={{ delay: 0.25 }}
         >
           <Link to="/gastos" style={{ textDecoration: 'none' }}>
-            <div className="glass-card" style={{ padding: 20, height: '100%' }}>
+            <div className="card-flat" style={{ padding: 20, height: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                 <div style={{
                   padding: 8,
@@ -328,12 +332,12 @@ export function Home() {
                 }}>
                   <CreditCard style={{ width: 18, height: 18, color: 'var(--success-color)' }} />
                 </div>
-                <span style={{ color: 'var(--theme-text-muted)', fontSize: 13, fontWeight: 500 }}>Cuotas</span>
+                <span style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 13, fontWeight: 500 }}>Cuotas</span>
               </div>
-              <p style={{ fontSize: 24, fontWeight: 700, color: 'var(--success-color)', marginBottom: 4 }}>
+              <p style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF', marginBottom: 4 }}>
                 {resumenCuotas.progresoGeneral}%
               </p>
-              <p style={{ fontSize: 11, color: 'var(--theme-text-muted)' }}>
+              <p style={{ fontSize: 13, color: 'rgba(255, 255, 255, 0.45)' }}>
                 {formatCurrency(resumenCuotas.totalPagado)} / {formatCurrency(resumenCuotas.totalAPagar)}
               </p>
               {/* Mini progress bar */}
@@ -366,7 +370,7 @@ export function Home() {
           transition={{ delay: 0.25 }}
         >
           <Link to="/config" style={{ textDecoration: 'none' }}>
-            <div className="glass-card" style={{ padding: 20, height: '100%' }}>
+            <div className="card-flat" style={{ padding: 20, height: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                 <div style={{
                   padding: 8,
@@ -375,12 +379,12 @@ export function Home() {
                 }}>
                   <MapPin style={{ width: 18, height: 18, color: 'var(--theme-accent)' }} />
                 </div>
-                <span style={{ color: 'var(--theme-text-muted)', fontSize: 13, fontWeight: 500 }}>Lugares</span>
+                <span style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 13, fontWeight: 500 }}>Lugares</span>
               </div>
-              <p style={{ fontSize: 24, fontWeight: 700, color: 'white', marginBottom: 4 }}>
+              <p style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF', marginBottom: 4 }}>
                 {lugaresPendientes}
               </p>
-              <p style={{ fontSize: 11, color: 'var(--theme-text-muted)' }}>por visitar</p>
+              <p style={{ fontSize: 13, color: 'rgba(255, 255, 255, 0.45)' }}>por visitar</p>
             </div>
           </Link>
         </motion.div>
@@ -392,23 +396,23 @@ export function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          style={{ marginBottom: 56 }}
+          style={{ marginBottom: 24 }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
             <Calendar style={{ width: 20, height: 20, color: 'var(--theme-accent)' }} />
             <h2 style={{ fontSize: 18, fontWeight: 600, color: 'white' }}>Proxima actividad</h2>
           </div>
           <Link to="/itinerario" style={{ textDecoration: 'none' }}>
-            <div className="glass-card" style={{ padding: 20 }}>
+            <div className="glass-card" style={{ padding: 20, borderLeft: '3px solid var(--theme-accent)' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontWeight: 600, color: 'white', fontSize: 17 }}>
+                  <p style={{ fontWeight: 600, color: '#FFFFFF', fontSize: 18 }}>
                     {nextActivity.titulo}
                   </p>
                   {nextActivity.descripcion && (
                     <p style={{
-                      color: 'var(--theme-text-muted)',
-                      fontSize: 14,
+                      color: 'rgba(255, 255, 255, 0.75)',
+                      fontSize: 13,
                       marginTop: 8,
                       display: '-webkit-box',
                       WebkitLineClamp: 2,
@@ -423,15 +427,15 @@ export function Home() {
                   <div style={{
                     padding: '10px 16px',
                     borderRadius: 14,
-                    background: 'var(--glass-bg-1)',
+                    background: 'rgba(255, 255, 255, 0.04)',
                     border: '1px solid var(--glass-border)'
                   }}>
-                    <p style={{ color: 'var(--theme-accent)', fontSize: 14, fontWeight: 600 }}>
+                    <p style={{ color: 'var(--theme-accent)', fontSize: 11, fontWeight: 600 }}>
                       {formatDate(nextActivity.fecha, "d MMM")}
                     </p>
                   </div>
                   {nextActivity.hora && (
-                    <p style={{ color: 'var(--theme-text-muted)', fontSize: 12, marginTop: 8 }}>
+                    <p style={{ color: 'var(--theme-text-muted)', fontSize: 11, marginTop: 8 }}>
                       {nextActivity.hora}
                     </p>
                   )}
@@ -471,7 +475,7 @@ export function Home() {
               whileTap={{ scale: 0.95 }}
             >
               <Link to={item.to} style={{ textDecoration: 'none' }}>
-                <div className="glass-card" style={{ padding: 20, textAlign: 'center' }}>
+                <div className="glass-card" style={{ padding: 16, textAlign: 'center', minHeight: '44px' }}>
                   <div
                     style={{
                       width: 52,
@@ -485,9 +489,9 @@ export function Home() {
                       background: 'var(--icon-bg-1)'
                     }}
                   >
-                    <item.icon style={{ width: 24, height: 24, color: 'white' }} />
+                    <item.icon style={{ width: 28, height: 28, color: 'white' }} />
                   </div>
-                  <span style={{ fontSize: 12, color: 'var(--theme-text-muted)', fontWeight: 500 }}>
+                  <span style={{ fontSize: 13, color: 'var(--theme-text-muted)', fontWeight: 600 }}>
                     {item.label}
                   </span>
                 </div>
