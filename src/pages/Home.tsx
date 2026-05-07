@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Sparkles, DollarSign, Calendar, MapPin, Heart, CreditCard, Wallet, ArrowLeftRight } from 'lucide-react';
+import { Calendar, MapPin, Heart, CreditCard, Wallet, ArrowLeftRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PageWrapper } from '../components/layout';
 import { useItinerario, useLugares, useTripConfig, useGastos } from '../hooks';
@@ -111,7 +111,7 @@ export function Home() {
 
   return (
     <PageWrapper>
-      {/* Trip Switcher Button - Fixed at top right */}
+      {/* Trip Switcher - icon-only pill, top-right */}
       <motion.button
         onClick={handleChangeTrip}
         initial={{ opacity: 0, scale: 0.8 }}
@@ -123,22 +123,21 @@ export function Home() {
           zIndex: 50,
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
-          padding: '10px 16px',
-          borderRadius: 20,
+          justifyContent: 'center',
+          width: 44,
+          height: 44,
+          borderRadius: 999,
           background: 'var(--glass-bg-1)',
           backdropFilter: 'blur(12px)',
           border: '1px solid var(--glass-border)',
-          color: '#FFFFFF',
-          fontSize: 13,
-          fontWeight: 500,
+          color: 'var(--text-primary)',
           cursor: 'pointer',
         }}
         whileHover={{ scale: 1.05, borderColor: 'var(--glass-border-hover)' }}
         whileTap={{ scale: 0.95 }}
+        aria-label="Cambiar viaje"
       >
-        <span style={{ fontSize: 16 }}>{currentTrip?.emoji || '✈️'}</span>
-        <ArrowLeftRight style={{ width: 16, height: 16, color: 'var(--theme-accent)' }} />
+        <ArrowLeftRight style={{ width: 18, height: 18, color: 'var(--theme-accent)' }} />
       </motion.button>
 
       {/* Header Section */}
@@ -148,27 +147,27 @@ export function Home() {
         style={{ textAlign: 'center', marginBottom: 24 }}
       >
         <motion.div
-          animate={{ y: [0, -8, 0] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-          style={{ display: 'inline-block', marginBottom: 20 }}
+          animate={{ y: [0, -6, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ display: 'inline-block', marginBottom: 12, transform: 'scale(0.85)' }}
         >
           <TripIcon theme={tripTheme} />
         </motion.div>
-        <h1 className="gradient-text" style={{ fontSize: 28, fontWeight: 700 }}>
+        <h1 className="gradient-text" style={{ fontSize: 28, fontWeight: 700, lineHeight: 1.2 }}>
           {tripName}
         </h1>
         <p style={{
-          color: 'rgba(255, 255, 255, 0.75)',
+          color: 'var(--text-secondary)',
           fontSize: 13,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 8,
-          marginTop: 12
+          gap: 6,
+          marginTop: 8
         }}>
-          <Heart style={{ width: 14, height: 14, fill: 'var(--heart-color)', color: 'var(--heart-color)' }} />
-          Juan & Vale
-          <Heart style={{ width: 14, height: 14, fill: 'var(--heart-color)', color: 'var(--heart-color)' }} />
+          Juan
+          <Heart style={{ width: 12, height: 12, fill: 'var(--heart-color)', color: 'var(--heart-color)' }} />
+          Vale
         </p>
       </motion.div>
 
@@ -179,29 +178,23 @@ export function Home() {
         transition={{ delay: 0.1 }}
         style={{ marginBottom: 24 }}
       >
-        <div className="card-elevated" style={{ padding: '28px 24px', position: 'relative', overflow: 'hidden' }}>
-          {/* Decorative sparkles */}
-          <Sparkles className="sparkle" style={{ position: 'absolute', top: 20, left: 20, width: 20, height: 20, color: 'var(--theme-accent)', opacity: 0.4 }} />
-          <Sparkles className="sparkle" style={{ position: 'absolute', top: 20, right: 20, width: 20, height: 20, color: 'var(--theme-secondary)', opacity: 0.4, animationDelay: '0.5s' }} />
+        <div className="card-elevated" style={{ padding: '28px 24px', textAlign: 'center' }}>
+          {!onTrip && daysUntil > 0 && (
+            <motion.div
+              animate={{ scale: [1, 1.02, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <span className="shimmer-text" style={{ fontSize: 72, fontWeight: 700, lineHeight: 1 }}>{daysUntil}</span>
+            </motion.div>
+          )}
 
-          <div style={{ textAlign: 'center', position: 'relative', zIndex: 10 }}>
-            {!onTrip && daysUntil > 0 && (
-              <motion.div
-                animate={{ scale: [1, 1.02, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <span className="shimmer-text" style={{ fontSize: 72, fontWeight: 700 }}>{daysUntil}</span>
-              </motion.div>
-            )}
+          <p style={{ fontSize: 15, color: 'var(--text-secondary)', marginTop: 16, fontWeight: 500 }}>
+            {countdownMsg}
+          </p>
 
-            <p style={{ fontSize: 15, color: 'rgba(255, 255, 255, 0.75)', marginTop: 16, fontWeight: 500 }}>
-              {countdownMsg}
-            </p>
-
-            <p style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 13, marginTop: 12 }}>
-              {formatDate(config.trip_start_date, "d 'de' MMMM")} - {formatDate(config.trip_end_date, "d 'de' MMMM, yyyy")}
-            </p>
-          </div>
+          <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 8 }}>
+            {formatDate(config.trip_start_date, "d 'de' MMMM")} — {formatDate(config.trip_end_date, "d 'de' MMMM, yyyy")}
+          </p>
         </div>
       </motion.div>
 
@@ -222,16 +215,16 @@ export function Home() {
               }}>
                 <Wallet style={{ width: 20, height: 20, color: 'var(--theme-accent)' }} />
               </div>
-              <span style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 13, fontWeight: 500 }}>Balance Total</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: 13, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Balance Total</span>
             </div>
 
             {/* Total gastado */}
-            <div style={{ marginBottom: 16 }}>
-              <p style={{ fontSize: 24, fontWeight: 700, color: '#FFFFFF' }}>
+            <div style={{ marginBottom: 20 }}>
+              <p style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.1 }}>
                 {formatCurrency(balance.totalGeneral.usd)}
               </p>
               {balance.totalGeneral.ars > 0 && (
-                <p style={{ fontSize: 13, color: 'rgba(255, 255, 255, 0.45)', marginTop: 4 }}>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
                   + {formatCurrency(balance.totalGeneral.ars, 'ARS')}
                 </p>
               )}
@@ -332,12 +325,12 @@ export function Home() {
                 }}>
                   <CreditCard style={{ width: 18, height: 18, color: 'var(--success-color)' }} />
                 </div>
-                <span style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 13, fontWeight: 500 }}>Cuotas</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: 13, fontWeight: 500 }}>Cuotas</span>
               </div>
-              <p style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF', marginBottom: 4 }}>
+              <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
                 {resumenCuotas.progresoGeneral}%
               </p>
-              <p style={{ fontSize: 13, color: 'rgba(255, 255, 255, 0.45)' }}>
+              <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
                 {formatCurrency(resumenCuotas.totalPagado)} / {formatCurrency(resumenCuotas.totalAPagar)}
               </p>
               {/* Mini progress bar */}
@@ -379,12 +372,12 @@ export function Home() {
                 }}>
                   <MapPin style={{ width: 18, height: 18, color: 'var(--theme-accent)' }} />
                 </div>
-                <span style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 13, fontWeight: 500 }}>Lugares</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: 13, fontWeight: 500 }}>Lugares</span>
               </div>
-              <p style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF', marginBottom: 4 }}>
+              <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
                 {lugaresPendientes}
               </p>
-              <p style={{ fontSize: 13, color: 'rgba(255, 255, 255, 0.45)' }}>por visitar</p>
+              <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>por visitar</p>
             </div>
           </Link>
         </motion.div>
@@ -396,24 +389,23 @@ export function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          style={{ marginBottom: 24 }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-            <Calendar style={{ width: 20, height: 20, color: 'var(--theme-accent)' }} />
-            <h2 style={{ fontSize: 18, fontWeight: 600, color: '#FFFFFF' }}>Proxima actividad</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+            <Calendar style={{ width: 18, height: 18, color: 'var(--theme-accent)' }} />
+            <h2 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Proxima actividad</h2>
           </div>
           <Link to="/itinerario" style={{ textDecoration: 'none' }}>
             <div className="glass-card" style={{ padding: 20, borderLeft: '3px solid var(--theme-accent)' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontWeight: 600, color: '#FFFFFF', fontSize: 18 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 16, lineHeight: 1.3 }}>
                     {nextActivity.titulo}
                   </p>
                   {nextActivity.descripcion && (
                     <p style={{
-                      color: 'rgba(255, 255, 255, 0.75)',
+                      color: 'var(--text-secondary)',
                       fontSize: 13,
-                      marginTop: 8,
+                      marginTop: 6,
                       display: '-webkit-box',
                       WebkitLineClamp: 2,
                       WebkitBoxOrient: 'vertical',
@@ -424,18 +416,11 @@ export function Home() {
                   )}
                 </div>
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <div style={{
-                    padding: '10px 16px',
-                    borderRadius: 14,
-                    background: 'rgba(255, 255, 255, 0.04)',
-                    border: '1px solid var(--glass-border)'
-                  }}>
-                    <p style={{ color: 'var(--theme-accent)', fontSize: 11, fontWeight: 600 }}>
-                      {formatDate(nextActivity.fecha, "d MMM")}
-                    </p>
-                  </div>
+                  <p style={{ color: 'var(--theme-accent)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    {formatDate(nextActivity.fecha, "d MMM")}
+                  </p>
                   {nextActivity.hora && (
-                    <p style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 11, marginTop: 8 }}>
+                    <p style={{ color: 'var(--text-muted)', fontSize: 11, marginTop: 4 }}>
                       {nextActivity.hora}
                     </p>
                   )}
@@ -445,61 +430,6 @@ export function Home() {
           </Link>
         </motion.div>
       )}
-
-      {/* Quick Links Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <h2 style={{
-          fontSize: 18,
-          fontWeight: 600,
-          color: '#FFFFFF',
-          marginBottom: 20,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10
-        }}>
-          <Sparkles style={{ width: 20, height: 20, color: 'var(--theme-accent)' }} />
-          Accesos rapidos
-        </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-          {[
-            { to: '/gastos', icon: DollarSign, label: 'Gastos' },
-            { to: '/itinerario', icon: Calendar, label: 'Itinerario' },
-          ].map((item) => (
-            <motion.div
-              key={item.to}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link to={item.to} style={{ textDecoration: 'none' }}>
-                <div className="glass-card" style={{ padding: 16, textAlign: 'center', minHeight: '44px' }}>
-                  <div
-                    style={{
-                      width: 52,
-                      height: 52,
-                      margin: '0 auto',
-                      borderRadius: 16,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginBottom: 12,
-                      background: 'var(--icon-bg-1)'
-                    }}
-                  >
-                    <item.icon style={{ width: 28, height: 28, color: '#FFFFFF' }} />
-                  </div>
-                  <span style={{ fontSize: 13, color: 'var(--theme-text-muted)', fontWeight: 600 }}>
-                    {item.label}
-                  </span>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
     </PageWrapper>
   );
 }

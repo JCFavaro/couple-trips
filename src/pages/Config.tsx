@@ -575,7 +575,7 @@ function NotasTab() {
                         {nota.contenido && (
                           <p style={{
                             fontSize: 13,
-                            color: 'rgba(255, 255, 255, 0.75)',
+                            color: 'var(--text-secondary)',
                             marginTop: 8,
                             display: '-webkit-box',
                             WebkitLineClamp: 3,
@@ -855,7 +855,7 @@ function DocumentosTab() {
                                 <p style={{ fontWeight: 500, fontSize: 15 }} className="text-white truncate group-hover:text-pink-200 transition-colors">
                                   {doc.nombre}
                                 </p>
-                                <p style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.45)', marginTop: 4 }}>
+                                <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
                                   {formatDate(doc.created_at)}
                                 </p>
                               </div>
@@ -1057,7 +1057,7 @@ function ConfigTab() {
           <p style={{ fontWeight: 600, color: '#FFFFFF', fontSize: 15, marginBottom: 4 }}>
             {currentTrip?.nombre || 'Viaje'}
           </p>
-          <p style={{ fontSize: 13, color: 'rgba(255, 255, 255, 0.45)' }}>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
             {currentTrip?.destino || 'Destino'}
           </p>
         </div>

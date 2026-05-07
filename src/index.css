@@ -184,7 +184,10 @@ body {
   min-height: 100vh;
   background: linear-gradient(180deg, var(--theme-bg) 0%, var(--theme-bg-secondary) 40%, var(--theme-bg-tertiary) 100%);
   background-attachment: fixed;
-  color: white;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   transition: background 0.3s ease;
 }
 
