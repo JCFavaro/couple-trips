@@ -106,9 +106,9 @@ export function ItinerarioPage() {
             padding: '16px 28px',
             borderRadius: 16,
             background: 'var(--tab-active-gradient)',
-            color: 'white',
+            color: '#FFFFFF',
             fontWeight: 600,
-            fontSize: 16,
+            fontSize: 15,
             border: 'none',
             cursor: 'pointer',
             boxShadow: '0 8px 24px var(--btn-shadow)'
@@ -141,7 +141,7 @@ export function ItinerarioPage() {
         >
           <Calendar style={{ width: 56, height: 56, margin: '0 auto', color: 'var(--theme-secondary)', opacity: 0.3, marginBottom: 16 }} />
           <p style={{ color: 'var(--theme-text-muted)', fontSize: 18 }}>No hay actividades en el itinerario</p>
-          <p style={{ color: 'var(--theme-secondary)', opacity: 0.4, fontSize: 14, marginTop: 8 }}>Agrega tu primera actividad magica</p>
+          <p style={{ color: 'var(--theme-secondary)', opacity: 0.4, fontSize: 13, marginTop: 8 }}>Agrega tu primera actividad magica</p>
         </motion.div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
@@ -170,7 +170,7 @@ export function ItinerarioPage() {
                       fontSize: 18,
                       position: 'relative',
                       background: isToday ? 'var(--tab-active-gradient)' : 'var(--glass-bg-1)',
-                      color: 'white',
+                      color: '#FFFFFF',
                       boxShadow: isToday ? '0 8px 20px var(--btn-shadow)' : 'none',
                       border: isToday ? 'none' : '1px solid var(--glass-border)'
                     }}
@@ -295,13 +295,13 @@ export function ItinerarioPage() {
                               <motion.button
                                 onClick={() => handleOpenModal(activity)}
                                 style={{
-                                  width: 32,
-                                  height: 32,
+                                  width: 44,
+                                  height: 44,
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   padding: 0,
-                                  borderRadius: 8,
+                                  borderRadius: 12,
                                   background: 'var(--glass-bg-1)',
                                   border: '1px solid var(--glass-border)',
                                   color: 'var(--theme-text-muted)',
@@ -310,18 +310,18 @@ export function ItinerarioPage() {
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                               >
-                                <Edit2 style={{ width: 14, height: 14 }} />
+                                <Edit2 style={{ width: 16, height: 16 }} />
                               </motion.button>
                               <motion.button
                                 onClick={() => confirmDelete(activity.id)}
                                 style={{
-                                  width: 32,
-                                  height: 32,
+                                  width: 44,
+                                  height: 44,
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   padding: 0,
-                                  borderRadius: 8,
+                                  borderRadius: 12,
                                   background: 'rgba(239, 68, 68, 0.1)',
                                   border: '1px solid rgba(239, 68, 68, 0.2)',
                                   color: 'rgba(248, 113, 113, 0.6)',
@@ -330,7 +330,7 @@ export function ItinerarioPage() {
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                               >
-                                <Trash2 style={{ width: 14, height: 14 }} />
+                                <Trash2 style={{ width: 16, height: 16 }} />
                               </motion.button>
                             </div>
                           </div>

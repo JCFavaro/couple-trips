@@ -129,7 +129,7 @@ export function Home() {
           background: 'var(--glass-bg-1)',
           backdropFilter: 'blur(12px)',
           border: '1px solid var(--glass-border)',
-          color: 'white',
+          color: '#FFFFFF',
           fontSize: 13,
           fontWeight: 500,
           cursor: 'pointer',
@@ -267,7 +267,7 @@ export function Home() {
                   </div>
                 </div>
                 {balance.usd.deudor && (
-                  <p style={{ fontSize: 12, color: 'var(--success-color)', textAlign: 'center', marginBottom: 12 }}>
+                  <p style={{ fontSize: 11, color: 'var(--success-color)', textAlign: 'center', marginBottom: 12 }}>
                     {balance.usd.deudor} debe {formatCurrency(balance.usd.diferencia)} a {balance.usd.deudor === 'Juan' ? 'Vale' : 'Juan'}
                   </p>
                 )}
@@ -304,7 +304,7 @@ export function Home() {
                   </div>
                 </div>
                 {balance.ars.deudor && (
-                  <p style={{ fontSize: 12, color: 'var(--theme-accent)', textAlign: 'center' }}>
+                  <p style={{ fontSize: 11, color: 'var(--theme-accent)', textAlign: 'center' }}>
                     {balance.ars.deudor} debe {formatCurrency(balance.ars.diferencia, 'ARS')} a {balance.ars.deudor === 'Juan' ? 'Vale' : 'Juan'}
                   </p>
                 )}
@@ -400,7 +400,7 @@ export function Home() {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
             <Calendar style={{ width: 20, height: 20, color: 'var(--theme-accent)' }} />
-            <h2 style={{ fontSize: 18, fontWeight: 600, color: 'white' }}>Proxima actividad</h2>
+            <h2 style={{ fontSize: 18, fontWeight: 600, color: '#FFFFFF' }}>Proxima actividad</h2>
           </div>
           <Link to="/itinerario" style={{ textDecoration: 'none' }}>
             <div className="glass-card" style={{ padding: 20, borderLeft: '3px solid var(--theme-accent)' }}>
@@ -435,7 +435,7 @@ export function Home() {
                     </p>
                   </div>
                   {nextActivity.hora && (
-                    <p style={{ color: 'var(--theme-text-muted)', fontSize: 11, marginTop: 8 }}>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: 11, marginTop: 8 }}>
                       {nextActivity.hora}
                     </p>
                   )}
@@ -455,7 +455,7 @@ export function Home() {
         <h2 style={{
           fontSize: 18,
           fontWeight: 600,
-          color: 'white',
+          color: '#FFFFFF',
           marginBottom: 20,
           display: 'flex',
           alignItems: 'center',
@@ -489,7 +489,7 @@ export function Home() {
                       background: 'var(--icon-bg-1)'
                     }}
                   >
-                    <item.icon style={{ width: 28, height: 28, color: 'white' }} />
+                    <item.icon style={{ width: 28, height: 28, color: '#FFFFFF' }} />
                   </div>
                   <span style={{ fontSize: 13, color: 'var(--theme-text-muted)', fontWeight: 600 }}>
                     {item.label}

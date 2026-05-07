@@ -256,9 +256,9 @@ export function Gastos() {
             padding: '16px 28px',
             borderRadius: 16,
             background: 'var(--tab-active-gradient)',
-            color: 'white',
+            color: '#FFFFFF',
             fontWeight: 600,
-            fontSize: 16,
+            fontSize: 15,
             border: 'none',
             cursor: 'pointer',
             boxShadow: '0 8px 24px var(--btn-shadow)'
@@ -275,7 +275,7 @@ export function Gastos() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ marginBottom: 16 }}
+        style={{ marginBottom: 24 }}
       >
         <div className="glass-card" style={{ padding: 28, position: 'relative', overflow: 'hidden' }}>
           <Sparkles className="sparkle" style={{ position: 'absolute', top: 16, right: 16, width: 20, height: 20, color: 'var(--theme-accent)', opacity: 0.4 }} />
@@ -290,7 +290,7 @@ export function Gastos() {
             }}>
               <TrendingUp style={{ width: 22, height: 22, color: 'white' }} />
             </div>
-            <span style={{ fontWeight: 600, color: 'var(--theme-accent)', fontSize: 16 }}>Balance Total</span>
+            <span style={{ fontWeight: 600, color: 'var(--theme-accent)', fontSize: 15 }}>Balance Total</span>
           </div>
 
           {/* Monto total grande */}
@@ -304,7 +304,7 @@ export function Gastos() {
               {formatCurrency(balance.totalGeneral.usd)}
             </motion.span>
             {balance.totalGeneral.ars > 0 && (
-              <span style={{ fontSize: 16, color: 'var(--theme-text-muted)', marginTop: 4, display: 'block' }}>
+              <span style={{ fontSize: 15, color: 'var(--theme-text-muted)', marginTop: 4, display: 'block' }}>
                 + {formatCurrency(balance.totalGeneral.ars, 'ARS')}
               </span>
             )}
@@ -314,7 +314,7 @@ export function Gastos() {
           {balance.usd.total > 0 && (
             <>
               <div style={{ marginBottom: 8 }}>
-                <span style={{ fontSize: 12, color: 'rgba(74, 222, 128, 0.8)', fontWeight: 600 }}>DOLARES (USD)</span>
+                <span style={{ fontSize: 11, color: 'rgba(74, 222, 128, 0.8)', fontWeight: 600 }}>DOLARES (USD)</span>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
                 <div style={{
@@ -369,7 +369,7 @@ export function Gastos() {
           {balance.ars.total > 0 && (
             <>
               <div style={{ marginBottom: 8 }}>
-                <span style={{ fontSize: 12, color: 'rgba(59, 130, 246, 0.8)', fontWeight: 600 }}>PESOS (ARS)</span>
+                <span style={{ fontSize: 11, color: 'rgba(59, 130, 246, 0.8)', fontWeight: 600 }}>PESOS (ARS)</span>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
                 <div style={{
@@ -432,7 +432,7 @@ export function Gastos() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                 <CreditCard style={{ width: 18, height: 18, color: 'var(--theme-secondary)' }} />
-                <span style={{ fontSize: 14, color: 'var(--theme-accent)', fontWeight: 500 }}>
+                <span style={{ fontSize: 13, color: 'var(--theme-accent)', fontWeight: 500 }}>
                   {resumenCuotas.cantidad} gasto{resumenCuotas.cantidad > 1 ? 's' : ''} en cuotas
                 </span>
               </div>
@@ -450,7 +450,7 @@ export function Gastos() {
                   />
                 </div>
                 <div style={{ textAlign: 'center', marginTop: 6 }}>
-                  <span style={{ fontSize: 12, color: 'var(--theme-text-muted)' }}>
+                  <span style={{ fontSize: 11, color: 'var(--theme-text-muted)' }}>
                     {resumenCuotas.progresoGeneral}% completado
                   </span>
                 </div>
@@ -466,11 +466,11 @@ export function Gastos() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          style={{ marginBottom: 16 }}
+          style={{ marginBottom: 24 }}
         >
           <div className="glass-card" style={{ padding: 24 }}>
             <h3 style={{
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: 600,
               color: 'var(--theme-text-muted)',
               marginBottom: 24,
@@ -505,7 +505,7 @@ export function Gastos() {
                           }}>
                             <Icon style={{ width: 16, height: 16, color: colors.text }} />
                           </div>
-                          <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: 14, textTransform: 'capitalize', fontWeight: 500 }}>{cat}</span>
+                          <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: 13, textTransform: 'capitalize', fontWeight: 500 }}>{cat}</span>
                         </div>
                         <span style={{ color: 'white', fontWeight: 600 }}>{formatCurrency(total)}</span>
                       </div>
@@ -536,7 +536,7 @@ export function Gastos() {
         transition={{ delay: 0.2 }}
       >
         <h3 style={{
-          fontSize: 14,
+          fontSize: 13,
           fontWeight: 600,
           color: 'var(--theme-text-muted)',
           marginBottom: 16,
@@ -569,7 +569,7 @@ export function Gastos() {
               >
                 <DollarSign style={{ width: 56, height: 56, margin: '0 auto', color: 'var(--theme-secondary)', opacity: 0.3, marginBottom: 16 }} />
                 <p style={{ color: 'var(--theme-text-muted)', fontSize: 18 }}>No hay gastos registrados</p>
-                <p style={{ color: 'var(--theme-secondary)', opacity: 0.4, fontSize: 14, marginTop: 8 }}>Agrega tu primer gasto con el boton de arriba</p>
+                <p style={{ color: 'var(--theme-secondary)', opacity: 0.4, fontSize: 13, marginTop: 8 }}>Agrega tu primer gasto con el boton de arriba</p>
               </motion.div>
             ) : (
               gastos.map((gasto, index) => {
@@ -760,7 +760,7 @@ export function Gastos() {
                               background: 'rgba(74, 222, 128, 0.15)',
                               border: '1px solid rgba(74, 222, 128, 0.3)',
                               color: '#4ade80',
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: 600,
                               cursor: 'pointer',
                               minHeight: 44,
@@ -797,9 +797,9 @@ export function Gastos() {
                           <motion.button
                             onClick={() => handleOpenModal(gasto)}
                             style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: 8,
+                              width: 44,
+                              height: 44,
+                              borderRadius: 12,
                               background: 'var(--glass-bg-1)',
                               border: '1px solid var(--glass-border)',
                               cursor: 'pointer',
@@ -810,14 +810,14 @@ export function Gastos() {
                             }}
                             whileTap={{ scale: 0.95 }}
                           >
-                            <Edit2 style={{ width: 14, height: 14 }} />
+                            <Edit2 style={{ width: 16, height: 16 }} />
                           </motion.button>
                           <motion.button
                             onClick={() => confirmDelete(gasto.id)}
                             style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: 8,
+                              width: 44,
+                              height: 44,
+                              borderRadius: 12,
                               background: 'rgba(239, 68, 68, 0.1)',
                               border: '1px solid rgba(239, 68, 68, 0.2)',
                               cursor: 'pointer',
@@ -828,7 +828,7 @@ export function Gastos() {
                             }}
                             whileTap={{ scale: 0.95 }}
                           >
-                            <Trash2 style={{ width: 14, height: 14 }} />
+                            <Trash2 style={{ width: 16, height: 16 }} />
                           </motion.button>
                         </div>
                       </div>
@@ -844,7 +844,7 @@ export function Gastos() {
                             style={{ overflow: 'hidden' }}
                           >
                             <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                              <h4 style={{ fontSize: 12, color: 'var(--theme-text-muted)', marginBottom: 12 }}>
+                              <h4 style={{ fontSize: 11, color: 'var(--theme-text-muted)', marginBottom: 12 }}>
                                 Historial de cuotas
                               </h4>
                               {gasto.pagos.length === 0 ? (
@@ -881,15 +881,20 @@ export function Gastos() {
                                           }}>
                                             Cuota #{pago.numero_cuota}
                                           </span>
-                                          <span style={{ fontSize: 14, color: 'white', fontWeight: 600 }}>
+                                          <span style={{ fontSize: 13, color: '#FFFFFF', fontWeight: 600 }}>
                                             {formatCurrency(pago.monto, gasto.moneda)}
                                           </span>
                                         </div>
                                         <motion.button
                                           onClick={() => confirmDeletePago(pago.id)}
                                           style={{
-                                            padding: 6,
-                                            borderRadius: 8,
+                                            width: 44,
+                                            height: 44,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            padding: 0,
+                                            borderRadius: 12,
                                             background: 'transparent',
                                             border: 'none',
                                             cursor: 'pointer',
@@ -897,20 +902,20 @@ export function Gastos() {
                                           }}
                                           whileHover={{ color: '#f87171' }}
                                         >
-                                          <Trash2 style={{ width: 14, height: 14 }} />
+                                          <Trash2 style={{ width: 16, height: 16 }} />
                                         </motion.button>
                                       </div>
                                       {/* Fila 2: Pagador + Fecha */}
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                         <span style={{
-                                          fontSize: 12,
+                                          fontSize: 11,
                                           color: pago.pagador === 'Juan' ? 'var(--color-juan)' : 'var(--color-vale)',
                                           fontWeight: 500
                                         }}>
                                           {pago.pagador}
                                         </span>
                                         <span style={{ color: 'var(--theme-text-muted)' }}>•</span>
-                                        <span style={{ fontSize: 12, color: 'var(--theme-text-muted)' }}>
+                                        <span style={{ fontSize: 11, color: 'var(--theme-text-muted)' }}>
                                           {formatDate(pago.fecha_pago)}
                                         </span>
                                       </div>
@@ -983,7 +988,7 @@ export function Gastos() {
 
           {/* Tipo de pago */}
           <div>
-            <label style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--theme-accent)', marginBottom: 10 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--theme-accent)', marginBottom: 10 }}>
               Tipo de pago
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -999,7 +1004,7 @@ export function Gastos() {
                   color: tipoPago === 'unico' ? 'var(--theme-accent)' : 'var(--theme-text-muted)',
                   fontWeight: 500,
                   cursor: 'pointer',
-                  fontSize: 14,
+                  fontSize: 13,
                 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -1018,7 +1023,7 @@ export function Gastos() {
                   color: tipoPago === 'cuotas' ? 'var(--theme-accent)' : 'var(--theme-text-muted)',
                   fontWeight: 500,
                   cursor: 'pointer',
-                  fontSize: 14,
+                  fontSize: 13,
                 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -1057,7 +1062,7 @@ export function Gastos() {
           {formData.moneda === 'ARS' && formData.monto > 0 && (
             <motion.p
               style={{
-                fontSize: 14,
+                fontSize: 13,
                 color: 'var(--theme-text-muted)',
                 textAlign: 'center',
                 padding: 16,
